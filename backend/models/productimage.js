@@ -11,13 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ProductImage.belongsTo(models.products,{
+        foreignKey:'productId',
+        onDelete:'CASCADE'
+      })
     }
   }
   ProductImage.init({
+    productImageId:
+    {
+      type:DataTypes.INTEGER
+    },
     imageUrl: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'ProductImage',
+    tableName:'ProductImage'
   });
   return ProductImage;
 };
