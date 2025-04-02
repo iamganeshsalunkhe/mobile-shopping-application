@@ -11,9 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Customers.hasMany(models.addresses,{
+        foreignKey:'customerId'
+      });
+      Customers.hasMany(models.orders,{
+        foreignKey:'customerId'
+      })
     }
   }
   Customers.init({
+    customerId:{
+      type:DataTypes.INTEGER,
+      primaryKey:true,
+      autoIncrement:true
+    },
     email: DataTypes.STRING,
     fullName: DataTypes.STRING,
     password: DataTypes.STRING,
