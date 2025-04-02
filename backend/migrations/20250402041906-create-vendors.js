@@ -10,27 +10,29 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       email: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       vendorName: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       password: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       brandLogo: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       isAccepted: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM('Accepted',"Rejected","Pending"),
+        defaultValue:'Accepted'
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue:Sequelize.NOW
       }
     });
   },

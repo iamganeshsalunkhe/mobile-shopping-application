@@ -11,17 +11,30 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Vendors.hasMany(models.products,{
+        foreignKey:'vendorId'
+      })
     }
   }
   Vendors.init({
+    vendorId:{
+      DataTypes:INTEGER,
+      primaryKey:true,
+
+    },
     email: DataTypes.STRING,
     vendorName: DataTypes.STRING,
     password: DataTypes.STRING,
     brandLogo: DataTypes.STRING,
-    isAccepted: DataTypes.ENUM
+    isAccepted: DataTypes.ENUM('Accepted','Rejected','Pending'),
+    createdAt:{
+      type:DataTypes.DATE,
+      defaultValue:DataTypes.NOW
+    }
   }, {
     sequelize,
     modelName: 'Vendors',
+    tableName:'Vendors'
   });
   return Vendors;
 };
