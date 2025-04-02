@@ -11,9 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Addresses.belongsTo(models.customers,{
+        foreignKey:'customerId'
+      })
     }
   }
   Addresses.init({
+    addressId:{type:DataTypes.INTEGER,
+      primaryKey:true,
+      autoIncrement:true
+    },
+    customerId:DataTypes.INTEGER,
     fullName: DataTypes.STRING,
     contactNumber: DataTypes.STRING,
     addressLine: DataTypes.STRING,
@@ -21,10 +29,11 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
     postalCode: DataTypes.STRING,
     country: DataTypes.STRING,
-    addressType: DataTypes.ENUM
+    addressType: DataTypes.ENUM('Shipping',"Billing")
   }, {
     sequelize,
     modelName: 'Addresses',
+    tableName:'Addresses'
   });
   return Addresses;
 };

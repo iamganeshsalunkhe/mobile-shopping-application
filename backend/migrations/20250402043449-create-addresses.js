@@ -3,12 +3,14 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Addresses', {
-      id: {
+      addressId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      customerId:Sequelize.INTEGER,
+      
       fullName: {
         type: Sequelize.STRING
       },
@@ -16,28 +18,29 @@ module.exports = {
         type: Sequelize.STRING
       },
       addressLine: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       city: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       state: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       postalCode: {
+        allowNull:false,
         type: Sequelize.STRING
       },
       country: {
+        defaultValue:'INDIA',
         type: Sequelize.STRING
       },
       addressType: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM('Shipping', "Billing")
       },
       createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
       }
