@@ -14,11 +14,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Admins.init({
+    adminId:{
+      type:DataTypes.INTEGER,
+      primaryKey:true,
+      autoIncrement:true
+    },
     email: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    createdAt:{
+      type:DataTypes.DATE,
+      defaultValue:DataTypes.NOW
+    }
   }, {
     sequelize,
     modelName: 'Admins',
+    tableName:'Admins'
   });
   return Admins;
 };
