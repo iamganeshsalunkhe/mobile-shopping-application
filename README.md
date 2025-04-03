@@ -23,5 +23,6 @@ A full-stack e-commerce web app with microfrontends for Admin, Vendors, and Cust
 ✅ Track and manage their orders  
 
 ## Documentation
-- [Database Schema](docs/DatabaseSchema/)
 - [Basic Functionality](docs/basic_functionality)
+- [Use case diagram](docs/UseCaseDiagram)
+- [Database Schema](docs/DatabaseSchema/)
