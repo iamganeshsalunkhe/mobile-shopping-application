@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Vendors.hasMany(models.products,{
+      Vendors.hasMany(models.Products,{
         foreignKey:'vendorId',
         onDelete:'CASCADE'
       })
-      Vendors.hasMany(models.orders, {
+      Vendors.hasMany(models.Orders, {
         foreignKey: "vendorId",
         onDelete: "CASCADE",
       });
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Vendors.init({
     vendorId:{
-      DataTypes:INTEGER,
+      type:DataTypes.INTEGER,
       primaryKey:true,
       autoIncrement:true
     },

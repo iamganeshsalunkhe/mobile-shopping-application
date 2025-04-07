@@ -3,6 +3,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 
+// importing routes
+const vendorRoutes = require('./routes/vendor.routes');
+
 // config the dotenv
 dotenv.config();
 
@@ -14,6 +17,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
+app.use('/api/vendor',vendorRoutes)
 
 // listening 
 app.listen(PORT,'localhost',()=>{
