@@ -20,13 +20,16 @@ module.exports = (sequelize, DataTypes) => {
   ProductImage.init({
     productImageId:
     {
-      type:DataTypes.INTEGER
+      type:DataTypes.INTEGER,
+      primaryKey:true,
+      autoIncrement:true
     },
     imageUrl: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'ProductImage',
-    tableName:'ProductImage'
+    tableName:'ProductImage',
+     timestamps:false
   });
   return ProductImage;
 };

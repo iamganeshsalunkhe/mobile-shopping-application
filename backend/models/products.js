@@ -11,35 +11,42 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Products.hasMany(models.orders,{
-        foreignKey:'productId'
+      Products.hasMany(models.orders, {
+        foreignKey: "productId",
+        onDelete: "CASCADE",
       });
-      Products.belongsTo(models.vendors,{
-        foreignKey:'vendorId'
+      Products.belongsTo(models.vendors, {
+        foreignKey: "vendorId",
+        onDelete: "CASCADE",
       });
-      Products.hasMany(models.productimage,{
-        foreignKey:'productId'
-      })
+      Products.hasMany(models.productimage, {
+        foreignKey: "productId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Products.init({
-    productId:{
-      type:DataTypes.INTEGER,
-      primaryKey:true,
-      autoIncrement:true
+  Products.init(
+    {
+      productId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      vendorId: DataTypes.INTEGER,
+      productName: DataTypes.STRING,
+      price: DataTypes.INTEGER,
+      specification: DataTypes.TEXT,
+      soldOut: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
-    vendorId:DataTypes.INTEGER,
-    productName: DataTypes.STRING,
-    price: DataTypes.INTEGER,
-    specification: DataTypes.TEXT,
-    soldOut: {
-        type:DataTypes.BOOLEAN,
-        defaultValue:false
+    {
+      sequelize,
+      modelName: "Products",
+      tableName: "Products",
+      timestamps: false,
     }
-  }, {
-    sequelize,
-    modelName: 'Products',
-    tableName:'Products'
-  });
+  );
   return Products;
 };

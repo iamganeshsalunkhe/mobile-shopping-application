@@ -10,7 +10,14 @@ module.exports = {
         type: Sequelize.INTEGER 
       },
       productId:{
-        type:Sequelize.INTEGER
+        type:Sequelize.INTEGER,
+        allowNull:false,
+        references:{
+          model:'Products',
+          key:'productId'
+        },
+        onDelete:"CASCADE",
+        onUpdate:"CASCADE"
       },
       imageUrl: {
         type: Sequelize.STRING

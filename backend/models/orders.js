@@ -11,28 +11,35 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Orders.belongsTo(models.products,{
-        foreignKey:'productId'
+      Orders.belongsTo(models.products, {
+        foreignKey: "productId",
+        onDelete: "CASCADE",
       });
-      Orders.belongsTo(models.customers,{
-        foreignKey:'customerId'
-      })
+      Orders.belongsTo(models.customers, {
+        foreignKey: "customerId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Orders.init({
-    orderId:{type:DataTypes.INTEGER,
-      primaryKey:true,
-      autoIncrement:true
+  Orders.init(
+    {
+      orderId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      productId: DataTypes.INTEGER,
+      customerId: DataTypes.INTEGER,
+      amountPaid: DataTypes.STRING,
+      dateOfOrderPlaced: DataTypes.DATE,
+      transactionId: DataTypes.STRING,
     },
-    productId:DataTypes.INTEGER,
-    customerId:DataTypes.INTEGER,
-    amountPaid: DataTypes.STRING,
-    dateOfOrderPlaced: DataTypes.DATE,
-    transactionId: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Orders',
-    tableName:"Orders"
-  });
+    {
+      sequelize,
+      modelName: "Orders",
+      tableName: "Orders",
+      timestamps: false,
+    }
+  );
   return Orders;
 };

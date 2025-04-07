@@ -11,28 +11,34 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Customers.hasMany(models.addresses,{
-        foreignKey:'customerId'
+      Customers.hasMany(models.addresses, {
+        foreignKey: "customerId",
+        onDelete: "CASCADE",
       });
-      Customers.hasMany(models.orders,{
-        foreignKey:'customerId'
-      })
+      Customers.hasMany(models.orders, {
+        foreignKey: "customerId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  Customers.init({
-    customerId:{
-      type:DataTypes.INTEGER,
-      primaryKey:true,
-      autoIncrement:true
+  Customers.init(
+    {
+      customerId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      email: DataTypes.STRING,
+      fullName: DataTypes.STRING,
+      password: DataTypes.STRING,
+      contactNumber: DataTypes.STRING,
     },
-    email: DataTypes.STRING,
-    fullName: DataTypes.STRING,
-    password: DataTypes.STRING,
-    contactNumber: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Customers',
-    tableName:'Customers'
-  });
+    {
+      sequelize,
+      modelName: "Customers",
+      tableName: "Customers",
+      timestamps: false,
+    }
+  );
   return Customers;
 };

@@ -12,15 +12,20 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Vendors.hasMany(models.products,{
-        foreignKey:'vendorId'
+        foreignKey:'vendorId',
+        onDelete:'CASCADE'
       })
+      Vendors.hasMany(models.orders, {
+        foreignKey: "vendorId",
+        onDelete: "CASCADE",
+      });
     }
   }
   Vendors.init({
     vendorId:{
       DataTypes:INTEGER,
       primaryKey:true,
-
+      autoIncrement:true
     },
     email: DataTypes.STRING,
     vendorName: DataTypes.STRING,
@@ -34,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Vendors',
-    tableName:'Vendors'
+    tableName:'Vendors',
+    timestamps:false
   });
   return Vendors;
 };

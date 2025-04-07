@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Addresses.belongsTo(models.customers,{
-        foreignKey:'customerId'
-      })
+      Addresses.belongsTo(models.customers, {
+        foreignKey: "customerId",
+        onDelete: "CASCADE",
+      });
     }
   }
   Addresses.init({
@@ -33,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Addresses',
-    tableName:'Addresses'
+    tableName:'Addresses',
+    timestamps:false
   });
   return Addresses;
 };

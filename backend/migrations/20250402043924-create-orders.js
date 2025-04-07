@@ -10,10 +10,22 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       productId:{
-        type:Sequelize.INTEGER
+        type:Sequelize.INTEGER,
+        references:{
+          model:"Product",
+          key:'productId'
+        },
+        onDelete:'CASCADE',
+        onUpdate:'CASCADE'
       },
       customerId:{
-        type:Sequelize.INTEGER
+        type:Sequelize.INTEGER,
+        references:{
+          model:"Customers",
+          key:"customerId"
+        },
+        onDelete:"CASCADE",
+        onUpdate:"CASCADE"
       },
       amountPaid: {
         type: Sequelize.STRING

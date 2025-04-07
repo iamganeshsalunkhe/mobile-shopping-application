@@ -13,12 +13,22 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Cart.init({
-    userId: DataTypes.INTEGER,
-    productId: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Cart',
-  });
+  Cart.init(
+    {
+      cartId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      customerId: DataTypes.INTEGER,
+      productId: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "Cart",
+      tableName: "Cart",
+      timestamps: false,
+    }
+  );
   return Cart;
 };
