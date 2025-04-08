@@ -22,7 +22,6 @@ module.exports = {
         type: Sequelize.STRING
       },
       brandLogo: {
-        allowNull:false,
         type: Sequelize.STRING
       },
       isAccepted: {

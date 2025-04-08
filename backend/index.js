@@ -2,6 +2,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+// importing routes
+const vendorRoutes = require('./routes/vendor.routes');
 
 // config the dotenv
 dotenv.config();
@@ -13,7 +17,9 @@ const PORT = process.env.PORT || 8001;
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
+app.use('/api/vendor',vendorRoutes)
 
 // listening 
 app.listen(PORT,'localhost',()=>{

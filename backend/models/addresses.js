@@ -11,14 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Addresses.belongsTo(models.customers, {
+      Addresses.belongsTo(models.Customers, {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
     }
   }
   Addresses.init({
-    addressId:{type:DataTypes.INTEGER,
+    addressId:{
+      type:DataTypes.INTEGER,
       primaryKey:true,
       autoIncrement:true
     },
