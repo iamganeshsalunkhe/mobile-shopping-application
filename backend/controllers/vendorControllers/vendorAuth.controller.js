@@ -1,5 +1,5 @@
 // import required files
-const vendorService = require('../services/vendor.service');
+const vendorService = require('../../services/vendor.service');
 
 // registering a new vendor
 exports.signup = async (req,res)=>{
