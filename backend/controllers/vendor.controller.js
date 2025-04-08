@@ -8,7 +8,7 @@ exports.signup = async (req,res)=>{
         res.status(201).json({message:'Vendor registered successfully', vendor});
     } catch (error) {
         // temporary log the error 
-        res.status(500).json({message:error.message});
+        res.status(error.statusCode).json({message:error.message});
     }
 };
 
@@ -19,6 +19,6 @@ exports.login = async (req,res) =>{
         res.status(200).json({message:"Log in successful", vendor})
     } catch (error) {
         // temporary  log the error
-       res.status(500).json({message:error.message});
+       res.status(error.statusCode).json({message:error.message});
     }
 }

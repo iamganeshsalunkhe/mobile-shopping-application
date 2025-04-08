@@ -50,10 +50,10 @@ exports.loginVendor = async({email,password})=>{
 
       // if vendor found and admin approved request
       // check for right password
-      const checKPassword = await comparePassword(password, vendor.password);
+      const checkPassword = await comparePassword(password, vendor.password);
 
       // if password is wrong
-      if (!checKPassword){
+      if (!checkPassword){
         const error = new Error('Invalid password');
         error.statusCode = 401;
         throw error;
