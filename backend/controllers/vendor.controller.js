@@ -7,7 +7,7 @@ exports.signup = async (req,res)=>{
         const vendor = await vendorService.registerVendor(req.body);
         res.status(201).json({message:'Vendor registered successfully', vendor});
     } catch (error) {
-        // temporary log the error 
+        //if any error occurs
         res.status(error.statusCode).json({message:error.message});
     }
 };
@@ -15,10 +15,14 @@ exports.signup = async (req,res)=>{
 // login for vendor
 exports.login = async (req,res) =>{
     try {
+        // get vendor and assign a token
         const vendor = await vendorService.loginVendor(req.body);
-        res.status(200).json({message:"Log in successful", vendor})
+        res
+        .cookie('token',vendor.token,{httpOnly:true})
+        .status(200)
+        .json({message:"Login successful",vendor})
     } catch (error) {
-        // temporary  log the error
+        // if any error occurs
        res.status(error.statusCode).json({message:error.message});
     }
-}
+};

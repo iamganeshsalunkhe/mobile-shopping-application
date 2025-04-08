@@ -1,6 +1,7 @@
 // import required files 
 const {Vendors} = require('../models');
 const {hashPassword, comparePassword} = require('../utils/Password');
+const jwt= require('jsonwebtoken');
 
 
 // signup/registering a new vendor
@@ -58,4 +59,19 @@ exports.loginVendor = async({email,password})=>{
         error.statusCode = 401;
         throw error;
     }
+
+    // assign a token to vendor with role
+    const token = jwt.sign({
+      id:vendor.vendorId,role:'vendor'},
+      process.env.JWT_SECRET,
+      {expiresIn:'1h'}
+      );
+    
+      // get only necessary data from sequelize
+      const plainVendor = vendor.toJSON();
+
+      // combine vendor and token together
+      const LoggedVendor = {...plainVendor,token}
+      
+  return {LoggedVendor};
 };
