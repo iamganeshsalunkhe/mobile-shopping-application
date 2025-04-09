@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 // importing routes
-const vendorRoutes = require('./routes/vendorRoutes/vendorAuth.routes');
+const vendorRoutes = require('./routes/vendorRoutes/vendor.routes');
 
 // config the dotenv
 dotenv.config();

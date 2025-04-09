@@ -8,4 +8,18 @@ exports.createProduct = async(productData)=>{
     const product = await Products.create(productData);
     
     return product;
+};
+
+// for updating a product
+exports.updateProduct = async(productId, data)=>{
+    // get product by productId
+    const product = await Products.findByPk(productId);
+
+    if (!product){
+        const error = new Error('Product not found!!')
+        error.statusCode = 404;
+        throw error;
+    }
+
+    return await product.update(data);
 }

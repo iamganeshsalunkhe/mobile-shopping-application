@@ -21,3 +21,18 @@ exports.newProduct = async(req,res) =>{
     }
 };
 
+// update a product
+exports.updateProduct = async (req,res)=>{
+    try {
+        // get productId from params
+        const productId = req.params.productId;
+    
+        const updatedProduct  = await vendorProductServices.updateProduct(productId,req.body);
+
+        res.status(200).json({message:"Product updated!", updatedProduct});
+
+    } catch (error) {
+        // if any error occurs
+        res.status(error.statusCode).json({message:error.message});
+    }
+}
