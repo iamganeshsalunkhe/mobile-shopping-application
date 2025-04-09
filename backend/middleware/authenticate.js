@@ -14,19 +14,24 @@ const authenticate = async(req,res,next)=>{
         // check user have valid token
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
         
+        console.log(decoded);
+        console.log(`--------------------------------------hiii-`);
         // initiate a user
         let user;
 
-        if (decoded.role ==='vendor') user = await Vendors.findByPK(decoded.vendorId);
-
+        if (decoded.role ==='vendor') user = await Vendors.findByPk(decoded.id);
 
         if(!user) return res.status(401).json({message:"User not found"});
 
-        req.user = user;
+        console.log(user);
+        req.user = {
+            id:user.vendorId,
+            role:decoded.role
+        }
         next();
 
     } catch (error) {
-        return res.status(403).json({message:"Invalid token"})
+        return res.status(403).json({message:"Invalid token",error})
     }
 };
 

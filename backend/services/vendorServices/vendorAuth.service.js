@@ -1,6 +1,6 @@
 // import required files 
-const {Vendors} = require('../models');
-const {hashPassword, comparePassword} = require('../utils/Password');
+const {Vendors} = require('../../models');
+const {hashPassword, comparePassword} = require('../../utils/Password');
 const jwt= require('jsonwebtoken');
 
 
