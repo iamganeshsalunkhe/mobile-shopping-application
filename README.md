@@ -20,7 +20,7 @@ A full-stack e-commerce web app with microfrontends for Admin, Vendors, and Cust
 ✅ Add and remove products from the cart  
 ✅ Make secure payments via Stripe  
 ✅ Update profile information and account settings  
-✅ Track and manage their orders  
+✅ Track orders  
 
 ## Documentation
 - [Basic Functionality](docs/basic_functionality)
