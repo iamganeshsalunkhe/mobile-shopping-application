@@ -8,7 +8,9 @@ exports.signup = async (req,res)=>{
         res.status(201).json({message:'Vendor registered successfully', vendor});
     } catch (error) {
         //if any error occurs
-        res.status(error.statusCode).json({message:error.message});
+        res
+          .status(error.statusCode || 500)
+          .json({ message: error.message || "Something went wrong" });
     }
 };
 
@@ -23,6 +25,8 @@ exports.login = async (req,res) =>{
         .json({message:"Login successful",vendor})
     } catch (error) {
         // if any error occurs
-       res.status(error.statusCode).json({message:error.message});
+       res
+         .status(error.statusCode || 500)
+         .json({ message: error.message || "Something went wrong" });
     }
 };

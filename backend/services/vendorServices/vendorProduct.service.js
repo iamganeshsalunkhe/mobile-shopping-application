@@ -6,9 +6,9 @@ exports.AllProducts = async(vendorId) =>{
     // find the all products with authorized vendorId
     const AllProducts = await Products.findAll({where:{vendorId}});
     
-    // return the list/object
+    // return the object
     return AllProducts;
-}
+};
 
 // add a new product 
 exports.createProduct = async(productData)=>{
@@ -31,4 +31,19 @@ exports.updateProduct = async(productId, data)=>{
     }
 
     return await product.update(data);
-}
+};
+
+exports.deleteProduct = async(productId) =>{
+    // delete the product with the same productId
+    const productToDelete = await Products.findByPk(productId);
+
+    if (!productToDelete) {
+      const error = new Error("Product not found!!");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    //delete the product
+    return await productToDelete.destroy();
+
+};

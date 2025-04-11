@@ -22,5 +22,8 @@ router.post('/product',authenticate,vendorProductController.newProduct);
 // update a product
 router.put('/product/:productId',authenticate,vendorProductController.updateProduct);
 
+// delete a product
+router.delete('/product/:productId',authenticate,vendorProductController.deleteProduct);
+
 // export router 
 module.exports = router;

@@ -14,9 +14,12 @@ exports.getAllProducts = async(req,res)=>{
         res.status(200).json(productsList);
     } catch (error) {
         // if any error occurs
-        res.status(500).json({message:error.message})
+        res
+          .status(500)
+          .json({ message: error.message || "Something went wrong" });
     }
 };
+
 // add a new product
 exports.newProduct = async(req,res) =>{
     try {
@@ -28,28 +31,56 @@ exports.newProduct = async(req,res) =>{
             ...req.body,vendorId
         };
 
+        // pass the data to the service layer
         const product = await vendorProductServices.createProduct(productData);
 
+        // if request successfully handled
         res.status(201).json({message:"Product created",product});
     } catch (error) {
         // if any error occurs
-        res.status(500).json({message:error.message});
+        res
+          .status(500)
+          .json({ message: error.message || "Something went wrong" });
     }
 };
 
 // update a product
 exports.updateProduct = async (req,res)=>{
     try {
-        // get productId from params
-        const productId = req.params.productId;
-    
-        const updatedProduct  = await vendorProductServices.updateProduct(productId,req.body);
+      // get productId from params
+      const productId = req.params.productId;
 
-        res.status(200).json({message:"Product updated!", updatedProduct});
+      // pass data to the service layer
+      const updatedProduct = await vendorProductServices.updateProduct(
+        productId,
+        req.body
+      );
 
+      // if request successfully handled
+      res.status(200).json({ message: "Product updated!", updatedProduct });
     } catch (error) {
         // if any error occurs
-        res.status(error.statusCode).json({message:error.message});
+        res
+          .status(error.statusCode || 500)
+          .json({ message: error.message || "Something went wrong" });
     }
 };
 
+// delete a product
+exports.deleteProduct = async(req,res)=>{
+    try {
+      // get productId from the params
+      const productId = req.params.productId;
+
+      // send request to service layer
+      const product = await vendorProductServices.deleteProduct(productId);
+
+      // if request successfully handled
+      res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        // if any error occurs
+        res
+          .status(error.statusCode || 500)
+          .json({ message: error.message || "Something went wrong" });
+    }
+};
