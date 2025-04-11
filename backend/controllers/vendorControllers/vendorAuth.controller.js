@@ -1,14 +1,16 @@
 // import required files
-const vendorService = require('../services/vendor.service');
+const vendorAuthService = require('../../services/vendorServices/vendorAuth.service');
 
 // registering a new vendor
 exports.signup = async (req,res)=>{
     try {
-        const vendor = await vendorService.registerVendor(req.body);
+        const vendor = await vendorAuthService.registerVendor(req.body);
         res.status(201).json({message:'Vendor registered successfully', vendor});
     } catch (error) {
         //if any error occurs
-        res.status(error.statusCode).json({message:error.message});
+        res
+          .status(error.statusCode || 500)
+          .json({ message: error.message || "Something went wrong" });
     }
 };
 
@@ -16,13 +18,15 @@ exports.signup = async (req,res)=>{
 exports.login = async (req,res) =>{
     try {
         // get vendor and assign a token
-        const vendor = await vendorService.loginVendor(req.body);
+        const vendor = await vendorAuthService.loginVendor(req.body);
         res
         .cookie('token',vendor.token,{httpOnly:true})
         .status(200)
         .json({message:"Login successful",vendor})
     } catch (error) {
         // if any error occurs
-       res.status(error.statusCode).json({message:error.message});
+       res
+         .status(error.statusCode || 500)
+         .json({ message: error.message || "Something went wrong" });
     }
 };

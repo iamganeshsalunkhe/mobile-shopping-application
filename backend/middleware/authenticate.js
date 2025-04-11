@@ -17,16 +17,18 @@ const authenticate = async(req,res,next)=>{
         // initiate a user
         let user;
 
-        if (decoded.role ==='vendor') user = await Vendors.findByPK(decoded.vendorId);
-
+        if (decoded.role ==='vendor') user = await Vendors.findByPk(decoded.id);
 
         if(!user) return res.status(401).json({message:"User not found"});
 
-        req.user = user;
+        req.user = {
+            id:user.vendorId,
+            role:decoded.role
+        }
         next();
 
     } catch (error) {
-        return res.status(403).json({message:"Invalid token"})
+        return res.status(403).json({message:"Invalid or expired token",error})
     }
 };
 
