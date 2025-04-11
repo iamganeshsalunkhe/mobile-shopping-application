@@ -2,6 +2,7 @@
 const express = require('express');
 const vendorAuthController = require('../../controllers/vendorControllers/vendorAuth.controller');
 const vendorProductController = require('../../controllers/vendorControllers/vendorProduct.controller');
+const vendorProfileController = require('../../controllers/vendorControllers/vendorProfile.controller');
 const authenticate = require("../../middleware/authenticate");
 
 // initiate router instance 
@@ -24,6 +25,9 @@ router.put('/product/:productId',authenticate,vendorProductController.updateProd
 
 // delete a product
 router.delete('/product/:productId',authenticate,vendorProductController.deleteProduct);
+
+// get profile details
+router.get('/account',authenticate,vendorProfileController.profileDetails);
 
 // export router 
 module.exports = router;

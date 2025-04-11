@@ -20,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
       });
     }
+    toJSON(){
+      return{
+        ...this.get(),
+        password:undefined,
+        isAccepted:undefined,
+        createdAt:undefined,
+      }
+    }
   }
   Vendors.init({
     vendorId:{
