@@ -26,3 +26,11 @@ exports.updateVendorAccount = async(vendorId,data) => {
   // update the vendor with updated data
   return await vendor.update(updatedVendor);
 };
+
+exports.deleteAVendorAccount = async(vendorId) =>{
+    // delete a vendor account from db
+    const vendorToBeDeleted = await Vendors.findByPk(vendorId);
+
+    // delete the vendor
+    return await vendorToBeDeleted.destroy();
+}

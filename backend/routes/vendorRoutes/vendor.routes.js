@@ -32,5 +32,8 @@ router.get('/account',authenticate,vendorProfileController.profileDetails);
 // update vendor profile details
 router.put('/account',authenticate,vendorProfileController.updateAccount);
 
+// delete a vendor account
+router.delete('/account',authenticate,vendorProfileController.deleteVendor);
+
 // export router 
 module.exports = router;
