@@ -5,7 +5,9 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 // importing routes
-const vendorRoutes = require('./routes/vendorRoutes/vendor.routes');
+const vendorAuthRoutes = require('./routes/vendorRoutes/vendorAuth.routes');
+const vendorProductRoutes = require("./routes/vendorRoutes/vendorProduct.routes");
+const vendorProfileRoutes = require("./routes/vendorRoutes/vendorProfile.routes");
 
 // config the dotenv
 dotenv.config();
@@ -19,9 +21,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use('/api/vendor',vendorRoutes)
+app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes]);
 
 // listening 
-app.listen(PORT,'localhost',()=>{
+app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
 });
