@@ -29,5 +29,8 @@ router.delete('/product/:productId',authenticate,vendorProductController.deleteP
 // get profile details
 router.get('/account',authenticate,vendorProfileController.profileDetails);
 
+// update vendor profile details
+router.put('/account',authenticate,vendorProfileController.updateAccount);
+
 // export router 
 module.exports = router;
