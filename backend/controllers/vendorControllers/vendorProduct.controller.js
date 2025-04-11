@@ -1,6 +1,22 @@
 // import required modules 
 const vendorProductServices = require('../../services/vendorServices/vendorProduct.service');
 
+// get all  products(self-listed)
+exports.getAllProducts = async(req,res)=>{
+    try {
+        // get vendorId from token
+        const vendorId = req.user.id;
+        
+        // passing data to service layer
+        const productsList = await vendorProductServices.AllProducts(vendorId);
+        
+        // displaying all products
+        res.status(200).json(productsList);
+    } catch (error) {
+        // if any error occurs
+        res.status(500).json({message:error.message})
+    }
+};
 // add a new product
 exports.newProduct = async(req,res) =>{
     try {
@@ -35,4 +51,5 @@ exports.updateProduct = async (req,res)=>{
         // if any error occurs
         res.status(error.statusCode).json({message:error.message});
     }
-}
+};
+

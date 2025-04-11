@@ -13,6 +13,8 @@ router.post('/signup',vendorAuthController.signup);
 // login route
 router.post('/login',vendorAuthController.login);
 
+// get all products
+router.get('/products',authenticate,vendorProductController.getAllProducts);
 
 // add a product
 router.post('/product',authenticate,vendorProductController.newProduct);
