@@ -12,7 +12,7 @@ A full-stack e-commerce web app with microfrontends for Admin, Vendors, and Cust
 ✅ Sign up, log in, and log out  
 ✅ Add, update, and delete their own products  
 ✅ Update their profile information  
-✅ Manage orders for their products  
+✅ View for their products  
 
 ### Customer
 ✅ Sign up, log in, and log out  
