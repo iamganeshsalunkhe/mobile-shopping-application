@@ -121,7 +121,7 @@ function Signup() {
               </div>
             </form>
 
-            <p className="mt-4 text-center text-md text-gray-700 font-serif mb-4">
+            <p className="mt-4 text-center text-md text-gray-700 font-serif mb-4 font-semibold">
               already have an account?
               <Link
                 to="/"
