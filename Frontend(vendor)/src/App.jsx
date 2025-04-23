@@ -1,15 +1,25 @@
 // import required files
 import { BrowserRouter,Routes,Route } from "react-router-dom";
 import {Toaster} from 'react-hot-toast';
-import Footer from "./components/Footer";
 import DemoComponent from "./components/DemoComponent";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
+import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 
+const queryClient = new QueryClient({
+    defaultOptions:{
+      queries:{
+        staleTime:30 * 1000
+      }
+    }
+})
 
 function App() {
   return (
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen ={false}/>
     <BrowserRouter>
         <Routes>
           {/* <Route index  path="/" element={<LoginPage/>}/> */}
@@ -20,6 +30,7 @@ function App() {
         </Routes>
         <Toaster/>
     </BrowserRouter>
+    </QueryClientProvider>
   )
 }
 
