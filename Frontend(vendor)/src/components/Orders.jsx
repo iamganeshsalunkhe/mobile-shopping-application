@@ -5,8 +5,12 @@ import Loader from "./Loader";
 import Error from "./Error";
 
 async function fetchOrders() {
-  const res = await axios.get("http://localhost:8000/api/vendor/orders");
-  return res.data;
+  try {
+    const res = await axios.get("http://localhost:8000/api/vendor/orders");
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function Orders() {

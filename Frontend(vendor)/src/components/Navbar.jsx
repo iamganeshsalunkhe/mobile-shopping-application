@@ -1,12 +1,12 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const navigation = [
 //   { name: 'Home', href: '/', current: false },
-  { name: 'My Products', href: 'products', current: false },
-  { name: 'My Orders', href: 'orders', current: true },
-  { name: 'My Account', href: 'account', current: false },
+  { name: 'My Products', to: '/products', current: false },
+  { name: 'My Orders', to: '/orders', current: false },
+  { name: 'My Account', to: '/account', current: false },
 ]
 
 function classNames(...classes) {
@@ -14,6 +14,8 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+    const location = useLocation();
+
   return (
     <Disclosure as="nav" className="bg-gray-600">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -32,19 +34,21 @@ export default function Navbar() {
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                {navigation.map((item) => (
+                {navigation.map((item) => {
+                  const isActive = location.pathname === item.to;
+                  return (
                   <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.to}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
-                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      isActive ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                       'rounded-md px-3 py-2 text-sm font-bold',
                     )}
                   >
                     {item.name}
                   </Link>
-                ))}
+                )})}
               </div>
             </div>
           </div>

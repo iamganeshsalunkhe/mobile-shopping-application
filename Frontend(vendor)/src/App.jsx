@@ -5,6 +5,8 @@ import DemoComponent from "./components/DemoComponent";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import ProductPage from "./pages/ProductPage";
+
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 
@@ -26,6 +28,7 @@ function App() {
           <Route path="/signup" element={<SignupPage/>}/>
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/demo" element={<DemoComponent/>}/>
+          <Route path ='/products' element={<ProductPage/>}/>
           <Route path="/" element ={<HomePage/>}/>   
         </Routes>
         <Toaster/>
