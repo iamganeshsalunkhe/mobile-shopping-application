@@ -91,7 +91,7 @@ function Login() {
                <p className="mt-7 text-center text-md text-gray-700 font-serif mb-4 font-semibold">
                  Don't have account with us?
                  <Link
-                   to="signup"
+                   to="/signup"
                    className="font-semibold text-indigo-500 hover:text-indigo-900 px-1"
                  >
                    Sign up
