@@ -2,6 +2,7 @@
 const {Vendors} = require('../../models');
 const {hashPassword, comparePassword} = require('../../utils/Password');
 const jwt= require('jsonwebtoken');
+const generateAuthToken = require('../../utils/Tokengeneration');
 
 
 // signup/registering a new vendor
@@ -61,12 +62,17 @@ exports.loginVendor = async({email,password})=>{
     }
 
     // assign a token to vendor with role
-    const token = jwt.sign({
-      id:vendor.vendorId,role:'vendor'},
-      process.env.JWT_SECRET,
-      {expiresIn:'1h'}
-      );
-    
+    // const token = jwt.sign({
+    //   id:vendor.vendorId,role:'vendor'},
+    //   process.env.JWT_SECRET,
+    //   {expiresIn:'1h'}
+    //   );
+      const token = generateAuthToken(vendor);
+        
+
+      // set cookie 
+      
+
       // get only necessary data from sequelize
       const plainVendor = vendor.toJSON();
 

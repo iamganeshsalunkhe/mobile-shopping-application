@@ -1,16 +1,35 @@
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+      const navigate = useNavigate();
        const { register, handleSubmit } = useForm();
-       const onSubmit = (data) => console.log(data);
        const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
        // handle password visibility
        function handlePassword() {
          setIsPasswordVisible((prev) => !prev);
+       }
+
+       async  function onSubmit(data){
+          try {
+              await axios.post('http://localhost:8000/api/vendor/login',data,{withCredentials:true})
+              .then((res)=>{
+                if (res.data){
+                  toast.success('Logged in successfully')
+                }
+              })
+                navigate('/account')
+              }
+           catch (error) {
+            if (error.response){
+            toast.error(error.response?.data?.message )
+            }
+          }
        }
 
        return (
@@ -66,7 +85,7 @@ function Login() {
                    <input
                      id="password"
                      type={isPasswordVisible ? "text" : "password"}
-                     {...register("password", { required: true, minLength: 6 })}
+                     {...register("password", { required: true, minLength: 3 })}
                      className="block w-full rounded-md bg-white px-3 py-1.5 text-xl text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-600 focus:outline-3 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 mt-2 font-medium "
                    />
                    <div
@@ -80,7 +99,7 @@ function Login() {
                  <div>
                    <button
                      type="submit"
-                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-bold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-bold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
                    >
                      Login
                    </button>

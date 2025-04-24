@@ -1,34 +1,36 @@
 import {useForm} from 'react-hook-form';
 import { useQuery,useMutation, useQueryClient } from '@tanstack/react-query';
-// import axios from 'axios';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import Loader from './Loader';
 import Error from './Error';
 
-// async function fetchVendorData(){
-//     try {
-//         const res = await axios.get("http://localhost:8000/api/vendor/");
-//         return res.data;
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
-// async function updateVendorData(){
-//     try {
-//         const res =await axios.patch('http://localhost:8000/api/vendor')
-//         return  res.data;
-//     } catch (error) {
-//         console.error(error)   
-//     }
-// }
+async function fetchVendorData(){
+    try {
+        const res = await axios.get("http://localhost:8000/api/vendor/account",{
+          withCredentials:true
+        });
+        return res.data;
+    } catch (error) {
+        console.error(error.message)
+    }
+}
+async function updateVendorData(formData){
+    try {
+        const res =await axios.patch('http://localhost:8000/api/vendor/account',formData,{withCredentials:true})
+        return  res.data;
+    } catch (error) {
+        console.error(error)   
+    }
+}
 
 
 function Account() {
     const queryClient = useQueryClient();
     const {data,isLoading,isError} = useQuery({
         queryKey:['vendorData'],
-        
+        queryFn:fetchVendorData
     });
 
     const {register,handleSubmit,reset} = useForm({
@@ -40,7 +42,7 @@ function Account() {
     });
 
     const mutation = useMutation({
-        
+        queryFn:updateVendorData,
         onSuccess:()=>{
             queryClient.invalidateQueries(['vendorData']);
             toast.success("Account updated successfully!");
@@ -61,8 +63,8 @@ function Account() {
         mutation.mutate(formData)
     };
 
-    // if (isLoading) return <Loader/>
-    // if (isError) return <Error/>
+    if (isLoading) return <Loader/>
+    if (isError) return <Error/>
 
     return (
       <div className=" relative min-h-screen min-w-screen bg-gray-100">

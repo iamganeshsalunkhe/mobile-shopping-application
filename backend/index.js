@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 // importing routes
 const vendorAuthRoutes = require('./routes/vendorRoutes/vendorAuth.routes');
@@ -20,6 +21,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors({origin:"http://localhost:5173",credentials:true}))
 
 app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes]);
 

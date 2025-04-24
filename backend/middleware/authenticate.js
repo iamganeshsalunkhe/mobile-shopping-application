@@ -5,7 +5,8 @@ const {Admins,Vendors,Customers} = require('../models');
 
 const authenticate = async(req,res,next)=>{
     // check if token is present in cookies
-    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+    console.log(req.cookies);
+    const token = req.cookies?.token 
     
     // if not
     if (!token)return res.status(401).json({message:"Unauthorized!!"});
