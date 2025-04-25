@@ -25,13 +25,12 @@ function App() {
       <ReactQueryDevtools initialIsOpen ={false}/>
     <BrowserRouter>
         <Routes>
-          {/* <Route index  path="/" element={<LoginPage/>}/> */}
+          <Route index  path="/" element={<LoginPage/>}/>
           <Route path="/signup" element={<SignupPage/>}/>
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/demo" element={<DemoComponent/>}/>
           <Route path ='/products' element={<ProductPage/>}/>
-          <Route path="/account" element= {<AccountPage/>}/>
-          <Route path="/" element ={<HomePage/>}/>   
+          <Route path="/account" element= {<AccountPage/>}/> 
         </Routes>
         <Toaster/>
     </BrowserRouter>
