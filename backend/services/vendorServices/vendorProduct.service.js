@@ -17,12 +17,12 @@ exports.createProduct = async(productData)=>{
 
     const product = await Products.create(productData);
 
-    const {url,key} = await putObject(productData.file,productData.fileName)
+    // const {url,key} = await putObject(productData.file,productData.fileName)
 
 
-    if (!url || !key) {
-        return res.status(400).json({error:"Pls upload image"})
-    }
+    // if (!url || !key) {
+    //     return res.status(400).json({error:"Pls upload image"})
+    // }
     return product; 
 };
 

@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/products',authenticate,vendorProductController.getAllProducts);
 
 // add a product
-router.post('/product',authenticate,fileUpload(),vendorProductController.newProduct);
+router.post('/product',authenticate,vendorProductController.newProduct);
 
 // update a product
 router.put('/product/:productId',authenticate,fileUpload(),vendorProductController.updateProduct);
