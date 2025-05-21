@@ -16,15 +16,16 @@ exports.getVendorDetails = async(vendorId) =>{
 exports.updateVendorAccount = async(vendorId,data) => {
   // get vendor details by vendorId
   const vendor = await Vendors.findByPk(vendorId);
-
+  console.log(vendor);
+  let updatedVendor  = data;
   // if user want to update password
-  const newPassword = await hashPassword(data.password);
-
-  // update the vendor with hashed password
-  const updatedVendor = { ...data, password: newPassword };
-  
+  if (data.password){
+    const newPassword =await hashPassword(data.password);
+    // update the vendor with hashed password
+    updatedVendor = {...data,password:newPassword}
+  }
   // update the vendor with updated data
-  return await vendor.update(updatedVendor);
+  return await vendor.update(updatedVendor)
 };
 
 exports.deleteAVendorAccount = async(vendorId) =>{

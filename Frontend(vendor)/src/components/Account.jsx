@@ -18,7 +18,11 @@ async function fetchVendorData(){
 }
 async function updateVendorData(formData){
     try {
-        const res =await axios.patch('http://localhost:8000/api/vendor/account',formData,{withCredentials:true})
+        const res = await axios.put(
+          "http://localhost:8000/api/vendor/account",
+          formData,
+          { withCredentials: true }
+        );
         return  res.data;
     } catch (error) {
         console.error(error)   
@@ -36,16 +40,20 @@ function Account() {
     const {register,handleSubmit,reset} = useForm({
         defaultValues:{
             email:"",
-            vendorName:"",
-            brandLogo:""
+            vendorName:""
         }
     });
 
-    const mutation = useMutation({
-        queryFn:updateVendorData,
+    const updateAccount = useMutation({
+        mutationFn:updateVendorData,
         onSuccess:()=>{
+          toast.success("Account updated successfully!");
             queryClient.invalidateQueries(['vendorData']);
-            toast.success("Account updated successfully!");
+        },
+        onError:(error)=>{
+          console.log(error)
+          const message = error.response?.data?.message || "Failed to update account info"
+          toast.error(message)
         }
     });
 
@@ -53,14 +61,13 @@ function Account() {
         if(data){
             reset({
                 email:data.email,
-                vendorName:data.vendorName,
-                brandLogo:data.brandLogo
+                vendorName:data.vendorName
             });
         }
     },[data,reset]);
 
     function onSubmit(formData){
-        mutation.mutate(formData)
+        updateAccount.mutate(formData)
     };
 
     if (isLoading) return <Loader/>
@@ -84,48 +91,45 @@ function Account() {
           </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-xl font-medium">Email</label>
+              <label className="block text-xl font-medium ">Email : </label>
               <input
                 type="email"
                 {...register("email")}
-                className="w-full border rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600"
+                className="w-full border  rounded px-3 py-2 mt-1 focus-visible:outline-2 focus-visible:outline-gray-950 focus-visible:bg-gray-600 font-semibold"
               />
             </div>
 
             <div>
-              <label className="block text-xl font-medium">Vendor Name</label>
+              <label className="block text-xl font-medium">
+                Vendor Name :{" "}
+              </label>
               <input
-                type="email"
+                type="text"
                 {...register("vendorName")}
-                className="w-full border rounded px-3 py-2 mt-1focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600"
-              />
-            </div>
-            <div>
-              <label className="block text-xl font-medium">Password</label>
-              <input
-                type="password"
-                {...register("password")}
-                className="w-full border rounded px-3 py-2 mt-1focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600"
+                className="w-full border  rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600 font-semibold"
               />
             </div>
 
-            <div>
-              <label className="block text-xl font-medium">Brand Logo</label>
+            {/* <div>
+              <label className="block text-xl font-medium">Brand Logo :</label>
               <input
                 type="file"
                 {...register("brandLogo")}
                 className="w-full border rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950"
               />
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-xl
-              hover:outline-1 cursor-pointer
+            </div> */}
+            <div className="text-center ">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-800 text-xl
+              hover:outline-1 cursor-pointer 
               "
-            >
-              Update my account
-            </button>
+              >
+                Update my account
+              </button>
+            </div>
           </form>
+          
         </div>
       </div>
     );
