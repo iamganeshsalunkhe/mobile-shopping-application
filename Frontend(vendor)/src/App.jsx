@@ -10,6 +10,7 @@ import ProductPage from "./pages/ProductPage";
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import AccountPage from "./pages/AccountPage";
+import OrderPage from "./pages/OrderPage";
 
 const queryClient = new QueryClient({
     defaultOptions:{
@@ -31,6 +32,7 @@ function App() {
           <Route path="/demo" element={<DemoComponent/>}/>
           <Route path ='/products' element={<ProductPage/>}/>
           <Route path="/account" element= {<AccountPage/>}/> 
+          <Route path="/orders" element={<OrderPage/>}/>
         </Routes>
         <Toaster/>
     </BrowserRouter>
