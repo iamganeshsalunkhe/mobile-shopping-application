@@ -1,8 +1,10 @@
 // import required modules
-import { useQuery } from "@tanstack/react-query";
+import { useQuery ,useMutation, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import Loader from "./Loader";
 import Error from "./Error";
+import { useState } from "react";
+import {toast} from 'react-hot-toast';
 
 // fetch the products from the database
 async function fetchProducts(){
@@ -10,7 +12,6 @@ async function fetchProducts(){
         const res = await axios.get('http://localhost:8000/api/vendor/products',{
           withCredentials:true
         });
-        console.log(res.data)
         return res.data;
     } catch (error) {
         console.error(error);
@@ -19,9 +20,47 @@ async function fetchProducts(){
 
 
 function Products() {
+  // state for the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // state for the updating the products
+  const [selectedProduct,setSelectedProduct]= useState(false);
+
+  const queryClient = useQueryClient();
+
     const {data:products=[],isLoading,isError}  = useQuery({queryKey:['products'],
         queryFn:fetchProducts
     });
+
+    // to delete the product
+    const deleteProduct = useMutation({
+      mutationFn:async(product) =>{
+        const isConfirmed = window.confirm(`Do you really want to delete ${product.productName}?`)
+        if (isConfirmed){
+        await axios.delete(`http://localhost:8000/api/vendor/prodct/${product.productId}`,{
+          withCredentials:true
+        }
+        )
+      }
+      },
+      onSuccess:()=>{
+        queryClient.invalidateQueries({queryKey:['products']})
+      },
+      onError:(error)=>{
+          const message = error.response?.data?.message || 'Failed to delete product!'
+          toast.error(message)
+      }
+    },  
+  )
+
+  function openModal(product){
+    setSelectedProduct(product)
+    setIsModalOpen(true)
+  }
+
+  function closeModal(){
+    setSelectedProduct(null)
+    setIsModalOpen(false)
+  }
 
     // show loader if data is not received yet
     if (isLoading) return <Loader/>
@@ -45,25 +84,29 @@ function Products() {
           <tbody>
             {/* row 1 */}
             {products.map((product, index) => (
-              <tr key={product.id}>
-                <th className="font-semibold text-lg text-gray-900">{index + 1}</th>
+              <tr key={product.productId}>
+                <th className="font-semibold text-lg text-gray-900">{index +1 }</th>
                 <td className="font-semibold text-lg text-gray-900">
-                  {product.productName}
+                  {product.productName || 'NA'}
                 </td>
                 <td className="font-semibold text-lg text-gray-900">
-                  {product.specification}
+                  {product.specification ||'NA'}
                 </td>
                 <td className="font-semibold text-lg text-gray-900">
-                  {product.price}
+                  {product.price || 'NA'}
                 </td>
-                <div className="">
-                  <button className="font-bold bg-green-400 m-2 p-2 rounded-xl cursor-pointer ">
+                <td>
+                  <button
+                        onClick={()=>openModal(product)}
+                        className="font-bold bg-green-700 m-2 p-2 rounded-xl cursor-pointer  text-white">
                     Update
                   </button>
-                  <button className="font-bold bg-red-400 m-2 p-2 rounded-xl cursor-pointer">
+                  <button 
+                      onClick={()=>deleteProduct.mutate(product)}
+                      className="font-bold bg-red-700 m-2 p-2 rounded-xl cursor-pointer text-white">
                     Delete
-                  </button>
-                </div>
+                  </button> 
+                  </td>
               </tr>
             ))}
           </tbody>

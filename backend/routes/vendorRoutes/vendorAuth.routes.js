@@ -11,7 +11,7 @@ router.post('/signup',vendorAuthController.signup);
 // login route
 router.post('/login',vendorAuthController.login);
 
-router.post('/logout',authenticate,vendorAuthController.logout);
+router.post('/logout', vendorAuthController.logout);
 
 
 // export router 
