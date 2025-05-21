@@ -5,7 +5,9 @@ import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import Loader from './Loader';
 import Error from './Error';
+import {useNavigate} from 'react-router-dom';
 
+// function for fetching account details of loggedin user
 async function fetchVendorData(){
     try {
         const res = await axios.get("http://localhost:8000/api/vendor/account",{
@@ -16,6 +18,8 @@ async function fetchVendorData(){
         console.error(error.message)
     }
 }
+
+// function for updating an account
 async function updateVendorData(formData){
     try {
         const res = await axios.put(
@@ -28,9 +32,26 @@ async function updateVendorData(formData){
         console.error(error)   
     }
 }
+ // function for deleting an account
+async function deleteVendorAccount(vendorId){
+      try {
+        const res = await axios.delete('http://localhost:8000/api/vendor/account',   
+          {
+          data: { vendorId },
+          withCredentials:true
+          },
+        )
+        return res.data;
+        } catch (error) {
+        console.error(error)
+        throw error;
+      }
+}
+
 
 
 function Account() {
+    const navigate = useNavigate()
     const queryClient = useQueryClient();
     const {data,isLoading,isError} = useQuery({
         queryKey:['vendorData'],
@@ -43,7 +64,8 @@ function Account() {
             vendorName:""
         }
     });
-
+    
+    // update the account details
     const updateAccount = useMutation({
         mutationFn:updateVendorData,
         onSuccess:()=>{
@@ -56,6 +78,19 @@ function Account() {
           toast.error(message)
         }
     });
+
+    const deleteAccount = useMutation({
+      mutationFn:deleteVendorAccount,
+      onSuccess:()=>{
+        toast.success('Account deleted successfully');
+        navigate('/login')
+      },
+      onError:(error)=>{
+        console.error(error);
+        const message = error.response?.data?.message || "Failed to delete account";
+        toast.error(message);
+      }
+    })
 
     useEffect(()=>{
         if(data){
@@ -70,6 +105,8 @@ function Account() {
         updateAccount.mutate(formData)
     };
 
+
+   
     if (isLoading) return <Loader/>
     if (isError) return <Error/>
 
@@ -129,7 +166,23 @@ function Account() {
               </button>
             </div>
           </form>
-          
+          <div className="text-center ">
+            <button
+              type="button"
+              onClick={()=>{
+                const isConfirmed = window.confirm("Do you really want to delete your account ?? This action can't be reverted back!!");
+                if (isConfirmed){
+                deleteAccount.mutate(data.vendorId)
+              }
+            }
+          }
+              className="bg-red-600 text-white px-4 py-3 mt-4 rounded-xl hover:bg-red-800 text-xl
+              hover:outline-1 cursor-pointer 
+              "
+            >
+              Delete my account
+            </button>
+          </div>
         </div>
       </div>
     );
