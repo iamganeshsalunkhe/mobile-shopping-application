@@ -22,13 +22,10 @@ exports.profileDetails = async (req, res) => {
 
 // update profile details
 exports.updateAccount = async (req, res) => {
-  console.log(`request hittt`);
   try {
     // get vendorId from the token
     const vendorId = req.user.id;
 
-    console.log(vendorId);
-    console.log(`hiiiiiiiii`);
     // pass it to service layer
     const updatedVendor = await vendorProfileServices.updateVendorAccount(
       vendorId,

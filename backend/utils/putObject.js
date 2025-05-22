@@ -1,13 +1,15 @@
 const { PutObjectCommand} = require("@aws-sdk/client-s3")
 const {s3Client} = require('./s3Credentials.js');
+const dotenv = require('dotenv');
+dotenv.config();
 
 exports.putObject = async(file,fileName)=>{
     try {
         const params = {
             Bucket:process.env.AWS_BUCKET_NAME,
             Key:fileName,
-            Body:file,
-            ContentType:"file.mimetype"
+            Body:file.buffer,
+            ContentType:file.mimetype
         }
 
         const command = new PutObjectCommand(params);
@@ -21,7 +23,7 @@ exports.putObject = async(file,fileName)=>{
 
         console.log(url);
 
-        return {url,key:params.Key}
+        return url;
     } catch (error) {
         console.log(error);
     }

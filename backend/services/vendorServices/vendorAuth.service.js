@@ -1,13 +1,20 @@
 // import required files 
 const {Vendors} = require('../../models');
 const {hashPassword, comparePassword} = require('../../utils/Password');
-const jwt= require('jsonwebtoken');
 const generateAuthToken = require('../../utils/Tokengeneration');
-
+const  {putObject} =require('../../utils/putObject');
 
 // signup/registering a new vendor
 
-exports.registerVendor = async({email,password,vendorName,brandLogo})=>{
+exports.registerVendor = async(req,res)=>{
+  console.log(req.body);
+
+    const {vendorName,email,password} = req.body;
+    const file = req.file;
+
+    if (!file) return;
+
+
     // checks that if any vendor exists with same email
     const isExisting = await Vendors.findOne({ where: { email } });
 
@@ -21,12 +28,21 @@ exports.registerVendor = async({email,password,vendorName,brandLogo})=>{
     // if not then hash the password
     const hashedPassword = await hashPassword(password);
 
+    // upload brand logo to s3
+    const fileName = `brand-logo/${Date.now()}_${file.originalname}`;
+    const logoUrl = await putObject(file,fileName);
+    
+    // logoUrl fails
+    if (!logoUrl){
+      return ;
+    }
+
     // create a new entry in database
     const newVendor =  await Vendors.create({
       email,
       vendorName,
       password: hashedPassword,
-      brandLogo,
+      brandLogo:logoUrl,
     });
     return newVendor;
   };
@@ -61,12 +77,7 @@ exports.loginVendor = async({email,password})=>{
         throw error;
     }
 
-    // assign a token to vendor with role
-    // const token = jwt.sign({
-    //   id:vendor.vendorId,role:'vendor'},
-    //   process.env.JWT_SECRET,
-    //   {expiresIn:'1h'}
-    //   );
+    
       const token = generateAuthToken(vendor);
         
 

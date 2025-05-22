@@ -19,16 +19,31 @@ function Signup() {
     };
 
     async function onSubmit(data){
-      try {
-        await axios.post('http://localhost:8000/api/vendor/signup',data,{withCredentials:true})
-        .then((res)=>{
-          if (res.data){
-            toast.success("Logged in successfully")
-          };
-          navigate('/login')
+      try { 
+        // create  formData 
+        const formData = new FormData();
+
+        // add text fields
+        formData.append('vendorName',data.vendorName);
+        formData.append('email',data.email);
+        formData.append('password',data.password);
+
+        if (data.brandLogo && data.brandLogo.length > 0){
+          formData.append('brandLogo',  data.brandLogo[0])
+        };
+
+       const res =  await axios.post('http://localhost:8000/api/vendor/signup',formData,{withCredentials:true,
+          headers:{
+            'Content-Type':'multipart/form-data'
+          }
         })
+        if (res.data){
+          toast.success('Signed up successfully!')
+          navigate('/login')
+        }
       } catch (error) {
         if (error.response){
+          console.error(error)
           toast.error(error.response?.data?.message)
         }
       }
@@ -123,6 +138,7 @@ function Signup() {
                 </label>
                 <input
                   id="brandLogo"
+                  accept='image/*'
                   type="file"
                   {...register("brandLogo")}
                   className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800"

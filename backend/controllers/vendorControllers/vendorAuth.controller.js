@@ -4,10 +4,11 @@ const vendorAuthService = require('../../services/vendorServices/vendorAuth.serv
 // registering a new vendor
 exports.signup = async (req,res)=>{
     try {
-        const vendor = await vendorAuthService.registerVendor(req.body);
+        const vendor = await vendorAuthService.registerVendor(req);
         res.status(201).json({message:'Vendor registered successfully', vendor});
     } catch (error) {
         //if any error occurs
+        console.error(error);
         res
           .status(error.statusCode || 500)
           .json({ message: error.message || "Something went wrong" });
