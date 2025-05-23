@@ -33,7 +33,7 @@ function Login() {
        }
 
        return (
-         <div className=" relative flex min-h-screen items-center justify-start px-5 py-4 bg-grey-200 ">
+         <div className=" relative flex min-h-screen items-center justify-start px-5 py-4 bg-grey-200 select-none ">
            <div
              className="absolute inset-0 bg-cover bg-center z-0"
              style={{
@@ -99,7 +99,7 @@ function Login() {
                  <div>
                    <button
                      type="submit"
-                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-bold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+                     className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-md font-bold text-white shadow-xs hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
                    >
                      Login
                    </button>
@@ -107,7 +107,7 @@ function Login() {
                </form>
             <div>
 
-               <p className="mt-7 text-center text-md text-gray-700 font-serif mb-4 font-semibold">
+               <p className="mt-7 text-center text-md text-gray-700 font-serif mb-4 font-semibold select-none">
                  Don't have account with us?
                  <Link
                    to="/signup"

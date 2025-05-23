@@ -159,7 +159,7 @@ function Account() {
               <button
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-800 text-xl
-              hover:outline-1 cursor-pointer 
+              hover:outline-1 cursor-pointer transition hover:scale-110
               "
               >
                 Update my account
@@ -169,15 +169,16 @@ function Account() {
           <div className="text-center ">
             <button
               type="button"
-              onClick={()=>{
-                const isConfirmed = window.confirm("Do you really want to delete your account ?? This action can't be reverted back!!");
-                if (isConfirmed){
-                deleteAccount.mutate(data.vendorId)
-              }
-            }
-          }
+              onClick={() => {
+                const isConfirmed = window.confirm(
+                  "Do you really want to delete your account ?? This action can't be reverted back!!"
+                );
+                if (isConfirmed) {
+                  deleteAccount.mutate(data.vendorId);
+                }
+              }}
               className="bg-red-600 text-white px-4 py-3 mt-4 rounded-xl hover:bg-red-800 text-xl
-              hover:outline-1 cursor-pointer 
+              hover:outline-1 cursor-pointer transition hover:scale-110 
               "
             >
               Delete my account
