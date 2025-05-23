@@ -132,7 +132,7 @@ function Products() {
   if (isError) return <Error />;
 
   return (
-    <div className="overflow-x-auto min-h-screen bg-gray-200 border-2">
+    <div className="overflow-x-auto min-h-screen bg-gray-200 border-2 select-none">
       {/* case 1: No products available */}
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-screen">

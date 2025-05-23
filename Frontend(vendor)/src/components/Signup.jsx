@@ -46,7 +46,7 @@ function Signup() {
     }
 
     return (
-      <div className=" relative flex min-h-screen items-center justify-start px-5 py-4 bg-grey-200 ">
+      <div className=" relative flex min-h-screen items-center justify-start px-5 py-4 bg-grey-200 select-none">
         <div
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{
@@ -57,8 +57,8 @@ function Signup() {
           <div className="absolute inset-0 bg-black opacity-20" />
         </div>
         <div className=" relative z-10 bg-gray-100 w-full max-w-xl  bg-opacity-80 backdrop-blur-md shadow-2xl rounded-xl px-2 py-4 ml-4 md:ml-12 lg:ml-24">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h1 className="text-center text-4xl font-bold font-serif tracking-widest">
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm ">
+            <h1 className="text-center text-4xl font-bold font-serif tracking-widest ">
               MSA
             </h1>
             <h4 className="text-center mt-1 font-bold font-sans">
@@ -134,7 +134,7 @@ function Signup() {
                 </label>
                 <input
                   id="brandLogo"
-                  accept='image/*'
+                  accept="image/*"
                   type="file"
                   {...register("brandLogo")}
                   className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800"
@@ -151,7 +151,7 @@ function Signup() {
               </div>
             </form>
 
-            <p className="mt-4 text-center text-md text-gray-700 font-serif mb-4 font-semibold">
+            <p className="mt-4 text-center text-md text-gray-700 font-serif mb-4 font-semibold select-none">
               already have an account?
               <Link
                 to="/login"
