@@ -5,7 +5,9 @@ import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import Loader from './Loader';
 import Error from './Error';
+import {useNavigate} from 'react-router-dom';
 
+// function for fetching account details of loggedin user
 async function fetchVendorData(){
     try {
         const res = await axios.get("http://localhost:8000/api/vendor/account",{
@@ -16,17 +18,40 @@ async function fetchVendorData(){
         console.error(error.message)
     }
 }
+
+// function for updating an account
 async function updateVendorData(formData){
     try {
-        const res =await axios.patch('http://localhost:8000/api/vendor/account',formData,{withCredentials:true})
+        const res = await axios.put(
+          "http://localhost:8000/api/vendor/account",
+          formData,
+          { withCredentials: true }
+        );
         return  res.data;
     } catch (error) {
         console.error(error)   
     }
 }
+ // function for deleting an account
+async function deleteVendorAccount(vendorId){
+      try {
+        const res = await axios.delete('http://localhost:8000/api/vendor/account',   
+          {
+          data: { vendorId },
+          withCredentials:true
+          },
+        )
+        return res.data;
+        } catch (error) {
+        console.error(error)
+        throw error;
+      }
+}
+
 
 
 function Account() {
+    const navigate = useNavigate()
     const queryClient = useQueryClient();
     const {data,isLoading,isError} = useQuery({
         queryKey:['vendorData'],
@@ -36,33 +61,52 @@ function Account() {
     const {register,handleSubmit,reset} = useForm({
         defaultValues:{
             email:"",
-            vendorName:"",
-            brandLogo:""
+            vendorName:""
+        }
+    });
+    
+    // update the account details
+    const updateAccount = useMutation({
+        mutationFn:updateVendorData,
+        onSuccess:()=>{
+          toast.success("Account updated successfully!");
+            queryClient.invalidateQueries(['vendorData']);
+        },
+        onError:(error)=>{
+          console.log(error)
+          const message = error.response?.data?.message || "Failed to update account info"
+          toast.error(message)
         }
     });
 
-    const mutation = useMutation({
-        queryFn:updateVendorData,
-        onSuccess:()=>{
-            queryClient.invalidateQueries(['vendorData']);
-            toast.success("Account updated successfully!");
-        }
-    });
+    const deleteAccount = useMutation({
+      mutationFn:deleteVendorAccount,
+      onSuccess:()=>{
+        toast.success('Account deleted successfully');
+        navigate('/login')
+      },
+      onError:(error)=>{
+        console.error(error);
+        const message = error.response?.data?.message || "Failed to delete account";
+        toast.error(message);
+      }
+    })
 
     useEffect(()=>{
         if(data){
             reset({
                 email:data.email,
-                vendorName:data.vendorName,
-                brandLogo:data.brandLogo
+                vendorName:data.vendorName
             });
         }
     },[data,reset]);
 
     function onSubmit(formData){
-        mutation.mutate(formData)
+        updateAccount.mutate(formData)
     };
 
+
+   
     if (isLoading) return <Loader/>
     if (isError) return <Error/>
 
@@ -84,48 +128,61 @@ function Account() {
           </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-xl font-medium">Email</label>
+              <label className="block text-xl font-medium ">Email : </label>
               <input
                 type="email"
                 {...register("email")}
-                className="w-full border rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600"
+                className="w-full border  rounded px-3 py-2 mt-1 focus-visible:outline-2 focus-visible:outline-gray-950 focus-visible:bg-gray-600 font-semibold"
               />
             </div>
 
             <div>
-              <label className="block text-xl font-medium">Vendor Name</label>
+              <label className="block text-xl font-medium">
+                Vendor Name :{" "}
+              </label>
               <input
-                type="email"
+                type="text"
                 {...register("vendorName")}
-                className="w-full border rounded px-3 py-2 mt-1focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600"
-              />
-            </div>
-            <div>
-              <label className="block text-xl font-medium">Password</label>
-              <input
-                type="password"
-                {...register("password")}
-                className="w-full border rounded px-3 py-2 mt-1focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600"
+                className="w-full border  rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600 font-semibold"
               />
             </div>
 
-            <div>
-              <label className="block text-xl font-medium">Brand Logo</label>
+            {/* <div>
+              <label className="block text-xl font-medium">Brand Logo :</label>
               <input
                 type="file"
                 {...register("brandLogo")}
                 className="w-full border rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950"
               />
+            </div> */}
+            <div className="text-center ">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-800 text-xl
+              hover:outline-1 cursor-pointer 
+              "
+              >
+                Update my account
+              </button>
             </div>
+          </form>
+          <div className="text-center ">
             <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 text-xl
-              hover:outline-1 cursor-pointer
+              type="button"
+              onClick={()=>{
+                const isConfirmed = window.confirm("Do you really want to delete your account ?? This action can't be reverted back!!");
+                if (isConfirmed){
+                deleteAccount.mutate(data.vendorId)
+              }
+            }
+          }
+              className="bg-red-600 text-white px-4 py-3 mt-4 rounded-xl hover:bg-red-800 text-xl
+              hover:outline-1 cursor-pointer 
               "
             >
-              Update my account
+              Delete my account
             </button>
-          </form>
+          </div>
         </div>
       </div>
     );

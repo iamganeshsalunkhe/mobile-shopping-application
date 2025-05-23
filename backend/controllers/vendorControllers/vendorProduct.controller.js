@@ -1,12 +1,13 @@
 // import required modules 
 const vendorProductServices = require('../../services/vendorServices/vendorProduct.service');
+const v4 = require('uuid');
 
 // get all  products(self-listed)
 exports.getAllProducts = async(req,res)=>{
     try {
         // get vendorId from token
         const vendorId = req.user.id;
-        
+        console.log(vendorId);
         // passing data to service layer
         const productsList = await vendorProductServices.AllProducts(vendorId);
         
@@ -25,10 +26,16 @@ exports.newProduct = async(req,res) =>{
     try {
         // get vendorId from token
         const  vendorId = req.user.id;
+        const file= req.files?.file;
+
+        // if (!file) return res.status(400).json({error:'Image file is required'})
+        // const fileName = 'images/'+ v4();
 
         // passing vendorId explicitly to the services
         const productData = {
-            ...req.body,vendorId
+            ...req.body,
+            vendorId,
+          
         };
 
         // pass the data to the service layer

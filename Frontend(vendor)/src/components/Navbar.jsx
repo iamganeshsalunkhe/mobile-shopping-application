@@ -1,5 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -18,6 +19,7 @@ function classNames(...classes) {
 export default function Navbar() {
     const location = useLocation();
     const navigate =  useNavigate();
+    const queryClient = useQueryClient();
 
 
     async function handleLogout(){
@@ -26,6 +28,8 @@ export default function Navbar() {
         const res = await axios.post('http://localhost:8000/api/vendor/logout',{},
           {withCredentials:true}
         )
+        // clear the cache of react-query
+        queryClient.clear();
         toast.success("Logged out successfully!")
         navigate('/login')
         

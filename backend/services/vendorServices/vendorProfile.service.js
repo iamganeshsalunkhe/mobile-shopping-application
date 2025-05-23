@@ -1,5 +1,6 @@
 // import required files
 const {Vendors}= require('../../models');
+const { deleteObject } = require('../../utils/deleteObject');
 const {hashPassword} = require('../../utils/Password');
 
 // get specific vendor details
@@ -16,20 +17,31 @@ exports.getVendorDetails = async(vendorId) =>{
 exports.updateVendorAccount = async(vendorId,data) => {
   // get vendor details by vendorId
   const vendor = await Vendors.findByPk(vendorId);
-
+  console.log(vendor);
+  let updatedVendor  = data;
   // if user want to update password
-  const newPassword = await hashPassword(data.password);
-
-  // update the vendor with hashed password
-  const updatedVendor = { ...data, password: newPassword };
-  
+  if (data.password){
+    const newPassword =await hashPassword(data.password);
+    // update the vendor with hashed password
+    updatedVendor = {...data,password:newPassword}
+  }
   // update the vendor with updated data
-  return await vendor.update(updatedVendor);
+  return await vendor.update(updatedVendor)
 };
 
 exports.deleteAVendorAccount = async(vendorId) =>{
     // delete a vendor account from db
     const vendorToBeDeleted = await Vendors.findByPk(vendorId);
+
+    //get s3 url from vendorToBeDeleted
+    const brandLogoUrl = vendorToBeDeleted.brandLogo;
+    
+    // extract the key from brandLogo url 
+    // split the url in two parts 1.start-to-'.com/', 2.remaining portion 
+    const s3Key = brandLogoUrl.split('.com/')[1];
+
+    // delete from s3
+    await deleteObject(s3Key);
 
     // delete the vendor
     return await vendorToBeDeleted.destroy();

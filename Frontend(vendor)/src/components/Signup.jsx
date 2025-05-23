@@ -1,19 +1,48 @@
 // import required files
 import {useForm} from 'react-hook-form';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState } from 'react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 
 function Signup() {
+  const navigate = useNavigate();
     const {register, handleSubmit} = useForm();
-    const onSubmit = data=>console.log(data);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 
     // handle password visibility
     function handlePassword(){
       setIsPasswordVisible((prev)=>!prev)
+    };
+
+    async function onSubmit(data){
+      try { 
+        // create  formData 
+        const formData = new FormData();
+
+        // add text fields
+        formData.append('vendorName',data.vendorName);
+        formData.append('email',data.email);
+        formData.append('password',data.password);
+
+        if (data.brandLogo && data.brandLogo.length > 0){
+          formData.append('brandLogo',  data.brandLogo[0])
+        };
+
+       const res =  await axios.post('http://localhost:8000/api/vendor/signup',formData,{withCredentials:true})
+        if (res.data){
+          toast.success('Signed up successfully!')
+          navigate('/login')
+        }
+      } catch (error) {
+        if (error.response){
+          console.error(error)
+          toast.error(error.response?.data?.message)
+        }
+      }
     }
 
     return (
@@ -85,7 +114,7 @@ function Signup() {
                 <input
                   id="password"
                   type={isPasswordVisible ? "text" : "password"}
-                  {...register("password", { required: true, minLength: 6 })}
+                  {...register("password", { required: true, minLength: 4 })}
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-xl text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-600 focus:outline-3 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 mt-2 font-medium "
                 />
                 <div
@@ -105,6 +134,7 @@ function Signup() {
                 </label>
                 <input
                   id="brandLogo"
+                  accept='image/*'
                   type="file"
                   {...register("brandLogo")}
                   className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800"
@@ -114,7 +144,7 @@ function Signup() {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-bold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-md font-bold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
                 >
                   Sign up
                 </button>

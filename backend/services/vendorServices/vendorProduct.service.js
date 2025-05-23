@@ -1,5 +1,6 @@
 // import required modules
 const {Products} = require('../../models');
+const { putObject } = require('../../utils/putObject');
 
 // get all products(self-listed)
 exports.AllProducts = async(vendorId) =>{
@@ -15,8 +16,14 @@ exports.createProduct = async(productData)=>{
     // create product 
 
     const product = await Products.create(productData);
-    
-    return product;
+
+    // const {url,key} = await putObject(productData.file,productData.fileName)
+
+
+    // if (!url || !key) {
+    //     return res.status(400).json({error:"Pls upload image"})
+    // }
+    return product; 
 };
 
 // for updating a product

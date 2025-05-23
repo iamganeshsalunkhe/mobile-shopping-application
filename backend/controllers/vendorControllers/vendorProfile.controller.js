@@ -51,10 +51,10 @@ exports.deleteVendor = async (req, res) => {
     const vendorId = req.user.id;
 
     // pass it to the service layer
-    const vendor = await vendorProfileServices.deleteAVendorAccount(vendorId);
+    await vendorProfileServices.deleteAVendorAccount(vendorId);
 
     // if request successfully handled
-    res.status(200).json({ message: "Account deleted successfully" });
+    res.status(200).json({ message: "Account Deleted Successfully!!" });
   } catch (error) {
     // if any error occurs
     res

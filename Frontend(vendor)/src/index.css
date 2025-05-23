@@ -3,3 +3,8 @@
     themes:light
 }
 
+
+.tooltip.tooltip-black-text::before{
+    color:black;
+    font-weight: 600;
+}

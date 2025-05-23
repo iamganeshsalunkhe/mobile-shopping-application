@@ -2,6 +2,8 @@
 const express = require('express');
 const vendorProductController = require("../../controllers/vendorControllers/vendorProduct.controller");
 const authenticate = require("../../middleware/authenticate");
+const fileUpload = require('express-fileupload');
+
 
 // initiate router instance 
 const router = express.Router();
@@ -13,7 +15,7 @@ router.get('/products',authenticate,vendorProductController.getAllProducts);
 router.post('/product',authenticate,vendorProductController.newProduct);
 
 // update a product
-router.put('/product/:productId',authenticate,vendorProductController.updateProduct);
+router.put('/product/:productId',authenticate,fileUpload(),vendorProductController.updateProduct);
 
 // delete a product
 router.delete('/product/:productId',authenticate,vendorProductController.deleteProduct);

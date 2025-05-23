@@ -1,56 +1,284 @@
 // import required modules
-import { useQuery } from "@tanstack/react-query";
+import { useQuery ,useMutation, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import Loader from "./Loader";
 import Error from "./Error";
+import { useState } from "react";
+import {toast} from 'react-hot-toast';
+import {useForm} from 'react-hook-form';
+import { IoIosAddCircleOutline } from "react-icons/io";
 
+// fetch the products from the database(self-listed)
 async function fetchProducts(){
     try {
-        const res = await axios.get('http://localhost:8000/api/vednor/products');
+        const res = await axios.get('http://localhost:8000/api/vendor/products',{
+          withCredentials:true
+        });
         return res.data;
     } catch (error) {
         console.error(error);
     }
 }
 
+
 function Products() {
+  // state for the modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // state for the updating the products
+  const [isEditProduct, setEditProduct] = useState(null);
 
-    const {data:products=[],isLoading,isError}  = useQuery({queryKey:['products'],
-        queryFn:fetchProducts
+  // to handle form
+  const { register, handleSubmit, reset } = useForm();
+
+  const queryClient = useQueryClient();
+
+  //to open modal for creating new product
+  function openCreateModal() {
+    setEditProduct(null);
+    setIsModalOpen(true);
+  }
+
+  // to open modal for updating an existing product
+  function openUpdateModal(product) {
+    setEditProduct(product);
+    reset({
+      productName: product.productName,
+      specification: product.specification,
+      price: product.price,
     });
+    setIsModalOpen(true);
+  }
 
+  // to close the modal
+  function closeModal() {
+    setIsModalOpen(false);
+  }
 
-    if (isLoading) return <Loader/>
-    if (isError) return <Error/>
+  // fetch the product
+  const {
+    data: products = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProducts,
+    staleTime: 60 * 1000, // 1 min = 60000ms (60 * 1000)
+    cacheTime: 2 * 60 * 1000, // 2 min
+    refetchInterval: 2 * 60 * 1000, // 2min
+    refetchOnWindowFocus: true, // fetch if user changes tab and then comes back
+  });
 
-    return (
-      <div className="overflow-x-auto">
-        <table className="table">
-          {/* head */}
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Product Name</th>
-              <th>Specification</th>
-              <th>Product Price</th>
-              <th>Images</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* row 1 */}
-            {products.map((product, index) => (
-              <tr key={product.id}>
-                <th>{index + 1}</th>
-                <td>{product.customerName}</td>
-                <td>{product.productName}</td>
-                <td>{product.specification}</td>
-                <td>{product.price}</td>
+  // to delete the product
+  const deleteProduct = useMutation({
+    mutationFn: async (product) => {
+      await axios.delete(
+        `http://localhost:8000/api/vendor/product/${product.productId}`,
+        {
+          withCredentials: true,
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+    onError: (error) => {
+      const message =
+        error.response?.data?.message || "Failed to delete product!";
+      toast.error(message);
+    },
+  });
+
+  // function to add new product
+  async function onSubmit(data) {
+    try {
+      const productData = {
+        productName: data.productName,
+        specification: data.specification,
+        price: data.price,
+      };
+
+      // if edit product is true (User want to delete a product)
+      if (isEditProduct) {
+        await axios.put(
+          `http://localhost:8000/api/vendor/product/${isEditProduct.productId}`,
+          productData,
+          { withCredentials: true }
+        );
+        toast.success("Product updated successfully!");
+      } else {
+        // if edit product is false (User want to add a product)
+        await axios.post(
+          `http://localhost:8000/api/vendor/product`,
+          productData,
+          {
+            withCredentials: true,
+          }
+        );
+        toast.success("Product added successfully!");
+      }
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      reset();
+      setEditProduct(null);
+      closeModal();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // show loader if data is not received yet
+  if (isLoading) return <Loader />;
+
+  // throw error if error occurs while fetching data
+  if (isError) return <Error />;
+
+  return (
+    <div className="overflow-x-auto min-h-screen bg-gray-200 border-2">
+      {/* case 1: No products available */}
+      {products.length === 0 ? (
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <h1 className="text-3xl font-bold text-gray-700 text-center">
+            You haven't added any product yet.
+          </h1>
+          <button
+            onClick={openCreateModal}
+            className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:scale-110 transition cursor-pointer"
+          >
+            Add Your First Product
+          </button>
+        </div>
+      ) : (
+        // case 2 :products available
+        // <div className="overflow-x-auto min-h-screen bg-gray-300  border-2">
+        <>
+          <table className="table w-full border-collapse border  border-gray-500">
+            {/* head */}
+            <thead>
+              <tr className="font-bold text-2xl font-sans tracking-wide border-b-2  ">
+                <th className="border-r border-gray-500 px-4 py-2">Sr no.</th>
+                <th className="border-r border-gray-500 px-4 py-2">
+                  Product Name
+                </th>
+                <th className="border-r border-gray-500 px-4 py-2">
+                  Specification
+                </th>
+                <th className="border-r border-gray-500 px-4 py-2">
+                  Product Price
+                </th>
+                <th className="border-r border-gray-500 px-4 py-2">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
+            </thead>
+            <tbody>
+              {products.map((product, index) => (
+                <tr
+                  key={product.productId}
+                  className="bg-gray-100 hover:bg-gray-300 border-b"
+                >
+                  <th className="font-semibold text-lg text-gray-900 border-r border-gray-400 ">
+                    {index + 1}
+                  </th>
+                  <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
+                    {product.productName || "NA"}
+                  </td>
+                  <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
+                    {product.specification || "NA"}
+                  </td>
+                  <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
+                    {product.price || "NA"}
+                  </td>
+                  <td className="px-2">
+                    <button
+                      onClick={() => openUpdateModal(product)}
+                      className="font-bold bg-green-500 hover:bg-green-800 m-2 p-2 rounded-xl cursor-pointer  text-white hover:scale-110 transition"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => {
+                        const isConfirmed = window.confirm(
+                          `Do really want to delete ${product.productName}`
+                        );
+                        if (isConfirmed) {
+                          deleteProduct.mutate(product);
+                        }
+                      }}
+                      className="font-bold bg-red-500 hover:bg-red-800 m-2 p-2 rounded-xl cursor-pointer text-white hover:scale-110 transition"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="tooltip tooltip-bottom flex justify-center m-4 font-bold font-sans ">
+            <button
+              data-tip="Add a new product"
+              onClick={openCreateModal}
+              className="tooltip tooltip-bottom bg-blue-500 hover:bg-blue-600 transition text-white text-3xl m-8 p-2 rounded-full w-16 h-16 flex items-center justify-center cursor-pointer hover:scale-110 select-none tooltip-black-text
+          "
+              aria-label="add a new product"
+            >
+              {" "}
+              <IoIosAddCircleOutline />{" "}
+            </button>
+          </div>
+        </>
+      )}
+
+      {isModalOpen && (
+        <div className="fixed inset-0  bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 ">
+          <div className="bg-white p-6 rounded-xl w-auto shadow-xl ">
+            <h2 className="text-xl font-bold mb-4 text-center">
+              {isEditProduct ? "Update a Product" : "Add a new product"}
+            </h2>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="">
+                <label htmlFor="productName" className="font-bold ">
+                  Product Name :-{" "}
+                </label>
+                <input
+                  {...register("productName")}
+                  className="w-full mb-3 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
+                />
+                <label htmlFor="productName" className="font-bold ">
+                  Product Specifications:-
+                </label>
+
+                <input
+                  {...register("specification")}
+                  className="w-full mb-3 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
+                />
+                <label htmlFor="productName" className="font-bold  ">
+                  Product Price :-
+                </label>
+
+                <input
+                  {...register("price")}
+                  type="number"
+                  className="w-full mb-3 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="mr-2 px-4 py-2 bg-gray-600 rounded text-white font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded font-bold cursor-pointer"
+                >
+                  {isEditProduct ? "Update" : "Add"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Products

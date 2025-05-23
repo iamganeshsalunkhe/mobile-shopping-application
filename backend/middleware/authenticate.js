@@ -5,7 +5,6 @@ const {Admins,Vendors,Customers} = require('../models');
 
 const authenticate = async(req,res,next)=>{
     // check if token is present in cookies
-    console.log(req.cookies);
     const token = req.cookies?.token 
     
     // if not
