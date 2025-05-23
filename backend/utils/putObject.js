@@ -18,10 +18,10 @@ exports.putObject = async(file,fileName)=>{
         const command = new PutObjectCommand(params);
         
         // send request to server for adding new image 
-        await s3Client.send(command);
+        const Data = await s3Client.send(command);
         
         // checks if image uploaded successfully or not
-        if (data.$metadata.httpStatusCode !== 200){
+        if (Data.$metadata.httpStatusCode !== 200){
             throw new Error("S3 Upload Failed!");
         };
 

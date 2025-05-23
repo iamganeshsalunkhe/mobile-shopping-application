@@ -13,5 +13,6 @@ exports.deleteObject  = async (s3Key) =>{
         await s3Client.send(command)
     } catch (error) {
         console.error(error);
+        throw new Error("S3 Delete Failed:"+ error.message)
     }
 }
