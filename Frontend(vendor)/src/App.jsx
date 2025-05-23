@@ -23,21 +23,39 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen ={false}/>
-    <BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <BrowserRouter>
         <Routes>
-          <Route index  path="/" element={<LoginPage/>}/>
-          <Route path="/signup" element={<SignupPage/>}/>
-          <Route path="/login" element={<LoginPage/>}/>
-          <Route path="/demo" element={<DemoComponent/>}/>
-          <Route path ='/products' element={<ProductPage/>}/>
-          <Route path="/account" element= {<AccountPage/>}/> 
-          <Route path="/orders" element={<OrderPage/>}/>
+          <Route index path="/" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/demo" element={<DemoComponent />} />
+          <Route path="/products" element={<ProductPage />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/orders" element={<OrderPage />} />
         </Routes>
-        <Toaster/>
-    </BrowserRouter>
+        <Toaster
+          toastOptions={{
+            success: {
+              style: {
+                fontFamily: "inherit",
+                fontWeight: "bold",
+                fontSize: "18px",
+              },
+            },
+            
+            error: {
+              style: {
+                fontFamily: "inherit",
+                fontWeight: "bold",
+                fontSize: "18px",
+              },
+            },
+          }}
+        />
+      </BrowserRouter>
     </QueryClientProvider>
-  )
+  );
 }
 
 export default App

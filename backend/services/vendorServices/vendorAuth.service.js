@@ -6,13 +6,12 @@ const  {putObject} =require('../../utils/putObject');
 
 // signup/registering a new vendor
 
-exports.registerVendor = async(req,res)=>{
-  console.log(req.body);
+exports.registerVendor = async(req)=>{
 
     const {vendorName,email,password} = req.body;
     const file = req.file;
 
-    if (!file) return;
+    if (!file) throw new Error ("Brand-Logo required !");
 
 
     // checks that if any vendor exists with same email
@@ -20,7 +19,7 @@ exports.registerVendor = async(req,res)=>{
 
     // if vendor exists then throw error
     if (isExisting){
-        const error = new Error('Email already registered')
+        const error = new Error('Email Already Registered !')
         error.statusCode = 400;
         throw error;
     }
@@ -34,10 +33,10 @@ exports.registerVendor = async(req,res)=>{
     
     // logoUrl fails
     if (!logoUrl){
-      return ;
+        throw new Error("Image Upload Failed!")
     }
 
-    // create a new entry in database
+    // create a new entry in database with s3 url
     const newVendor =  await Vendors.create({
       email,
       vendorName,

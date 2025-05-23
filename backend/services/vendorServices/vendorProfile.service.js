@@ -33,14 +33,15 @@ exports.deleteAVendorAccount = async(vendorId) =>{
     // delete a vendor account from db
     const vendorToBeDeleted = await Vendors.findByPk(vendorId);
 
-
     //get s3 url from vendorToBeDeleted
+    console.log(vendorToBeDeleted);
     const brandLogoUrl = vendorToBeDeleted.brandLogo;
+    // extract the key from brandLogo url 
+    // split the url in two parts 1.start-to-'.com/', 2.remaining portion 
     const s3Key = brandLogoUrl.split('.com/')[1];
 
     // delete from s3
     await deleteObject(s3Key);
-    console.log(`s3 image deleted`);
 
     // delete the vendor
     return await vendorToBeDeleted.destroy();

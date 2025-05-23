@@ -32,11 +32,7 @@ function Signup() {
           formData.append('brandLogo',  data.brandLogo[0])
         };
 
-       const res =  await axios.post('http://localhost:8000/api/vendor/signup',formData,{withCredentials:true,
-          headers:{
-            'Content-Type':'multipart/form-data'
-          }
-        })
+       const res =  await axios.post('http://localhost:8000/api/vendor/signup',formData,{withCredentials:true})
         if (res.data){
           toast.success('Signed up successfully!')
           navigate('/login')
