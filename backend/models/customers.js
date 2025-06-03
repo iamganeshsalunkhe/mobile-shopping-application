@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       fullName: DataTypes.STRING,
       password: DataTypes.STRING,
       contactNumber: DataTypes.STRING,
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
