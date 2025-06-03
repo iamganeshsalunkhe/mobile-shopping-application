@@ -1,12 +1,12 @@
 // import required module
 const express = require("express");
 const customerProfileController = require("../../controllers/customerControllers/customerProfileController");
+const authenticate = require('../../middleware/authenticate');
 // initiate a router instance
 const router = express.Router();
 
-
 // get profile route
-router.get('/account',);
+router.get('/account',authenticate,customerProfileController.getProfile);
 
 
 // export module
