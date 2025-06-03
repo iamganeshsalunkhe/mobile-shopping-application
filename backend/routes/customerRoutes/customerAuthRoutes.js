@@ -11,5 +11,8 @@ router.post('/signup', customerAuthController.signUp);
 // login route
 router.post('/login',customerAuthController.login);
 
+// logout route
+router.post('logout',customerAuthController.logout);
+
 // export router
 module.exports = router;
