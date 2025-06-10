@@ -28,4 +28,13 @@ exports.updateProfile = async(customerId,data) =>{
 
   // update the customer with new data
   return await customer.update(updatedCustomer)
+};
+
+// delete customer profile/account
+
+exports.deleteCustomer = async (customerId)=>{
+  // got customer Id from controller layer
+  const customerToDelete = await Customers.findByPk(customerId);
+
+  return await customerToDelete.destroy();
 }

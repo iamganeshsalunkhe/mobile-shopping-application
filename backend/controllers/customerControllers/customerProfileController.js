@@ -35,3 +35,22 @@ exports.updateProfile = async (req,res) =>{
     res.status(error.statusCode|| 500).json({message:error.message || "Something went wrong!!"})
   }
 };
+
+// delete the customer
+exports.deleteCustomer = async(req,res)=>{
+  try {
+    // get id from token
+    const customerId = req.user.id;
+
+    // pass the id to the service layer 
+    const customer = await customerProfileServices.deleteCustomer(customerId);
+
+    // if request handled successfully
+    res.status(200).json("Account deleted successfully!");
+
+  } catch (error) {
+    // if any error occurs
+    console.error(error);
+    res.status(500).json({message:error.message || "Something went wrong"});
+  }
+};

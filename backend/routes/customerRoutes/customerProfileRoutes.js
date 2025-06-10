@@ -11,5 +11,8 @@ router.get('/account',authenticate,customerProfileController.getProfile);
 // update the profile of customer
 router.post('/account',authenticate,customerProfileController.updateProfile);
 
+// delete the customer
+router.delete('/account',authenticate,customerProfileController.deleteCustomer);
+
 // export module
 module.exports = router;
