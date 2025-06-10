@@ -1,6 +1,7 @@
 // import required modules
 const customerProfileServices = require('../../services/customerServices/customerProfileService');
 
+// get customer details
 exports.getProfile = async(req,res)=>{
     try {
       // get vendorId from token
@@ -16,4 +17,21 @@ exports.getProfile = async(req,res)=>{
         console.error(error);
         res.status(500).json({message:error.message || "Something went wrong!!"})
     }
-}
+};
+
+// update the customer details
+exports.updateProfile = async (req,res) =>{
+  try {
+    // get customerId from token
+      const customerId  = req.user.id;
+
+    // pass the details to service layer
+    const customerData = await customerProfileServices.updateProfile(customerId,req.body);
+
+    // if request handled successfully
+    res.status(200).json(customerData);
+  } catch (error) {
+    console.error(error);
+    res.status(error.statusCode|| 500).json({message:error.message || "Something went wrong!!"})
+  }
+};
