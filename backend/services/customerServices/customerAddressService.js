@@ -6,7 +6,7 @@ exports.addAddress = async(customerId,req)=>{
     // get the customerId and data from the controller
     console.log(req.body);
     console.log(customerId);
-    const {fullName,contactNumber,addressLine,city, state, postalCode, country, addressType} = req.body;
+    const {fullName,contactNumber,addressLine,landMark,city,district, state, postalCode, country, addressType} = req.body;
 
     // create a new entry in db
     const addressToAdd = await Addresses.create({
@@ -14,7 +14,9 @@ exports.addAddress = async(customerId,req)=>{
         fullName,
         contactNumber,
         addressLine,
+        landMark,
         city,
+        district,
         state,
         postalCode,
         country,
@@ -33,4 +35,39 @@ exports.getAddress = async(customerId)=>{
     
     // return the all addresses to the service layer
     return allAddresses;
+};
+
+// update an address 
+exports.updateAddress = async(customerId, addressId, data)=>{
+    // get customerId, addressId, data from the controller layer
+    const address = await Addresses.findOne({
+        where:{
+            customerId:customerId,
+            addressId:addressId
+        }
+    })
+    console.log(customerId);
+    console.log(addressId);
+    console.log(` i am the separatorrr`);
+
+    console.log(`i am old address`);
+
+    console.log(address);
+
+    if (!address){
+        throw new Error("Address not found")    
+    }
+    
+
+    console.log(`I am the data`);
+    console.log(data);
+    console.log(`---------------`);
+
+
+    // update the address
+    const updatedAddress =  await address.update(data)
+
+    console.log(`i am newww addresss`);
+    console.log(updatedAddress);
+    return updatedAddress;
 };

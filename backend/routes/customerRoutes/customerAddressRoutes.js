@@ -12,4 +12,7 @@ router.post('/address',authenticate,customerAddressController.addNewAddress);
 // get an address
 router.get('/address',authenticate,customerAddressController.getAllAddresses);
 
+// update an address
+router.put('/address/:addressId',authenticate,customerAddressController.updateAnAddress);
+
 module.exports = router;
