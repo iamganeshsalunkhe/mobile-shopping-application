@@ -17,26 +17,34 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Addresses.init({
-    addressId:{
-      type:DataTypes.INTEGER,
-      primaryKey:true,
-      autoIncrement:true
+  Addresses.init(
+    {
+      addressId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      customerId: DataTypes.INTEGER,
+      fullName: DataTypes.STRING,
+      contactNumber: DataTypes.STRING,
+      addressLine: DataTypes.STRING,
+      city: DataTypes.STRING,
+      state: DataTypes.STRING,
+      postalCode: DataTypes.STRING,
+      country: DataTypes.STRING,
+      addressType: DataTypes.ENUM("Shipping", "Billing"),
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    customerId:DataTypes.INTEGER,
-    fullName: DataTypes.STRING,
-    contactNumber: DataTypes.STRING,
-    addressLine: DataTypes.STRING,
-    city: DataTypes.STRING,
-    state: DataTypes.STRING,
-    postalCode: DataTypes.STRING,
-    country: DataTypes.STRING,
-    addressType: DataTypes.ENUM('Shipping',"Billing")
-  }, {
-    sequelize,
-    modelName: 'Addresses',
-    tableName:'Addresses',
-    timestamps:false
-  });
+    {
+      sequelize,
+      modelName: "Addresses",
+      tableName: "Addresses",
+      timestamps: false,
+    }
+  );
   return Addresses;
 };
