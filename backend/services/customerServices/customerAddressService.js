@@ -46,28 +46,32 @@ exports.updateAddress = async(customerId, addressId, data)=>{
             addressId:addressId
         }
     })
-    console.log(customerId);
-    console.log(addressId);
-    console.log(` i am the separatorrr`);
-
-    console.log(`i am old address`);
-
-    console.log(address);
-
+    
+    // if address not found
     if (!address){
         throw new Error("Address not found")    
     }
     
-
-    console.log(`I am the data`);
-    console.log(data);
-    console.log(`---------------`);
-
-
     // update the address
     const updatedAddress =  await address.update(data)
 
-    console.log(`i am newww addresss`);
-    console.log(updatedAddress);
+    // return to controller layer
     return updatedAddress;
 };
+
+exports.deleteAddress = async(customerId, addressId)=>{
+    // get the customerId and addressId from the controller layer
+
+    // find the address in db using customerId, addressId
+    const address = await Addresses.findOne({where:{
+        customerId:customerId,
+        addressId:addressId
+    }});
+    
+    if (!address){
+        throw new Error("Address not found")
+    }
+
+    // delete the address
+    return await address.destroy();
+}

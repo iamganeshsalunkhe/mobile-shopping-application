@@ -45,10 +45,9 @@ exports.updateAnAddress = async(req,res)=>{
         // get the addressId from params
         const addressId = req.params.addressId;
 
+        // get the data from request
         const data = req.body;
-        console.log(data);
-        console.log(`from the controller`);
-
+        
         // send it to the service layer
         const updatedAddress = await customerAddressService.updateAddress(
             customerId,
@@ -63,4 +62,25 @@ exports.updateAnAddress = async(req,res)=>{
         console.error(error);
         res.status(500).json({message:error.message||"Something went wrong!"})
     }
+};
+
+exports.deleteAnAddress =async (req,res)=>{
+    try {
+        // get the customerId from token
+        const customerId  = req.user.id;
+
+        // get the addressId from params
+        const addressId = req.params.addressId;
+
+        // pass it to service layer
+        const addressToDelete = await customerAddressService.deleteAddress(customerId,addressId);
+
+        // if request handled successfully
+
+        res.status(200).json({message:"Address deleted successfully"});
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        res.status(500).json({message:error.message ||"Something went wrong"});
+        }
 };
