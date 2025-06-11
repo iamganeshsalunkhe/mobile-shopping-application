@@ -25,3 +25,12 @@ exports.addAddress = async(customerId,req)=>{
     return addressToAdd;
 
 };
+
+// get all address for that customer
+exports.getAddress = async(customerId)=>{
+    // get the customerId from the controller layer
+    const allAddresses = await Addresses.findAll({where:{customerId}});
+    
+    // return the all addresses to the service layer
+    return allAddresses;
+};

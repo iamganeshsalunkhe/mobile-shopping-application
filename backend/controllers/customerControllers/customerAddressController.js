@@ -18,3 +18,21 @@ exports.addNewAddress = async(req,res)=>{
         res.status(500).json({message:error.message ||"Something went wrong!"});
     };
 };
+
+// get all address for a customer
+exports.getAllAddresses = async(req,res)=>{
+    try {
+        //get the customerId from the token
+        const customerId = req.user.id;
+
+        // pass it to the service layer
+        const allAddresses = await customerAddressService.getAddress(customerId);
+        
+        // if request handled successfully
+        res.status(200).json(allAddresses);
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        res.status(500).json({message:error.message || "Something went wrong!"})
+    }
+};
