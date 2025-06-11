@@ -1,6 +1,6 @@
 // import required files
 const express = require('express');
-const vendorAuthController = require('../../controllers/vendorControllers/vendorAuth.controller');
+const vendorAuthController = require('../../controllers/vendorControllers/vendorAuthController');
 // initiate router instance 
 const router = express.Router();
 const {upload} = require('../../middleware/multer');

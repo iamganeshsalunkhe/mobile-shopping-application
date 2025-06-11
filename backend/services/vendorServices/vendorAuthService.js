@@ -1,7 +1,7 @@
 // import required files 
 const {Vendors} = require('../../models');
 const {hashPassword, comparePassword} = require('../../utils/Password');
-const generateAuthToken = require('../../utils/Tokengeneration');
+const {generateVendorAuthToken} = require('../../utils/Tokengeneration');
 const  {putObject} =require('../../utils/putObject');
 
 // signup/registering a new vendor
@@ -75,13 +75,8 @@ exports.loginVendor = async({email,password})=>{
         error.statusCode = 401;
         throw error;
     }
-
-    
-      const token = generateAuthToken(vendor);
-        
-
-      // set cookie 
-      
+      // generate token
+      const token = generateVendorAuthToken(vendor);
 
       // get only necessary data from sequelize
       const plainVendor = vendor.toJSON();
