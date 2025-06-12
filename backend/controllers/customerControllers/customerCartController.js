@@ -22,6 +22,22 @@ exports.addAProduct = async(req,res)=>{
     }
 };
 
+exports.getCart = async(req,res)=>{
+    try {
+        // get the customerId from the token
+        const customerId = req.user.id;
+
+        // pass it to the service layer
+        const cartInfo = await customerCartServices.getCustomerCart(customerId);
+
+        // if request handled successfully
+        res.status(200).json(cartInfo);
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        res.status(500).json({message:error.message || "Something went wrong!"});
+    }
+};
 
 exports.removeAProduct = async(req,res)=>{
     try {
