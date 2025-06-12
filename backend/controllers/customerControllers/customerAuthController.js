@@ -1,5 +1,5 @@
 //import required modules
-const { registerCustomer, loginCustomer } = require("../../services/customerServices/customerAuthServices")
+const { registerCustomer, loginCustomer } = require("../../services/customerServices/customerAuthService")
 
 // signup a new customer
 exports.signUp = async(req,res)=>{
