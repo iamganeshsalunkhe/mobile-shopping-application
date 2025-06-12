@@ -18,3 +18,11 @@ exports.addToCart =async (customerId,productId)=>{
     // return to the controller layer
     return newItem;
 };
+
+exports.removeFromCart = async(customerId,productId)=>{
+    // get the customerId and productId from the controller layer
+    const removeFromCart = await Cart.findOne({where:{customerId,productId}});
+
+    
+    return await removeFromCart.destroy();
+};
