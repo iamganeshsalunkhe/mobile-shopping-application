@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Vendors extends Model {
     /**
@@ -11,43 +9,52 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Vendors.hasMany(models.Products,{
-        foreignKey:'vendorId',
-        onDelete:'CASCADE'
-      })
+      Vendors.hasMany(models.Products, {
+        foreignKey: "vendorId",
+        onDelete: "CASCADE",
+      });
       Vendors.hasMany(models.Orders, {
         foreignKey: "vendorId",
         onDelete: "CASCADE",
       });
     }
-    toJSON(){
-      return{
+    toJSON() {
+      return {
         ...this.get(),
-        isAccepted:undefined,
-        createdAt:undefined,
-      }
+        isAccepted: undefined,
+        createdAt: undefined,
+      };
     }
   }
-  Vendors.init({
-    vendorId:{
-      type:DataTypes.INTEGER,
-      primaryKey:true,
-      autoIncrement:true
+  Vendors.init(
+    {
+      vendorId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      email: DataTypes.STRING,
+      vendorName: DataTypes.STRING,
+      password: DataTypes.STRING,
+      brandLogo: DataTypes.STRING,
+      isAccepted: DataTypes.ENUM("Accepted", "Rejected", "Pending"),
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    email: DataTypes.STRING,
-    vendorName: DataTypes.STRING,
-    password: DataTypes.STRING,
-    brandLogo: DataTypes.STRING,
-    isAccepted: DataTypes.ENUM('Accepted','Rejected','Pending'),
-    createdAt:{
-      type:DataTypes.DATE,
-      defaultValue:DataTypes.NOW
+    {
+      sequelize,
+      modelName: "Vendors",
+      tableName: "Vendors",
+      timestamps: true,
     }
-  }, {
-    sequelize,
-    modelName: 'Vendors',
-    tableName:'Vendors',
-    timestamps:false
-  });
+  );
   return Vendors;
 };

@@ -1,5 +1,5 @@
 // import required files
-const vendorProfileServices = require("../../services/vendorServices/vendorProfile.service");
+const vendorProfileServices = require("../../services/vendorServices/vendorProfileService");
 
 // get vendor details
 exports.profileDetails = async (req, res) => {

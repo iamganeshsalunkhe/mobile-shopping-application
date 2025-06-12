@@ -1,6 +1,6 @@
 // import required files
 const express = require("express");
-const vendorProfileController = require('../../controllers/vendorControllers/vendorProfile.controller');
+const vendorProfileController = require('../../controllers/vendorControllers/vendorProfileController');
 const authenticate = require("../../middleware/authenticate");
 
 // initiate router instance

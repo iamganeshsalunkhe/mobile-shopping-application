@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -32,7 +32,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      landMark: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       city: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      district: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -56,9 +64,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Addresses');
-  }
+    await queryInterface.dropTable("Addresses");
+  },
 };

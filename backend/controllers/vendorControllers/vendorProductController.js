@@ -1,5 +1,5 @@
 // import required modules 
-const vendorProductServices = require('../../services/vendorServices/vendorProduct.service');
+const vendorProductServices = require('../../services/vendorServices/vendorProductService');
 const v4 = require('uuid');
 
 // get all  products(self-listed)
