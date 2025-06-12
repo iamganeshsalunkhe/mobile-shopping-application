@@ -6,8 +6,10 @@ const customerProductController = require('../../controllers/customerControllers
 const router = express.Router();
 
 // get all products
-router.get('/allProducts',customerProductController.getAllProducts);
+router.get('/product',customerProductController.getAllProducts);
 
+// get specific product
+router.get('/product/:productId',customerProductController.getAProduct);
 
 // export module
 module.exports = router;
