@@ -7,7 +7,7 @@ const authenticate = require("../../middleware/authenticate");
 const router = express.Router();
 
 // get all products
-router.get('/products',authenticate,vendorProductController.getAllProducts);
+router.get('/product',authenticate,vendorProductController.getAllProducts);
 
 // add a product
 router.post('/product',authenticate,vendorProductController.newProduct);

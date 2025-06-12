@@ -1,5 +1,5 @@
 // import required module
-const customerProductService = require('../../services/customerServices/customerProductServices');
+const customerProductService = require('../../services/customerServices/customerProductService');
 
 
 exports.getAllProducts = async(req,res)=>{
