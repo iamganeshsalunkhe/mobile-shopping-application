@@ -17,6 +17,7 @@ const customerProfileRoutes = require('./routes/customerRoutes/customerProfileRo
 const customerAddressRoutes = require('./routes/customerRoutes/customerAddressRoutes.js');
 const customerProductRoutes = require('./routes/customerRoutes/customerProductRoutes.js');
 const customerCartRoutes = require('./routes/customerRoutes/customerCartRoute.js');
+const customerOrderRoutes = require('./routes/customerRoutes/customerOrderRoute');
 
 // config the dotenv
 dotenv.config();
@@ -32,7 +33,7 @@ app.use(cookieParser());
 app.use(cors({origin:"http://localhost:5173",credentials:true}))
 
 app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes]);
-app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes]);
+app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes,customerOrderRoutes]);
 
 // listening 
 app.listen(PORT,()=>{
