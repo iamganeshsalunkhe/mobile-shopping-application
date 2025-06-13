@@ -22,3 +22,20 @@ exports.placeOrder = async(req,res) =>{
         })
     }
 };
+
+
+exports.getAllOrders = async(req,res)=>{
+    try {
+        // get customerId from the token
+        const customerId = req.user.id;
+
+        // pass it to the service layer
+        const allOrders = await customerOrderServices.getOrder(customerId);
+
+        // if request handled successfully
+        res.status(200).json({data:allOrders});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:error.message || "Something went wrong!"});
+    }
+};

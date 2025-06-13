@@ -9,6 +9,8 @@ const router = express.Router();
 // place an order
 router.post('/order',authenticate,customerOrderController.placeOrder);
 
+// get all orders
+router.get('/order',authenticate,customerOrderController.getAllOrders);
 
 // export router
 module.exports = router;
