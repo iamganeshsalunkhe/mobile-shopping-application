@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "VendorId",
         onDelete: "CASCADE",
       });
+      Orders.belongsTo(models.Addresses,{
+        foreignKey:'addressId',
+        onDelete:"CASCADE"
+      })
     }
   }
   Orders.init(

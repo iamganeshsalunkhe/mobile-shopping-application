@@ -12,5 +12,8 @@ router.post('/order',authenticate,customerOrderController.placeOrder);
 // get all orders
 router.get('/order',authenticate,customerOrderController.getAllOrders);
 
+// get a specific order details
+router.get('/order/:orderId',authenticate,customerOrderController.specificOrder);
+
 // export router
 module.exports = router;

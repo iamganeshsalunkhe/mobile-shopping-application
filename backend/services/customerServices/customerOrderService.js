@@ -1,5 +1,5 @@
 // import required modules
-const {Orders,Products,Vendors} = require('../../models');
+const {Orders,Products,Addresses} = require('../../models');
 
 exports.placeOrder = async(customerId,orderData) =>{
     // got customerId, productId from the controller layer
@@ -36,4 +36,26 @@ exports.getOrder = async(customerId)=>{
 
     // return the data
     return ordersData;
+};
+
+exports.getAnOrder = async(orderId)=>{
+    // got the  orderId from the controller layer
+
+    // find the order by orderId in db
+    const order = await Orders.findOne({
+      where: { orderId },
+      include: [
+        {
+          model: Products,
+          attributes: ["productName", "specification"],
+        },
+        {
+            model: Addresses,
+            attributes: ["addressLine", "city", "district", "postalCode"],
+        }
+      ],
+    });
+
+    // return to the controller layers
+    return order;
 };
