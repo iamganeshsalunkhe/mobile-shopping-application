@@ -31,7 +31,7 @@ exports.getCustomerCart = async (customerId) => {
       {
         model: Products,
         as: "product",
-        attributes: ["productId", "productName", "price"],
+        attributes: ["productId", "productName", "price","vendorId"],
       },
     ],
   });

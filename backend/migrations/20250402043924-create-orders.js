@@ -27,6 +27,24 @@ module.exports = {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
+      vendorId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Vendors",
+          key: "vendorId",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      addressId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Addresses",
+          key: "addressId",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       amountPaid: {
         type: Sequelize.STRING,
       },

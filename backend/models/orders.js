@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
+      Orders.belongsTo(models.Vendors, {
+        foreignKey: "VendorId",
+        onDelete: "CASCADE",
+      });
+      Orders.belongsTo(models.Addresses,{
+        foreignKey:'addressId',
+        onDelete:"CASCADE"
+      })
     }
   }
   Orders.init(
@@ -28,6 +36,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       productId: DataTypes.INTEGER,
       customerId: DataTypes.INTEGER,
+      vendorId:DataTypes.INTEGER,
+      addressId:DataTypes.INTEGER,
       amountPaid: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
