@@ -30,7 +30,8 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors({origin:"http://localhost:5173",credentials:true}))
+app.use(cors({origin:"http://localhost:5173",credentials:true}));
+app.use(cors({origin:"http://localhost:5174",credentials:true}));
 
 app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes]);
 app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes,customerOrderRoutes]);
