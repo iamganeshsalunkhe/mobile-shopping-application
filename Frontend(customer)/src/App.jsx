@@ -5,6 +5,7 @@ import { BrowserRouter,Routes,Route } from "react-router-dom";
 import {Toaster} from 'react-hot-toast';
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
+import SignUpPage from "./Pages/SignUpPage";
 
 // create queryClient instance
 const queryClient = new QueryClient();
