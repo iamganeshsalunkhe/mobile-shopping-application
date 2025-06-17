@@ -11,7 +11,7 @@ export default function SingUp() {
   const navigate = useNavigate();
 
   // to handle form effectively
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit ,formState:{errors}} = useForm();
 
   // handle password visibility
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -50,7 +50,7 @@ export default function SingUp() {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm w-fit ">
           <h1 className="text-center font-bold text-5xl">MSA</h1>
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Sign up
+            Create an account
           </h2>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm shadow-zinc-600 ">
@@ -74,6 +74,7 @@ export default function SingUp() {
                   border-2 bg-gray-100 focus:bg-white focus:scale-105
                   "
                   />
+                  {errors.fullName && <span className="text-red-500 font-semibold">This field is required</span>}
                 </div>
 
                 {/* input field our email address  */}
@@ -91,6 +92,7 @@ export default function SingUp() {
                     autoComplete="email"
                     className="block w-full rounded-md bg-gray-100 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 border-2 focus:bg-white focus:scale-105"
                   />
+                  {errors.email && <span className="text-red-500 font-semibold">This field is required</span>}
                 </div>
 
                 {/* input field fur contact number  */}
@@ -114,6 +116,7 @@ export default function SingUp() {
                     })}
                     className="block w-full rounded-md bg-gray-100 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 border-2 focus:bg-white focus:scale-105"
                   />
+                  {errors.contactNumber && <span className="text-red-500 font-semibold">This field is required (10 digits)</span>}
                 </div>
 
                 {/* input field for password */}
@@ -131,23 +134,26 @@ export default function SingUp() {
                     type={isPasswordVisible ? "text" : "password"}
                     {...register("password", {
                       required: true,
+                      min:5,
                       pattern: {
                         message:
-                          "Password must be minimum of 5 digit/characters",
+                          "Password must be minimum of 5 digit or characters",
                       },
                     })}
                     autoComplete="current-password"
                     minLength={5}
                     className="block w-full rounded-md bg-gray-100 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 border-2 focus:bg-white focus:scale-105"
                   />
+                  
                   {/* handle password visibility */}
                   <div
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-600"
                     onClick={handlePasswordVisibility}
-                  >
+                    >
                     {isPasswordVisible ? <FaRegEyeSlash /> : <FaRegEye />}
                   </div>
                 </div>
+                    {errors.password && <span className="text-red-500 font-semibold">This field is required</span>}
               </div>
 
               {/* submit button for submitting the form */}
@@ -161,7 +167,7 @@ export default function SingUp() {
               </div>
             </form>
 
-            <p className="mt-10 text-center text-sm text-gray-900">
+            <p className="mt-10 text-center text-md text-gray-900">
               Already have an account?
               <Link
                 to="/login"
