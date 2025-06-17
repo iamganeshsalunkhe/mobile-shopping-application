@@ -50,7 +50,7 @@ export default function SingUp() {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm w-fit ">
           <h1 className="text-center font-bold text-5xl">MSA</h1>
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Sign up
+            Create an account
           </h2>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm shadow-zinc-600 ">
@@ -161,7 +161,7 @@ export default function SingUp() {
               </div>
             </form>
 
-            <p className="mt-10 text-center text-sm text-gray-900">
+            <p className="mt-10 text-center text-md text-gray-900">
               Already have an account?
               <Link
                 to="/login"

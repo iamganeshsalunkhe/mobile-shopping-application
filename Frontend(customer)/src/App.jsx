@@ -7,6 +7,8 @@ import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import SignUpPage from "./Pages/SignUpPage";
 import DemoPage from "./Pages/DemoPage";
+import LoginPage from "./Pages/LoginPage";
+
 
 // create queryClient instance
 const queryClient = new QueryClient();
@@ -18,6 +20,7 @@ return (
       <MantineProvider>
         <Routes>
           <Route path="/" element={<SignUpPage/>} />
+          <Route path="/login" element={<LoginPage/>}/>
           <Route path="/demo" element={<DemoPage/>}/>
         </Routes>
       </MantineProvider>
