@@ -71,7 +71,10 @@ function Login() {
                   <input
                     id="email"
                     type="email"
-                    {...register("email", { required: true })}
+                    {...register("email", {
+                      required: true,
+                      pattern: "^S+@S+.S+$",
+                    })}
                     autoComplete="email"
                     className="block w-full rounded-md bg-gray-100 focus:bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 focus:scale-105"
                   />
@@ -129,7 +132,7 @@ function Login() {
             <p className="mt-10 text-center text-md text-gray-800">
               Don&apos;t have an account with us?
               <Link
-                to="/"
+                to="/signup"
                 className=" m-2 font-semibold text-indigo-500 hover:text-indigo-800"
               >
                 Register yourself
