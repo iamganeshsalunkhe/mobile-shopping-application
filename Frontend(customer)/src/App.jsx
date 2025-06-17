@@ -6,6 +6,7 @@ import {Toaster} from 'react-hot-toast';
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import SignUpPage from "./Pages/SignUpPage";
+import DemoPage from "./Pages/DemoPage";
 
 // create queryClient instance
 const queryClient = new QueryClient();
@@ -17,6 +18,7 @@ return (
       <MantineProvider>
         <Routes>
           <Route path="/" element={<SignUpPage/>} />
+          <Route path="/demo" element={<DemoPage/>}/>
         </Routes>
       </MantineProvider>
       <Toaster toastOptions={{

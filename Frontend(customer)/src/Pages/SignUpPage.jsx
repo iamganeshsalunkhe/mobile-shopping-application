@@ -1,9 +1,11 @@
+import Footer from "../Components/Footer"
 import  SignUp  from "../Components/SignUp"
 
 function SignUpPage() {
     return (
         <>
-          <SignUp/>  
+          <SignUp/> 
+          <Footer/>
         </>
     )
 }
