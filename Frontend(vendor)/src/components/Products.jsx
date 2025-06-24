@@ -11,7 +11,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 // fetch the products from the database(self-listed)
 async function fetchProducts(){
     try {
-        const res = await axios.get('http://localhost:8000/api/vendor/products',{
+        const res = await axios.get('http://localhost:8000/api/vendor/product',{
           withCredentials:true
         });
         return res.data;

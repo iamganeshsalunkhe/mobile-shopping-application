@@ -1,3 +1,4 @@
+// import required modules
 import { useState } from "react";
 import {
   Dialog,
@@ -41,11 +42,10 @@ export default function Navbar() {
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
         </div>
-        <PopoverGroup className="hidden lg:flex lg:gap-x-12 font-serif ">
+        {/* search bar */}
+        <SearchBar />
 
-          <SearchBar/>
-
-          
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-10 transition ">
           <Link
             to="/"
             className="text-xl font-bold text-gray-900 hover:scale-110 transition tracking-wide"
@@ -53,18 +53,16 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="#"
+            to="/"
             className="text-xl font-bold text-gray-900 hover:scale-110 transition tracking-wide"
           >
-            Features
+            Home
           </Link>
-          
-        </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-10 transition ">
           <div className="hover:scale-110 ">
             <Link>
               <FaShoppingCart size={35} />
             </Link>
+            <Link></Link>
           </div>
         </div>
       </nav>
