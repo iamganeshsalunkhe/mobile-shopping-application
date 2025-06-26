@@ -1,5 +1,5 @@
 // import required modules
-const {Products,ProductImage} = require('../../models');
+const {Products,ProductImages} = require('../../models');
 const { putObject } = require('../../utils/putObject');
 
 
@@ -13,32 +13,32 @@ exports.AllProducts = async(vendorId) =>{
 };
 
 // add a new product 
-exports.createProduct = async(productData)=>{
+exports.createProduct = async(data)=>{
+    console.log(data);
     //get data from req
-    const {vendorId,productName,specification,price} = productData
-    const file = productData.req.file;
+    const {vendorId,productName,specification,price,file} = data;
 
     if (!file) throw new Error("Product image is required!!")
 
     // create product 
-    const product = await Products.create({vendorId,productName,specification,price});
+    const product = await Products.create({vendorId,productName,specification,price:parseFloat(price).toFixed(2)});
 
     // generate a fileName
-    const fileName = `ProductImages/${Date.NOW()}_${file.originalname}`;
+    const fileName = `ProductImages/${Date.now()}_${file.originalname}`;
     const productURL = await putObject(file,fileName);
 
     // if productURL fails
     if (!productURL) throw new Error("Image Upload failed");
 
     //create a new entry in db using s3 link
-    await ProductImage.create({
+    await ProductImages.create({
         productId:product.productId,
-        imageUrl
+        productURL
     })
     
     return Products.findByPk(product.productId,{
         include:[{
-            model:ProductImage
+            model:ProductImages
         }]
     })
 };

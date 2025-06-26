@@ -108,19 +108,29 @@ function Products() {
 
   // function to add new product
   async function onSubmit(data) {
+    // create a formData 
+    const formData = new FormData();
+
     try {
-      const productData = {
-        productName: data.productName,
-        specification: data.specification,
-        price: data.price,
-        productImage:data.productImage
-      };
+    
+      const price = parseFloat(data.price).toFixed(2);
+
+      formData.append('productName',data.productName);
+
+      formData.append('specification',data.specification);
+
+      formData.append('price', price);
+
+      formData.append("productImage", data.productImage[0]);
+      // if (data.productImage && data.productImage.length > 0){
+      //   formData.append('productImage',data.productImage[0])
+      // };
 
       // if edit product is true (User want to delete a product)
       if (isEditProduct) {
         await axios.put(
           `http://localhost:8000/api/vendor/product/${isEditProduct.productId}`,
-          productData,
+          formData,
           { withCredentials: true }
         );
         toast.success("Product updated successfully!");
@@ -128,7 +138,7 @@ function Products() {
         // if edit product is false (User want to add a product)
         await axios.post(
           `http://localhost:8000/api/vendor/product`,
-          productData,
+          formData,
           {
             withCredentials: true,
           }
@@ -141,6 +151,7 @@ function Products() {
       closeModal();
     } catch (error) {
       console.error(error);
+      toast.error(error?.response?.data?.message);
     }
   }
 
@@ -172,8 +183,7 @@ function Products() {
           <table className="table w-full border-collapse border  border-gray-500">
             {/* head */}
             <thead>
-              <tr className="font-bold text-2xl font-sans tracking-wide border-b-2  ">
-                <th className="border-r border-gray-500 px-4 py-2">Sr no.</th>
+              <tr className="font-bold text-2xl font-sans tracking-wide border-b-2">
                 <th className="border-r border-gray-500 px-4 py-2">
                   Product Name
                 </th>
@@ -187,14 +197,12 @@ function Products() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <tr
                   key={product.productId}
                   className="bg-gray-100 hover:bg-gray-300 border-b"
                 >
-                  <th className="font-semibold text-lg text-gray-900 border-r border-gray-400 ">
-                    {index + 1}
-                  </th>
+                  
                   <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
                     {product.productName || "NA"}
                   </td>
@@ -288,7 +296,7 @@ function Products() {
                 <div>
                 <label htmlFor="price" className="font-bold  ">
                   Product Price :-
-                </label>
+                </label>  
 
                 <input
                   {...register("price",{required:"Price is required!"})}
@@ -324,13 +332,13 @@ function Products() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="mr-2 px-4 py-2 bg-gray-600 rounded text-white font-semibold cursor-pointer"
+                  className="mr-2 px-4 py-2 bg-gray-500 rounded text-white font-semibold cursor-pointer hover:scale-110 hover:bg-gray-700 transition duration-300"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded font-bold cursor-pointer"
+                  className="px-4 py-2 bg-blue-600 text-white rounded font-bold cursor-pointer hover:scale-110 hover:bg-blue-800 transition duration-300"
                 >
                   {isEditProduct ? "Update" : "Add"}
                 </button>

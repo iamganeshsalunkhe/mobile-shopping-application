@@ -24,23 +24,24 @@ exports.getAllProducts = async(req,res)=>{
 // add a new product
 exports.newProduct = async(req,res) =>{
     try {
-        // get vendorId from token
-        const  vendorId = req.user.id;
-        const file= req.file;
+      // get vendorId from token
+      const vendorId = req.user.id;
 
-        if (!file) return res.status(400).json({error:'Product Image  is required'})
+      // Parse price to ensure proper format
+      const price = parseFloat(req.body.price).toFixed(2);
 
-        // passing vendorId explicitly to the services
-        const productData = {
-            ...req,
-            vendorId,
-        };
+      // passing vendorId explicitly to the services
+      const data = {
+        ...req.body,
+        vendorId,
+        file: req.file,
+      };
 
-        // pass the data to the service layer
-        const product = await vendorProductServices.createProduct(productData);
+      // pass the data to the service layer
+      const product = await vendorProductServices.createProduct(data);
 
-        // if request successfully handled
-        res.status(201).json({message:"Product created",product});
+      // if request successfully handled
+      res.status(201).json({ message: "Product created", product });
     } catch (error) {
         // if any error occurs
         res
