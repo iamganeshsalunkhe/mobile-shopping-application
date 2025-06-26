@@ -1,25 +1,24 @@
 // import required modules
-import { useQuery ,useMutation, useQueryClient} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useState } from "react";
-import {toast} from 'react-hot-toast';
-import {useForm} from 'react-hook-form';
+import { toast } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 // fetch the products from the database(self-listed)
-async function fetchProducts(){
-    try {
-        const res = await axios.get('http://localhost:8000/api/vendor/products',{
-          withCredentials:true
-        });
-        return res.data;
-    } catch (error) {
-        console.error(error);
-    }
+async function fetchProducts() {
+  try {
+    const res = await axios.get("http://localhost:8000/api/vendor/product", {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
 }
-
 
 function Products() {
   // state for the modal
@@ -28,7 +27,19 @@ function Products() {
   const [isEditProduct, setEditProduct] = useState(null);
 
   // to handle form
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues:{
+      productName:"",
+      specification:"",
+      price:"",
+      productImage:null
+    }
+  });
 
   const queryClient = useQueryClient();
 
@@ -36,6 +47,7 @@ function Products() {
   function openCreateModal() {
     setEditProduct(null);
     setIsModalOpen(true);
+    reset();
   }
 
   // to open modal for updating an existing product
@@ -52,6 +64,7 @@ function Products() {
   // to close the modal
   function closeModal() {
     setIsModalOpen(false);
+    reset();  
   }
 
   // fetch the product
@@ -95,6 +108,7 @@ function Products() {
         productName: data.productName,
         specification: data.specification,
         price: data.price,
+        productImage:data.productImage
       };
 
       // if edit product is true (User want to delete a product)
@@ -226,38 +240,81 @@ function Products() {
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0  bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 ">
-          <div className="bg-white p-6 rounded-xl w-auto shadow-xl ">
+        <div className="fixed inset-0 min-w-screen bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 ">
+          <div className="bg-white p-6 rounded-xl md:min-w-1/2 shadow-xl ">
             <h2 className="text-xl font-bold mb-4 text-center">
               {isEditProduct ? "Update a Product" : "Add a new product"}
             </h2>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="">
+              <div >
+                {/* input tag for the productName */}
                 <label htmlFor="productName" className="font-bold ">
-                  Product Name :-{" "}
+                  Product Name :-
                 </label>
                 <input
-                  {...register("productName")}
-                  className="w-full mb-3 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
+                  {...register("productName",{required:"Product name is required"})}
+                  className="w-full mb-1 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
                 />
-                <label htmlFor="productName" className="font-bold ">
+                {errors.productName && (
+                  <span className="text-red-500 font-semibold block">
+                    {errors.productName.message}
+                  </span>
+                )}
+                </div>
+
+                {/* input tag for specification of the product */}
+                <div>
+                <label htmlFor="specification" className="font-bold ">
                   Product Specifications:-
                 </label>
 
                 <input
-                  {...register("specification")}
-                  className="w-full mb-3 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
+                  {...register("specification",{required:"Specification are required!"})}
+                  className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
                 />
-                <label htmlFor="productName" className="font-bold  ">
+                {errors.specification && (
+                  <span className="text-red-500 font-semibold">
+                    {errors.specification.message}
+                  </span>
+                )}
+                </div>
+
+                {/* input tag for  price of the product */}
+                <div>
+                <label htmlFor="price" className="font-bold  ">
                   Product Price :-
                 </label>
 
                 <input
-                  {...register("price")}
+                  {...register("price",{required:"Price is required!"})}
                   type="number"
-                  className="w-full mb-3 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
+                  className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
                 />
+                {errors.price && (
+                  <span className="text-red-500 font-semibold">
+                    {errors.price.message}
+                  </span>
+                )}
+                </div>
+
+                {/* input for product image */}
+                <div>
+                <label htmlFor="productImage" className="font-bold  ">
+                  Product image :-
+                </label>
+
+                <input
+                  {...register("productImage",{required:"Product image is required!"})}
+                  type="file"
+                  className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800 cursor-pointer"
+                />
+                {errors.productImage && (
+                  <span className="text-red-500 font-semibold">
+                   {errors.productImage.message}
+                  </span>
+                )}
               </div>
+
               <div className="flex justify-end">
                 <button
                   type="button"
@@ -281,4 +338,4 @@ function Products() {
   );
 }
 
-export default Products
+export default Products;

@@ -26,16 +26,14 @@ exports.newProduct = async(req,res) =>{
     try {
         // get vendorId from token
         const  vendorId = req.user.id;
-        const file= req.files?.file;
+        const file= req.file;
 
-        // if (!file) return res.status(400).json({error:'Image file is required'})
-        // const fileName = 'images/'+ v4();
+        if (!file) return res.status(400).json({error:'Product Image  is required'})
 
         // passing vendorId explicitly to the services
         const productData = {
-            ...req.body,
+            ...req,
             vendorId,
-          
         };
 
         // pass the data to the service layer

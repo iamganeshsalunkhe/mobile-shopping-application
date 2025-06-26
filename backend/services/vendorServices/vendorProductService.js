@@ -1,6 +1,7 @@
 // import required modules
-const {Products} = require('../../models');
+const {Products,ProductImage} = require('../../models');
 const { putObject } = require('../../utils/putObject');
+
 
 // get all products(self-listed)
 exports.AllProducts = async(vendorId) =>{
@@ -13,17 +14,33 @@ exports.AllProducts = async(vendorId) =>{
 
 // add a new product 
 exports.createProduct = async(productData)=>{
+    //get data from req
+    const {vendorId,productName,specification,price} = productData
+    const file = productData.req.file;
+
+    if (!file) throw new Error("Product image is required!!")
+
     // create product 
+    const product = await Products.create({vendorId,productName,specification,price});
 
-    const product = await Products.create(productData);
+    // generate a fileName
+    const fileName = `ProductImages/${Date.NOW()}_${file.originalname}`;
+    const productURL = await putObject(file,fileName);
 
-    // const {url,key} = await putObject(productData.file,productData.fileName)
+    // if productURL fails
+    if (!productURL) throw new Error("Image Upload failed");
 
-
-    // if (!url || !key) {
-    //     return res.status(400).json({error:"Pls upload image"})
-    // }
-    return product; 
+    //create a new entry in db using s3 link
+    await ProductImage.create({
+        productId:product.productId,
+        imageUrl
+    })
+    
+    return Products.findByPk(product.productId,{
+        include:[{
+            model:ProductImage
+        }]
+    })
 };
 
 // for updating a product
