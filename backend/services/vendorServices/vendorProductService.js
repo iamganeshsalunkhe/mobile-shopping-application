@@ -1,5 +1,6 @@
 // import required modules
 const {Products,ProductImages} = require('../../models');
+const { deleteObject } = require('../../utils/deleteObject');
 const { putObject } = require('../../utils/putObject');
 
 
@@ -33,7 +34,7 @@ exports.createProduct = async(data)=>{
     //create a new entry in db using s3 link
     await ProductImages.create({
         productId:product.productId,
-        productURL
+        imageUrl:productURL
     })
     
     return Products.findByPk(product.productId,{
@@ -58,16 +59,28 @@ exports.updateProduct = async(productId, data)=>{
 };
 
 exports.deleteProduct = async(productId) =>{
-    // delete the product with the same productId
-    const productToDelete = await Products.findByPk(productId);
+  // delete the product with the same productId
+  const productToDelete = await Products.findByPk(productId);
 
-    if (!productToDelete) {
+  // search in productImage table with same productId
+  const productImageData = await ProductImages.findOne({ where: { productId } });
+
+
+  // get URL from productImageData
+  const s3ImageURL = productImageData.imageUrl;
+  
+  // extract the key from brandLogo url
+  // split the url in two parts 1.start-to-'.com/', 2.remaining portion
+  const s3Key = s3ImageURL.split(".com/")[1];
+
+  
+  if (!productToDelete) {
       const error = new Error("Product not found!!");
       error.statusCode = 404;
       throw error;
     }
-
-    //delete the product
-    return await productToDelete.destroy();
-
+  await deleteObject(s3Key);
+    
+  //delete the product
+  return await productToDelete.destroy();
 };

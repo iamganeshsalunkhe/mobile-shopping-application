@@ -97,11 +97,13 @@ function Products() {
       );
     },
     onSuccess: () => {
+      toast.success("Product Deleted Successfully!!");
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (error) => {
       const message =
         error.response?.data?.message || "Failed to delete product!";
+        console.log(error);
       toast.error(message);
     },
   });
