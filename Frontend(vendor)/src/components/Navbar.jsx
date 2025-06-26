@@ -1,13 +1,14 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems ,Transition} from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { CgProfile } from "react-icons/cg";
+import { FaUserAlt } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
+
 
 const navigation = [
-//   { name: 'Home', href: '/', current: false },
   { name: 'My Products', to: '/products', current: false },
   { name: 'My Orders', to: '/orders', current: false },
   { name: 'My Account', to: '/account', current: false },
@@ -39,16 +40,16 @@ export default function Navbar() {
     }
 
   return (
-    <Disclosure as="nav" className="bg-gray-600">
+    <Disclosure as="nav" className="bg-emerald-800">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 select-none">
         <div className="relative flex h-20 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* Mobile menu button*/}
-            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset">
+            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-200 hover:bg-emerald-500 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset ml-20 cursor-pointer">
               <span className="absolute -inset-0.5" />
               <Bars3Icon
                 aria-hidden="true"
-                className="block size-6 group-data-open:hidden"
+                className="incline-block size-6 group-data-open:hidden"
               />
               <XMarkIcon
                 aria-hidden="true"
@@ -57,9 +58,9 @@ export default function Navbar() {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-start justify-start sm:items-stretch sm:justify-start">
-            <div className="flex shrink-0 items-start justify-start">
+            <div className="sm:flex shrink-0 sm:items-start sm:justify-start justify-between ">
               <Link to="/account">
-                <p className="text-2xl text-white font-serif ">MSA</p>
+                <p className="text-2xl text-white font-serif m-1 ">MSA</p>
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:block">
@@ -73,9 +74,9 @@ export default function Navbar() {
                       aria-current={item.current ? "page" : undefined}
                       className={classNames(
                         isActive
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                        "rounded-md px-3 py-2 text-sm font-bold"
+                          ? "bg-green-500  text-white"
+                          : "text-gray-200 hover:bg-green-500 hover:text-white",
+                        "rounded-md px-3 py-2 text-md font-bold "
                       )}
                     >
                       {item.name}
@@ -88,30 +89,40 @@ export default function Navbar() {
           <div className="absolute inset-y-0 right-0 flex items-end justify-end pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 ">
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3">
-              <div className="cursor-pointer">
-                <MenuButton className="relative flex rounded-full bg-gray-800 text-xl focus:ring-2 focus:ring-white focus:ring-offset-1 focus:ring-offset-gray-800 focus:outline-hidden">
-                  <span className="absolute -inset-1.5" />
-                  {/* <img
-                    alt=""
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className="size-12 rounded-full"
-                  /> */}
-                  <CgProfile className="bg-white rounded-full text-4xl transition" />
-                </MenuButton>
-              </div>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2 w-28 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+              <MenuButton className="group flex rounded-full transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-indigo-700 focus:ring-offset-1">
+                <div className="relative flex items-center justify-center w-12 h-12">
+                  <FaUserAlt className="text-gray-200 bg-blue-600 rounded-full p-2 text-4xl transition-transform group-hover:scale-110 " />
+                </div>
+              </MenuButton>
+
+              <Transition
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
               >
-                <MenuItem>
-                  <button
-                    onClick={handleLogout}
-                    className="block px-5 py-2 text-md text-gray-700 cursor-pointer  font-serif font-bold"
-                  >
-                    Log out
-                  </button>
-                </MenuItem>
-              </MenuItems>
+                <MenuItems className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-xl bg-white shadow-xl ring-1 ring-gray-200/80 focus:outline-none overflow-hidden">
+                  <div className="p-1">
+                    <MenuItem>
+                      {({ active }) => (
+                        <button
+                          onClick={handleLogout}
+                          className={`${
+                            active
+                              ? "bg-indigo-50 text-indigo-700"
+                              : "text-gray-900"
+                          } flex w-full items-center rounded-lg px-4 py-3 text-base font-medium transition-colors`}
+                        >
+                          <FiLogOut className="mr-3 text-lg opacity-80 " />
+                          Log out
+                        </button>
+                      )}
+                    </MenuItem>
+                  </div>
+                </MenuItems>
+              </Transition>
             </Menu>
           </div>
         </div>
@@ -120,20 +131,19 @@ export default function Navbar() {
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pt-2 pb-3">
           {navigation.map((item) => (
-            <DisclosureButton
+            <Link
               key={item.name}
-              as="a"
-              href={item.href}
+              to={item.to}
               aria-current={item.current ? "page" : undefined}
               className={classNames(
                 item.current
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                  ? "bg-emerald-500 text-white"
+                  : "text-gray-300 hover:bg-emerald-500 hover:text-white",
                 "block rounded-md px-3 py-2 text-base font-medium"
               )}
             >
               {item.name}
-            </DisclosureButton>
+            </Link>
           ))}
         </div>
       </DisclosurePanel>

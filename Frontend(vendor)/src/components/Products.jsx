@@ -47,7 +47,12 @@ function Products() {
   function openCreateModal() {
     setEditProduct(null);
     setIsModalOpen(true);
-    reset();
+    reset({
+      productName: "",
+      specification: "",
+      price: "",
+      productImage: null,
+    });
   }
 
   // to open modal for updating an existing product
