@@ -1,6 +1,8 @@
 // import required modules
-const {Products} = require('../../models');
+const {Products,ProductImages} = require('../../models');
+const { deleteObject } = require('../../utils/deleteObject');
 const { putObject } = require('../../utils/putObject');
+
 
 // get all products(self-listed)
 exports.AllProducts = async(vendorId) =>{
@@ -12,18 +14,34 @@ exports.AllProducts = async(vendorId) =>{
 };
 
 // add a new product 
-exports.createProduct = async(productData)=>{
+exports.createProduct = async(data)=>{
+    console.log(data);
+    //get data from req
+    const {vendorId,productName,specification,price,file} = data;
+
+    if (!file) throw new Error("Product image is required!!")
+
     // create product 
+    const product = await Products.create({vendorId,productName,specification,price:parseFloat(price).toFixed(2)});
 
-    const product = await Products.create(productData);
+    // generate a fileName
+    const fileName = `ProductImages/${Date.now()}_${file.originalname}`;
+    const productURL = await putObject(file,fileName);
 
-    // const {url,key} = await putObject(productData.file,productData.fileName)
+    // if productURL fails
+    if (!productURL) throw new Error("Image Upload failed");
 
-
-    // if (!url || !key) {
-    //     return res.status(400).json({error:"Pls upload image"})
-    // }
-    return product; 
+    //create a new entry in db using s3 link
+    await ProductImages.create({
+        productId:product.productId,
+        imageUrl:productURL
+    })
+    
+    return Products.findByPk(product.productId,{
+        include:[{
+            model:ProductImages
+        }]
+    })
 };
 
 // for updating a product
@@ -41,16 +59,28 @@ exports.updateProduct = async(productId, data)=>{
 };
 
 exports.deleteProduct = async(productId) =>{
-    // delete the product with the same productId
-    const productToDelete = await Products.findByPk(productId);
+  // delete the product with the same productId
+  const productToDelete = await Products.findByPk(productId);
 
-    if (!productToDelete) {
+  // search in productImage table with same productId
+  const productImageData = await ProductImages.findOne({ where: { productId } });
+
+
+  // get URL from productImageData
+  const s3ImageURL = productImageData.imageUrl;
+  
+  // extract the key from brandLogo url
+  // split the url in two parts 1.start-to-'.com/', 2.remaining portion
+  const s3Key = s3ImageURL.split(".com/")[1];
+
+  
+  if (!productToDelete) {
       const error = new Error("Product not found!!");
       error.statusCode = 404;
       throw error;
     }
-
-    //delete the product
-    return await productToDelete.destroy();
-
+  await deleteObject(s3Key);
+    
+  //delete the product
+  return await productToDelete.destroy();
 };

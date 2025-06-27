@@ -2,7 +2,7 @@
 const express = require('express');
 const vendorProductController = require("../../controllers/vendorControllers/vendorProductController");
 const authenticate = require("../../middleware/authenticate");
-
+const {upload} = require('../../middleware/multer');
 // initiate router instance 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/product',authenticate,vendorProductController.getAllProducts);
 
 // add a product
-router.post('/product',authenticate,vendorProductController.newProduct);
+router.post('/product',authenticate,upload.single("productImage"),vendorProductController.newProduct);
 
 // update a product
 router.put('/product/:productId',authenticate,vendorProductController.updateProduct);
