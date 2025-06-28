@@ -62,6 +62,7 @@ function Products() {
       productName: product.productName,
       specification: product.specification,
       price: product.price,
+      productImage:product.ProductImages?.[0]?.imageUrl
     });
     setIsModalOpen(true);
   }
@@ -124,9 +125,7 @@ function Products() {
       formData.append('price', price);
 
       formData.append("productImage", data.productImage[0]);
-      // if (data.productImage && data.productImage.length > 0){
-      //   formData.append('productImage',data.productImage[0])
-      // };
+
 
       // if edit product is true (User want to delete a product)
       if (isEditProduct) {
@@ -162,7 +161,7 @@ function Products() {
 
   // throw error if error occurs while fetching data
   if (isError) return <Error />;
-
+  
   return (
     <div className="overflow-x-auto min-h-screen bg-gray-200 border-2 select-none">
       {/* case 1: No products available */}
@@ -195,6 +194,9 @@ function Products() {
                 <th className="border-r border-gray-500 px-4 py-2">
                   Product Price
                 </th>
+                <th className="border-r border-gray-500 px-4 py-2">
+                  Product Image
+                </th>
                 <th className="border-r border-gray-500 px-4 py-2">Actions</th>
               </tr>
             </thead>
@@ -204,7 +206,6 @@ function Products() {
                   key={product.productId}
                   className="bg-gray-100 hover:bg-gray-300 border-b"
                 >
-                  
                   <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
                     {product.productName || "NA"}
                   </td>
@@ -212,12 +213,25 @@ function Products() {
                     {product.specification || "NA"}
                   </td>
                   <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
-                    {product.price || "NA"}
+                    {new Intl.NumberFormat('en-IN',{
+                      style:'currency',
+                      currency:'INR',
+                      minimumFractionDigits:0,
+                      maximumFractionDigits:0
+                    }).format(product.price) || "NA"}
+                  </td>
+                  <td className="border-r border-gray-400 overflow-hidden rounded-lg group  h-48 ">
+                    <img
+                      src={
+                        product.ProductImages?.[0]?.signedUrl}
+                      alt={product.productName}
+                      className="w-54 h-40 object-contain transition-transform duration-300 ease-in-out group-hover:scale-110 cursor-pointer"
+                    />
                   </td>
                   <td className="px-2">
                     <button
                       onClick={() => openUpdateModal(product)}
-                      className="font-bold bg-green-500 hover:bg-green-800 m-2 p-2 rounded-xl cursor-pointer  text-white hover:scale-110 transition"
+                      className="font-bold bg-green-500 hover:bg-green-700 m-2 p-2 rounded-xl cursor-pointer  text-white hover:scale-120 transition duration-200"
                     >
                       Update
                     </button>
@@ -230,7 +244,7 @@ function Products() {
                           deleteProduct.mutate(product);
                         }
                       }}
-                      className="font-bold bg-red-500 hover:bg-red-800 m-2 p-2 rounded-xl cursor-pointer text-white hover:scale-110 transition"
+                      className="font-bold bg-red-500 hover:bg-red-700 m-2 p-2 rounded-xl cursor-pointer text-white hover:scale-120 transition duration-200"
                     >
                       Delete
                     </button>
@@ -261,13 +275,15 @@ function Products() {
               {isEditProduct ? "Update a Product" : "Add a new product"}
             </h2>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div >
+              <div>
                 {/* input tag for the productName */}
                 <label htmlFor="productName" className="font-bold ">
                   Product Name :-
                 </label>
                 <input
-                  {...register("productName",{required:"Product name is required"})}
+                  {...register("productName", {
+                    required: "Product name is required",
+                  })}
                   className="w-full mb-1 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
                 />
                 {errors.productName && (
@@ -275,16 +291,18 @@ function Products() {
                     {errors.productName.message}
                   </span>
                 )}
-                </div>
+              </div>
 
-                {/* input tag for specification of the product */}
-                <div>
+              {/* input tag for specification of the product */}
+              <div>
                 <label htmlFor="specification" className="font-bold ">
                   Product Specifications:-
                 </label>
 
                 <input
-                  {...register("specification",{required:"Specification are required!"})}
+                  {...register("specification", {
+                    required: "Specification are required!",
+                  })}
                   className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
                 />
                 {errors.specification && (
@@ -292,16 +310,16 @@ function Products() {
                     {errors.specification.message}
                   </span>
                 )}
-                </div>
+              </div>
 
-                {/* input tag for  price of the product */}
-                <div>
+              {/* input tag for  price of the product */}
+              <div>
                 <label htmlFor="price" className="font-bold  ">
                   Product Price :-
-                </label>  
+                </label>
 
                 <input
-                  {...register("price",{required:"Price is required!"})}
+                  {...register("price", { required: "Price is required!" })}
                   type="number"
                   className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
                 />
@@ -310,24 +328,19 @@ function Products() {
                     {errors.price.message}
                   </span>
                 )}
-                </div>
+              </div>
 
-                {/* input for product image */}
-                <div>
+              {/* input for product image */}
+              <div>
                 <label htmlFor="productImage" className="font-bold  ">
                   Product image :-
                 </label>
 
                 <input
-                  {...register("productImage",{required:"Product image is required!"})}
+                  {...register("productImage")}
                   type="file"
                   className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800 cursor-pointer"
                 />
-                {errors.productImage && (
-                  <span className="text-red-500 font-semibold">
-                   {errors.productImage.message}
-                  </span>
-                )}
               </div>
 
               <div className="flex justify-end">
