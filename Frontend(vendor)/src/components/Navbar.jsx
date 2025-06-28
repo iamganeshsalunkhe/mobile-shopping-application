@@ -41,7 +41,7 @@ export default function Navbar() {
 
   return (
     <Disclosure as="nav" className="bg-emerald-800">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 select-none">
+      <nav className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 select-none">
         <div className="relative flex h-20 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* Mobile menu button*/}
@@ -126,7 +126,7 @@ export default function Navbar() {
             </Menu>
           </div>
         </div>
-      </div>
+      </nav>
 
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pt-2 pb-3">

@@ -25,16 +25,16 @@ exports.createProduct = async(data)=>{
     const product = await Products.create({vendorId,productName,specification,price:parseFloat(price).toFixed(2)});
 
     // generate a fileName
-    const fileName = `ProductImages/${Date.now()}_${file.originalname}`;
-    const productURL = await putObject(file,fileName);
+    const imageKey = `ProductImages/${Date.now()}_${file.originalname}`;
+    const uploadedKey = await putObject(file,imageKey);
 
     // if productURL fails
-    if (!productURL) throw new Error("Image Upload failed");
+    if (!uploadedKey) throw new Error("Image Upload failed");
 
     //create a new entry in db using s3 link
     await ProductImages.create({
         productId:product.productId,
-        imageUrl:productURL
+        imageUrl:uploadedKey
     })
     
     return Products.findByPk(product.productId,{
@@ -65,21 +65,19 @@ exports.deleteProduct = async(productId) =>{
   // search in productImage table with same productId
   const productImageData = await ProductImages.findOne({ where: { productId } });
 
+  // If image is not uploaded by user
+   if (!productImageData) return await productToDelete.destroy();
+
 
   // get URL from productImageData
-  const s3ImageURL = productImageData.imageUrl;
-  
-  // extract the key from brandLogo url
-  // split the url in two parts 1.start-to-'.com/', 2.remaining portion
-  const s3Key = s3ImageURL.split(".com/")[1];
-
+  const s3ImageKey = productImageData.imageUrl;
   
   if (!productToDelete) {
       const error = new Error("Product not found!!");
       error.statusCode = 404;
       throw error;
     }
-  await deleteObject(s3Key);
+  await deleteObject(s3ImageKey);
     
   //delete the product
   return await productToDelete.destroy();

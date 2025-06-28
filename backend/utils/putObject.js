@@ -6,11 +6,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // using aws sdk putObjectCommand we build putObject function
-exports.putObject = async(file,fileName)=>{
+exports.putObject = async(file,imageKey)=>{
     try {
         const params = {
             Bucket:process.env.AWS_BUCKET_NAME,
-            Key:fileName,
+            Key:imageKey,
             Body:file.buffer,
             ContentType:file.mimetype
         }
@@ -25,9 +25,8 @@ exports.putObject = async(file,fileName)=>{
             throw new Error("S3 Upload Failed!");
         };
 
-        let url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`
+        return imageKey;
 
-        return url;
     } catch (error) {
         console.log(error);
     }
