@@ -7,6 +7,8 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
+
 
 // fetch the products from the database(self-listed)
 async function fetchProducts() {
@@ -30,6 +32,7 @@ function Products() {
   const {
     register,
     handleSubmit,
+    isSubmitting,
     reset,
     formState: { errors },
   } = useForm({
@@ -127,14 +130,14 @@ function Products() {
       formData.append("productImage", data.productImage[0]);
 
 
-      // if edit product is true (User want to delete a product)
+      // if edit product is true (User want to update a product)
       if (isEditProduct) {
         await axios.put(
           `http://localhost:8000/api/vendor/product/${isEditProduct.productId}`,
           formData,
           { withCredentials: true }
         );
-        toast.success("Product updated successfully!");
+        toast.success("Product Updated Successfully!");
       } else {
         // if edit product is false (User want to add a product)
         await axios.post(
@@ -143,8 +146,8 @@ function Products() {
           {
             withCredentials: true,
           }
-        );
-        toast.success("Product added successfully!");
+        );  
+        toast.success("Product Added Successfully!");
       }
       queryClient.invalidateQueries({ queryKey: ["products"] });
       reset();
@@ -179,186 +182,176 @@ function Products() {
         </div>
       ) : (
         // case 2 :products available
-        // <div className="overflow-x-auto min-h-screen bg-gray-300  border-2">
         <>
-          <table className="table w-full border-collapse border  border-gray-500">
-            {/* head */}
-            <thead>
-              <tr className="font-bold text-2xl font-sans tracking-wide border-b-2">
-                <th className="border-r border-gray-500 px-4 py-2">
-                  Product Name
-                </th>
-                <th className="border-r border-gray-500 px-4 py-2">
-                  Specification
-                </th>
-                <th className="border-r border-gray-500 px-4 py-2">
-                  Product Price
-                </th>
-                <th className="border-r border-gray-500 px-4 py-2">
-                  Product Image
-                </th>
-                <th className="border-r border-gray-500 px-4 py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr
-                  key={product.productId}
-                  className="bg-gray-100 hover:bg-gray-300 border-b"
-                >
-                  <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
-                    {product.productName || "NA"}
-                  </td>
-                  <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
-                    {product.specification || "NA"}
-                  </td>
-                  <td className="font-semibold text-lg text-gray-900 border-r border-gray-400">
-                    {new Intl.NumberFormat('en-IN',{
-                      style:'currency',
-                      currency:'INR',
-                      minimumFractionDigits:0,
-                      maximumFractionDigits:0
-                    }).format(product.price) || "NA"}
-                  </td>
-                  <td className="border-r border-gray-400 overflow-hidden rounded-lg group  h-48 ">
-                    <img
-                      src={
-                        product.ProductImages?.[0]?.signedUrl}
-                      alt={product.productName}
-                      className="w-54 h-40 object-contain transition-transform duration-300 ease-in-out group-hover:scale-110 cursor-pointer"
-                    />
-                  </td>
-                  <td className="px-2">
-                    <button
-                      onClick={() => openUpdateModal(product)}
-                      className="font-bold bg-green-500 hover:bg-green-700 m-2 p-2 rounded-xl cursor-pointer  text-white hover:scale-120 transition duration-200"
-                    >
-                      Update
-                    </button>
-                    <button
-                      onClick={() => {
-                        const isConfirmed = window.confirm(
-                          `Do really want to delete ${product.productName}`
-                        );
-                        if (isConfirmed) {
-                          deleteProduct.mutate(product);
-                        }
-                      }}
-                      className="font-bold bg-red-500 hover:bg-red-700 m-2 p-2 rounded-xl cursor-pointer text-white hover:scale-120 transition duration-200"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="tooltip tooltip-bottom flex justify-center m-4 font-bold font-sans ">
-            <button
-              data-tip="Add a new product"
-              onClick={openCreateModal}
-              className="tooltip tooltip-bottom bg-blue-500 hover:bg-blue-600 transition text-white text-3xl m-8 p-2 rounded-full w-16 h-16 flex items-center justify-center cursor-pointer hover:scale-110 select-none tooltip-black-text
-          "
-              aria-label="add a new product"
-            >
-              {" "}
-              <IoIosAddCircleOutline />{" "}
-            </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-8 max-w-7xl mx-auto">
+            <div className="border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center min-h-[300px] hover:bg-gray-50 ">
+              <div className="text-center p-4">
+                <FaPlus
+                  className="mx-auto h-12 w-12 text-gray-400 cursor-pointer"
+                  onClick={openCreateModal}
+                />
+                <p className="mt-2 font-medium">Add New Product</p>
+              </div>
+            </div>
+            {products.map((product) => (
+              <div
+                key={product.productId}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 hover:-translate-y-1"
+              >
+                {/* Product Image */}
+                <div className="h-64 w-full overflow-hidden">
+                  <img
+                    src={product.ProductImages?.[0]?.signedUrl}
+                    alt={product.productName}
+                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-500 cursor-pointer"
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Product Details */}
+                <div className="p-5 space-y-3">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {product.productName}
+                  </h3>
+                  <p className="text-gray-600 text-md font-bold min-h-[40px] truncate capitalize">
+                    {product.specification}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-gray-900">
+                      {new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(product.price)}
+                    </span>
+                    <div className="">
+                      <button
+                        onClick={() => openUpdateModal(product)}
+                        className=" mr-2 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition cursor-pointer hover:scale-115 duration-300 font-semibold"
+                      >
+                        Update
+                      </button>
+                      <button
+                        onClick={() => {
+                          const isConfirmed = window.confirm(
+                            `Do you really want to delete ${product.productName}`
+                          );
+                          if (isConfirmed) {
+                            deleteProduct.mutate(product);
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition cursor-pointer hover:scale-115 duration-300 font-semibold "
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </>
       )}
 
       {isModalOpen && (
-        <div className="fixed inset-0 min-w-screen bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 ">
-          <div className="bg-white p-6 rounded-xl md:min-w-1/2 shadow-xl ">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              {isEditProduct ? "Update a Product" : "Add a new product"}
-            </h2>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div>
-                {/* input tag for the productName */}
-                <label htmlFor="productName" className="font-bold ">
-                  Product Name :-
-                </label>
-                <input
-                  {...register("productName", {
-                    required: "Product name is required",
-                  })}
-                  className="w-full mb-1 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
-                />
-                {errors.productName && (
-                  <span className="text-red-500 font-semibold block">
-                    {errors.productName.message}
-                  </span>
+        <div role="dialog">
+          <div className="fixed inset-0 min-w-screen bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 ">
+            <div className="bg-white p-6 rounded-xl md:min-w-1/2 shadow-xl ">
+              <h2 className="text-xl font-bold mb-4 text-center">
+                {isEditProduct ? "Update a Product" : "Add a new product"}
+              </h2>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div>
+                  {/* input tag for the productName */}
+                  <label htmlFor="productName" className="font-bold ">
+                    Product Name :-
+                  </label>
+                  <input
+                    {...register("productName", {
+                      required: "Product name is required",
+                    })}
+                    className="w-full mb-1 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
+                  />
+                  {errors.productName && (
+                    <span className="text-red-500 font-semibold block">
+                      {errors.productName.message}
+                    </span>
+                  )}
+                </div>
+
+                {/* input tag for specification of the product */}
+                <div>
+                  <label htmlFor="specification" className="font-bold ">
+                    Product Specifications:-
+                  </label>
+
+                  <input
+                    {...register("specification", {
+                      required: "Specification are required!",
+                    })}
+                    className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
+                  />
+                  {errors.specification && (
+                    <span className="text-red-500 font-semibold">
+                      {errors.specification.message}
+                    </span>
+                  )}
+                </div>
+
+                {/* input tag for  price of the product */}
+                <div>
+                  <label htmlFor="price" className="font-bold  ">
+                    Product Price :-
+                  </label>
+
+                  <input
+                    {...register("price", { required: "Price is required!" })}
+                    type="number"
+                    className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
+                  />
+                  {errors.price && (
+                    <span className="text-red-500 font-semibold">
+                      {errors.price.message}
+                    </span>
+                  )}
+                </div>
+
+                {/* input for product image */}
+                {isEditProduct ? (
+                  ""
+                ) : (
+                  <div>
+                    <label htmlFor="productImage" className="font-bold  ">
+                      Product image :-
+                    </label>
+
+                    <input
+                      {...register("productImage")}
+                      type="file"
+                      className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800 cursor-pointer"
+                    />
+                  </div>
                 )}
-              </div>
 
-              {/* input tag for specification of the product */}
-              <div>
-                <label htmlFor="specification" className="font-bold ">
-                  Product Specifications:-
-                </label>
-
-                <input
-                  {...register("specification", {
-                    required: "Specification are required!",
-                  })}
-                  className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
-                />
-                {errors.specification && (
-                  <span className="text-red-500 font-semibold">
-                    {errors.specification.message}
-                  </span>
-                )}
-              </div>
-
-              {/* input tag for  price of the product */}
-              <div>
-                <label htmlFor="price" className="font-bold  ">
-                  Product Price :-
-                </label>
-
-                <input
-                  {...register("price", { required: "Price is required!" })}
-                  type="number"
-                  className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
-                />
-                {errors.price && (
-                  <span className="text-red-500 font-semibold">
-                    {errors.price.message}
-                  </span>
-                )}
-              </div>
-
-              {/* input for product image */}
-              <div>
-                <label htmlFor="productImage" className="font-bold  ">
-                  Product image :-
-                </label>
-
-                <input
-                  {...register("productImage")}
-                  type="file"
-                  className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800 cursor-pointer"
-                />
-              </div>
-
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="mr-2 px-4 py-2 bg-gray-500 rounded text-white font-semibold cursor-pointer hover:scale-110 hover:bg-gray-700 transition duration-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded font-bold cursor-pointer hover:scale-110 hover:bg-blue-800 transition duration-300"
-                >
-                  {isEditProduct ? "Update" : "Add"}
-                </button>
-              </div>
-            </form>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="mr-2 px-4 py-2 bg-gray-500 rounded text-white font-semibold cursor-pointer hover:scale-110 hover:bg-gray-700 transition duration-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-4 py-2 bg-blue-600 text-white rounded font-bold cursor-pointer hover:scale-110 hover:bg-blue-800 transition duration-300"
+                  >
+                    {isEditProduct ? "Update" : "Add"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
