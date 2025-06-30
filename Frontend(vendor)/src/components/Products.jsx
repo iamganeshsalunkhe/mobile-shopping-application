@@ -6,7 +6,6 @@ import Error from "./Error";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 
 
@@ -32,9 +31,8 @@ function Products() {
   const {
     register,
     handleSubmit,
-    isSubmitting,
     reset,
-    formState: { errors },
+    formState: { errors ,isSubmitting},
   } = useForm({
     defaultValues:{
       productName:"",
@@ -65,7 +63,7 @@ function Products() {
       productName: product.productName,
       specification: product.specification,
       price: product.price,
-      productImage:product.ProductImages?.[0]?.imageUrl
+      productImage:null
     });
     setIsModalOpen(true);
   }
@@ -125,17 +123,24 @@ function Products() {
 
       formData.append('specification',data.specification);
 
-      formData.append('price', price);
-
+      formData.append('price', price.toString());
+      
+      if(data.productImage && data.productImage[0]){
       formData.append("productImage", data.productImage[0]);
-
+      }
 
       // if edit product is true (User want to update a product)
       if (isEditProduct) {
         await axios.put(
           `http://localhost:8000/api/vendor/product/${isEditProduct.productId}`,
           formData,
-          { withCredentials: true }
+          { 
+            headers:
+            {
+            'Content-Type':'application/json'
+            },
+          withCredentials: true
+          } 
         );
         toast.success("Product Updated Successfully!");
       } else {
@@ -271,6 +276,7 @@ function Products() {
                     {...register("productName", {
                       required: "Product name is required",
                     })}
+                    id="productName"
                     className="w-full mb-1 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
                   />
                   {errors.productName && (
@@ -290,6 +296,7 @@ function Products() {
                     {...register("specification", {
                       required: "Specification are required!",
                     })}
+                    id="specification"
                     className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
                   />
                   {errors.specification && (
@@ -308,6 +315,7 @@ function Products() {
                   <input
                     {...register("price", { required: "Price is required!" })}
                     type="number"
+                    id="price"
                     className="w-full mb-1 p-2 border rounded  outline-sky-600 focus:outline-2 font-semibold "
                   />
                   {errors.price && (
@@ -329,6 +337,7 @@ function Products() {
                     <input
                       {...register("productImage")}
                       type="file"
+                      id="productImage"
                       className="block w-full rounded-md bg-white px-3 py-2 text-gray-900 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-800 cursor-pointer"
                     />
                   </div>
