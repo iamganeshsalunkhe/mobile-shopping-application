@@ -1,86 +1,120 @@
 // import required modules
-const {Products,ProductImages} = require('../../models');
-const { deleteObject } = require('../../utils/deleteObject');
-const { putObject } = require('../../utils/putObject');
-
+const { GetObjectCommand } = require("@aws-sdk/client-s3");
+const { Products, ProductImages } = require("../../models");
+const { deleteObject } = require("../../utils/deleteObject");
+const { putObject } = require("../../utils/putObject");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { s3Client } = require("../../utils/s3Credentials");
 
 // get all products(self-listed)
-exports.AllProducts = async(vendorId) =>{
-    // find the all products with authorized vendorId
-    const AllProducts = await Products.findAll({where:{vendorId}});
-    
-    // return the object
-    return AllProducts;
+exports.AllProducts = async (vendorId) => {
+  // find the all products with authorized vendorId
+  const products = await Products.findAll({
+    where: { vendorId },
+    include: [ProductImages],
+  });
+
+  // if no image is added
+  if (!products.length) return [];
+
+  // add signed URL
+  await Promise.all(
+    products.map(async (product) => {
+      product.ProductImages = await Promise.all(
+        product.ProductImages.map(async (image) => {
+          const command = new GetObjectCommand({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: image.imageUrl,
+          });
+
+          const signedUrl = await getSignedUrl(s3Client, command, {
+            expiresIn: 3600,
+          });
+          
+         image.dataValues.signedUrl = signedUrl;
+        })
+      );
+    })
+  );
+
+  // return the object
+  return products;
 };
 
-// add a new product 
-exports.createProduct = async(data)=>{
-    console.log(data);
-    //get data from req
-    const {vendorId,productName,specification,price,file} = data;
+// add a new product
+exports.createProduct = async (data) => {
+  console.log(data);
+  //get data from req
+  const { vendorId, productName, specification, price, file } = data;
 
-    if (!file) throw new Error("Product image is required!!")
+  if (!file) throw new Error("Product image is required!!");
 
-    // create product 
-    const product = await Products.create({vendorId,productName,specification,price:parseFloat(price).toFixed(2)});
+  // create product
+  const product = await Products.create({
+    vendorId,
+    productName,
+    specification,
+    price: parseFloat(price).toFixed(2),
+  });
 
-    // generate a fileName
-    const fileName = `ProductImages/${Date.now()}_${file.originalname}`;
-    const productURL = await putObject(file,fileName);
+  // generate a fileName
+  const imageKey = `ProductImages/${Date.now()}_${file.originalname}`;
+  const uploadedKey = await putObject(file, imageKey);
 
-    // if productURL fails
-    if (!productURL) throw new Error("Image Upload failed");
+  // if productURL fails
+  if (!uploadedKey) throw new Error("Image Upload failed");
 
-    //create a new entry in db using s3 link
-    await ProductImages.create({
-        productId:product.productId,
-        imageUrl:productURL
-    })
-    
-    return Products.findByPk(product.productId,{
-        include:[{
-            model:ProductImages
-        }]
-    })
+  //create a new entry in db using s3 link
+  await ProductImages.create({
+    productId: product.productId,
+    imageUrl: uploadedKey,
+  });
+
+  return Products.findByPk(product.productId, {
+    include: [
+      {
+        model: ProductImages,
+      },
+    ],
+  });
 };
 
 // for updating a product
-exports.updateProduct = async(productId, data)=>{
-    // get product by productId
-    const product = await Products.findByPk(productId);
+exports.updateProduct = async (productId, data) => {
+  // get product by productId
+  const product = await Products.findByPk(productId);
 
-    if (!product){
-        const error = new Error('Product not found!!')
-        error.statusCode = 404;
-        throw error;
-    }
+  if (!product) {
+    const error = new Error("Product not found!!");
+    error.statusCode = 404;
+    throw error;
+  }
 
-    return await product.update(data);
+  return await product.update(data);
 };
 
-exports.deleteProduct = async(productId) =>{
+exports.deleteProduct = async (productId) => {
   // delete the product with the same productId
   const productToDelete = await Products.findByPk(productId);
 
   // search in productImage table with same productId
-  const productImageData = await ProductImages.findOne({ where: { productId } });
+  const productImageData = await ProductImages.findOne({
+    where: { productId },
+  });
 
+  // If image is not uploaded by user
+  if (!productImageData) return await productToDelete.destroy();
 
   // get URL from productImageData
-  const s3ImageURL = productImageData.imageUrl;
-  
-  // extract the key from brandLogo url
-  // split the url in two parts 1.start-to-'.com/', 2.remaining portion
-  const s3Key = s3ImageURL.split(".com/")[1];
+  const s3ImageKey = productImageData.imageUrl;
 
-  
   if (!productToDelete) {
-      const error = new Error("Product not found!!");
-      error.statusCode = 404;
-      throw error;
-    }
-  await deleteObject(s3Key);
-    
+    const error = new Error("Product not found!!");
+    error.statusCode = 404;
+    throw error;
+  }
+  await deleteObject(s3ImageKey);
+
   //delete the product
   return await productToDelete.destroy();
 };
