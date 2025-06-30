@@ -111,7 +111,7 @@ function Account() {
     if (isError) return <Error/>
 
     return (
-      <div className=" relative min-h-screen min-w-screen bg-gray-100">
+      <div className=" relative min-h-screen min-w-screen bg-gray-100 select-none">
         <div
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{
@@ -146,6 +146,32 @@ function Account() {
                 className="w-full border  rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950 focus-visible:bg-gray-600 font-semibold"
               />
             </div>
+          <div className='flex items-center gap-6 '>
+            <div >
+              <label className="block text-xl font-medium mb-2"> Brand Logo :</label>
+
+              {data.brandLogo ? (<img
+              src={data.brandLogo}
+              width={200} 
+              height={200} 
+              className='rounded-lg border border-gray-300'
+              /> ):(
+                <div className='w-[200px] h-[200px] rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50'>
+                  <span className='text-gray-500'>No Logo</span>
+                </div>
+              )}
+
+            </div>
+            <div className='flex  gap-5 '>
+              <button className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition duration-300 hover:scale-115 cursor-pointer'>
+                  Update logo
+              </button>
+              <button
+              className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-300 hover:scale-115 cursor-pointer'
+              >Delete logo</button>
+
+            </div>
+          </div>
 
             {/* <div>
               <label className="block text-xl font-medium">Brand Logo :</label>
