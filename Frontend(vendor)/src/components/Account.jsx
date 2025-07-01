@@ -164,23 +164,15 @@ function Account() {
             </div>
             <div className='flex  gap-5 '>
               <button className='px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition duration-300 hover:scale-115 cursor-pointer'>
-                  Update logo
+                  {data.brandLogo ?"Update logo":"Add logo"}
               </button>
-              <button
-              className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-300 hover:scale-115 cursor-pointer'
+              {data.brandLogo && (<button
+              className='px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-300 hover:scale-115 cursor-pointer '
               >Delete logo</button>
-
+              )}
             </div>
           </div>
 
-            {/* <div>
-              <label className="block text-xl font-medium">Brand Logo :</label>
-              <input
-                type="file"
-                {...register("brandLogo")}
-                className="w-full border rounded px-3 py-2 mt-1 focus-visible:outline-3 focus-visible:outline-gray-950"
-              />
-            </div> */}
             <div className="text-center ">
               <button
                 type="submit"
