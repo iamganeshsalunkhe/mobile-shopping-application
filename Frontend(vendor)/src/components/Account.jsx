@@ -199,7 +199,10 @@ function Account() {
                 {data.brandLogo ? "Update logo" : "Add logo"}
               </button>
               {data.brandLogo && (
-                <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-300 hover:scale-115 cursor-pointer ">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-300 hover:scale-115 cursor-pointer "
+                >
                   Delete logo
                 </button>
               )}

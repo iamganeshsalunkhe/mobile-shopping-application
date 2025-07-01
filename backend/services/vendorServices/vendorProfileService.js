@@ -1,6 +1,7 @@
 // import required files
 const {Vendors}= require('../../models');
 const { deleteObject } = require('../../utils/deleteObject');
+const { getSignedS3URL } = require('../../utils/getSignedS3URL');
 const {hashPassword} = require('../../utils/Password');
 
 // get specific vendor details
@@ -9,8 +10,15 @@ exports.getVendorDetails = async(vendorId) =>{
     // find the vendor using vendorId
     const vendorDetails = await Vendors.findByPk(vendorId);
     // as we allowing vendor to fetch details only if while logged in hence no need handle "vendor not found scenario"
+
+    // extract the key from vendorDetails to get signedURL
+    const imageKey = vendorDetails.brandLogo;
+    const signedS3URL = await getSignedS3URL(imageKey)
     
-    return vendorDetails;
+    //convert model instance to plain object
+    const plainVendor = vendorDetails.get({plain:true});
+
+    return{...plainVendor, brandLogo:signedS3URL};
 };
 
 // update the vendor details 
@@ -34,12 +42,8 @@ exports.deleteAVendorAccount = async(vendorId) =>{
     const vendorToBeDeleted = await Vendors.findByPk(vendorId);
 
     //get s3 url from vendorToBeDeleted
-    const brandLogoUrl = vendorToBeDeleted.brandLogo;
+    const s3Key = vendorToBeDeleted.brandLogo;
     
-    // extract the key from brandLogo url 
-    // split the url in two parts 1.start-to-'.com/', 2.remaining portion 
-    const s3Key = brandLogoUrl.split('.com/')[1];
-
     // delete from s3
     await deleteObject(s3Key);
 
