@@ -1,6 +1,7 @@
 // import required modules
 const { Products, ProductImages } = require("../../models");
 const { deleteObject } = require("../../utils/deleteObject");
+const { getSignedS3URL } = require("../../utils/getSignedS3URL");
 const { putObject } = require("../../utils/putObject");
 
 
