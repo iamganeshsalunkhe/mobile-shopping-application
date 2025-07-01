@@ -1,10 +1,8 @@
 // import required modules
-const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { Products, ProductImages } = require("../../models");
 const { deleteObject } = require("../../utils/deleteObject");
 const { putObject } = require("../../utils/putObject");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { s3Client } = require("../../utils/s3Credentials");
+
 
 // get all products(self-listed)
 exports.AllProducts = async (vendorId) => {
@@ -22,16 +20,9 @@ exports.AllProducts = async (vendorId) => {
     products.map(async (product) => {
       product.ProductImages = await Promise.all(
         product.ProductImages.map(async (image) => {
-          const command = new GetObjectCommand({
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: image.imageUrl,
-          });
-
-          const signedUrl = await getSignedUrl(s3Client, command, {
-            expiresIn: 3600,
-          });
-          
-         image.dataValues.signedUrl = signedUrl;
+          // get signedURL from utils function
+          const signedUrl = await getSignedS3URL(image.imageUrl);
+          image.dataValues.signedUrl = signedUrl;
         })
       );
     })
