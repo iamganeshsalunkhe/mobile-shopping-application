@@ -16,10 +16,27 @@ exports.addNewBrandLogo = async (req, res) => {
     );
 
     // if request handled successfully
-    req.status(200).json({ message: "Image uploaded successfully!" });
+    res.status(200).json({ message: "Image uploaded successfully!" });
   } catch (error) {
     // if any error occurs
     console.error(error);
-    req.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
+
+exports.deleteLogo = async (req,res)=>{
+  try {
+    // get the vendorId from the jwt token
+    const vendorId = req.user.id;
+    
+    // pass it to the service layer
+    const deleteLogo =await vendorBrandLogoServices.deleteBrandLogo(vendorId);
+
+    // if request handled successfully
+    res.status(200).json({message:"brand logo deleted successfully!"})
+  } catch (error) {
+    //if any error occurs
+    console.log(error);
+    res.status(500).json({  message:error.message})
+  }
+}

@@ -13,8 +13,12 @@ exports.getVendorDetails = async(vendorId) =>{
 
     // extract the key from vendorDetails to get signedURL
     const imageKey = vendorDetails.brandLogo;
-    const signedS3URL = await getSignedS3URL(imageKey)
+    // if imageKey/brandLogo is not present
+    if (!imageKey) return vendorDetails;
     
+    // get signedS3URL from our utils function
+    const signedS3URL = await getSignedS3URL(imageKey)
+  
     //convert model instance to plain object
     const plainVendor = vendorDetails.get({plain:true});
 

@@ -16,7 +16,8 @@ async function fetchVendorData() {
     });
     return res.data;
   } catch (error) {
-    console.error(error.message);
+    console.log(error)
+    console.error(error.response?.data?.message);
   }
 }
 
@@ -115,7 +116,7 @@ function Account() {
   async function handleFileChange(e) {
     const file = e.target.files[0];
     if (!file) return;
-
+    // create new formData
     const formData = new FormData();
 
     formData.append("brandLogo", file);
@@ -124,11 +125,28 @@ function Account() {
       //
       await axios.post("http://localhost:8000/api/vendor/brandLogo", formData, {
         withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data", // This is crucial
+        },
       });
-      toast.success("Brand-Logo Added Successfully!");
       queryClient.invalidateQueries(["vendorData"]);
+      toast.success("Brand-Logo Added Successfully!");
     } catch (error) {
       // if any error occurs
+      console.error("Upload error:", error.response?.data || error.message);
+
+    }
+  }
+
+  // function for deleting brandLogo
+  async function handleDeleteLogo() {
+    try {
+      await axios.delete("http://localhost:8000/api/vendor/brandLogo",
+        { withCredentials: true });
+
+      toast.success("Brand-Logo Deleted Successfully!");
+      queryClient.invalidateQueries(["vendorData"]);
+    } catch (error) {
       console.error(error);
     }
   }
@@ -182,6 +200,7 @@ function Account() {
                   src={data.brandLogo}
                   width={200}
                   height={200}
+                  loading="lazy"
                   className="rounded-lg border border-gray-300"
                 />
               ) : (
@@ -201,6 +220,7 @@ function Account() {
               {data.brandLogo && (
                 <button
                   type="button"
+                  onClick={handleDeleteLogo}
                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition duration-300 hover:scale-115 cursor-pointer "
                 >
                   Delete logo

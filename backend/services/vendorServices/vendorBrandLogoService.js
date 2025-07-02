@@ -1,5 +1,6 @@
 // import required modules
 const { Vendors } = require("../../models");
+const { deleteObject } = require("../../utils/deleteObject");
 const { putObject } = require("../../utils/putObject");
 
 // adding a brand logo
@@ -28,3 +29,22 @@ exports.AddBrandLogo = async (vendorId, file) => {
 
   return vendor;
 };
+
+
+// for deleting the brandLogo
+exports.deleteBrandLogo = async (vendorId)=>{
+  // get the vendorId from the controller layer
+
+  const vendor = await Vendors.findByPk(vendorId);
+  // get the s3key from the vendor details
+  const s3Key = vendor.brandLogo;
+
+  
+  // delete the logo
+  await deleteObject(s3Key);
+  
+  //clear entry of DB
+  vendor.brandLogo = null;
+  
+  return await vendor.save();
+}

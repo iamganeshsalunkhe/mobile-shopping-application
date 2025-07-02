@@ -15,5 +15,11 @@ router.post(
   vendorBrandLogoControllers.addNewBrandLogo
 );
 
+router.delete(
+  "/brandLogo",
+  authenticate,
+  vendorBrandLogoControllers.deleteLogo
+);
+
 // exports the router
 module.exports = router;
