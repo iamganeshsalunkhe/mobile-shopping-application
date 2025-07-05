@@ -155,7 +155,7 @@ function Account() {
   if (isError) return <Error />;
 
   return (
-    <div className=" relative min-h-screen min-w-screen bg-gray-100 select-none">
+    <div className=" relative min-h-screen min-w-screen bg-gray-100 select-none pt-20">
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{
