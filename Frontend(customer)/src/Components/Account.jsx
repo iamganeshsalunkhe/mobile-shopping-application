@@ -5,6 +5,8 @@ import { FiEdit, FiSave, FiX } from "react-icons/fi";
 import { useEffect } from "react";
 import axios from "axios";
 import toast from 'react-hot-toast';
+import Loader from "./Loader";
+import Error from "./Error";
 
 // function to fetch customer data
 async function fetchCustomerData(){
@@ -88,7 +90,8 @@ export default function Account() {
     updateAccount.mutate(formData);
   };
 
-  if (isLoading) return <div className="text-center py-8">Loading...</div>;
+  if (isLoading) return <Loader/>;
+  if (isError) return <Error/>;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 select-none">
