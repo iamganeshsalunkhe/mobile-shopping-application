@@ -4,40 +4,67 @@ import { useForm } from "react-hook-form";
 import { FiEdit, FiSave, FiX } from "react-icons/fi";
 import { useEffect } from "react";
 import axios from "axios";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import Loader from "./Loader";
 import Error from "./Error";
+import { useNavigate } from "react-router-dom";
 
 // function to fetch customer data
-async function fetchCustomerData(){
-    try {
-        // get the data of the customer 
-        const res = await axios.get('http://localhost:8000/api/customer/account',{
-            withCredentials:true
-        });
-        return res.data;
-    } catch (error) {   
-        // if any error occurs
-        console.error(error);        
-    }
-};
+async function fetchCustomerData() {
+  try {
+    // get the data of the customer
+    const res = await axios.get("http://localhost:8000/api/customer/account", {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (error) {
+    // if any error occurs
+    console.error(error);
+  }
+}
 
 //function for updating an account info
-async function updateCustomerData(formData){
-    try {
-        const res = await axios.put("http://localhost:8000/api/customer/account",formData,{
-            withCredentials:true
-        });
-        return res.data;
-    } catch (error) {
-        // if any error occurs
-        console.error(error);
-    }
+async function updateCustomerData(formData) {
+  try {
+    const res = await axios.put(
+      "http://localhost:8000/api/customer/account",
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (error) {
+    // if any error occurs
+    console.error(error);
+  }
+}
+
+// function for deleting the customer Account
+async function deleteCustomerAccount(customerId) {
+  try {
+    const res = await axios.delete(
+      "http://localhost:8000/api/customer/account",
+      {
+        data: { customerId },
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (error) {
+    // if any error occurs
+    console.error(error);
+  }
 }
 
 export default function Account() {
-    const queryClient = useQueryClient();
-  const { data: customer, isLoading,isError } = useQuery({
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const {
+    data: customer,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["customerData"],
     queryFn: fetchCustomerData,
   });
@@ -51,7 +78,7 @@ export default function Account() {
   } = useForm({
     defaultValues: customer || {},
   });
-
+  // state for monitor user is editing or not
   const [isEditing, setIsEditing] = useState(false);
 
   // Initialize form with customer data when loaded or changes
@@ -61,37 +88,54 @@ export default function Account() {
     }
   }, [customer, reset]);
 
-
   // update the account details
   const updateAccount = useMutation({
-    mutationFn:updateCustomerData,
-    onSuccess:()=>{
-        toast.success("Account Updated Successfully!!");
-        setIsEditing(false);
-        queryClient.invalidateQueries(['customerData']);
+    mutationFn: updateCustomerData,
+    onSuccess: () => {
+      toast.success("Account Updated Successfully!!");
+      setIsEditing(false);
+      queryClient.invalidateQueries(["customerData"]);
     },
-    onError:(error)=>{
-        console.log(error)
-        toast.error(error.response?.data?.message);
+    onError: (error) => {
+      console.log(error);
+      toast.error(error.response?.data?.message);
     }
-  })
+  });
 
+  // for deleting the customer account
+  const deleteAccount = useMutation({
+    mutationFn: deleteCustomerAccount,
+    onSuccess: () => {
+      toast.success("Account Deleted Successfully!!");
+      navigate("/login");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(error.response?.data?.message);
+    },
+  });
 
- function handleEdit()  {
+  // function for setting edit value to true
+  function handleEdit() {
     setIsEditing(true);
-  };
+  }
 
+  // function for if user don't want to edit info
   function handleCancel() {
     reset(customer);
     setIsEditing(false);
-  };
+  }
 
-  async function onSubmit(formData){
+  // function for submitting the form
+  async function onSubmit(formData) {
     updateAccount.mutate(formData);
-  };
+  }
 
-  if (isLoading) return <Loader/>;
-  if (isError) return <Error/>;
+  // if data is still loading
+  if (isLoading) return <Loader />;
+
+  // if any error occurs
+  if (isError) return <Error />;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 select-none">
@@ -154,16 +198,16 @@ export default function Account() {
                         {...register("fullName", {
                           required: "Full name is required",
                         })}
-                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500 "
                       />
                       {errors.fullName && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p className="text-red-500 text-sm mt-1 ">
                           {errors.fullName.message}
                         </p>
                       )}
                     </div>
                   ) : (
-                    <p className="col-span-2 text-gray-800">
+                    <p className="col-span-2 text-gray-800 font-semibold">
                       {customer?.fullName}
                     </p>
                   )}
@@ -195,7 +239,7 @@ export default function Account() {
                       )}
                     </div>
                   ) : (
-                    <p className="col-span-2 text-gray-800">
+                    <p className="col-span-2 text-gray-800 font-semibold">
                       {customer?.email}
                     </p>
                   )}
@@ -225,7 +269,7 @@ export default function Account() {
                       )}
                     </div>
                   ) : (
-                    <p className="col-span-2 text-gray-800">
+                    <p className="col-span-2 text-gray-800 font-semibold">
                       {customer?.contactNumber}
                     </p>
                   )}
@@ -240,10 +284,20 @@ export default function Account() {
               Account Actions
             </h2>
             <div className="flex flex-wrap gap-4">
-              <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition">
+              <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition cursor-pointer">
                 Change Password
               </button>
-              <button className="px-4 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition">
+              <button
+                onClick={() => {
+                  const isConfirmed = window.confirm(
+                    `Do you really want to delete your account? This action can't be reverted back!`
+                  );
+                  if (isConfirmed) {
+                    deleteAccount.mutate(customer.customerId);
+                  }
+                }}
+                className="px-4 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition cursor-pointer"
+              >
                 Delete Account
               </button>
             </div>
