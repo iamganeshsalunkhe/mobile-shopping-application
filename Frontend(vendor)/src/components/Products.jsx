@@ -171,7 +171,7 @@ function Products() {
   if (isError) return <Error />;
   
   return (
-    <div className="overflow-x-auto min-h-screen bg-gray-200  select-none">
+    <div className="overflow-x-auto min-h-screen bg-gray-200  select-none pt-20">
       {/* case 1: No products available */}
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-screen">
@@ -188,11 +188,11 @@ function Products() {
       ) : (
         // case 2 :products available
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 py-8 max-w-7xl mx-auto">
             <div className="border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center min-h-[300px] hover:bg-gray-50 ">
               <div className="text-center p-4">
                 <FaPlus
-                  className="mx-auto h-12 w-12 text-gray-400 cursor-pointer"
+                  className="mx-auto h-12 w-12 text-gray-400 cursor-pointer hover:scale-110 transition "
                   onClick={openCreateModal}
                 />
                 <p className="mt-2 font-medium">Add New Product</p>

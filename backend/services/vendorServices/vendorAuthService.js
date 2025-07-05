@@ -8,10 +8,9 @@ const  {putObject} =require('../../utils/putObject');
 
 exports.registerVendor = async(req)=>{
 
+  // get data from the req body
     const {vendorName,email,password} = req.body;
     const file = req.file;
-
-    if (!file) throw new Error ("Brand-Logo required !");
 
 
     // checks that if any vendor exists with same email
@@ -27,23 +26,29 @@ exports.registerVendor = async(req)=>{
     // if not then hash the password
     const hashedPassword = await hashPassword(password);
 
-    // upload brand logo to s3
+    // create a new entry 
+    const newVendor =  {
+      email,
+      vendorName,
+      password: hashedPassword
+    };
+    //handle optional brandLogo upload  to s3
+    if (file){
     const fileName = `brand-logo/${Date.now()}_${file.originalname}`;
     const logoUrl = await putObject(file,fileName);
-    
+
     // logoUrl fails
     if (!logoUrl){
         throw new Error("Image Upload Failed!")
-    }
+    };
 
-    // create a new entry in database with s3 url
-    const newVendor =  await Vendors.create({
-      email,
-      vendorName,
-      password: hashedPassword,
-      brandLogo:logoUrl,
-    });
-    return newVendor;
+    newVendor.brandLogo = logoUrl; 
+  }; 
+
+    // create vendor in db
+    const vendor = await Vendors.create(newVendor);
+
+    return vendor;
   };
 
 // logging in a vendor

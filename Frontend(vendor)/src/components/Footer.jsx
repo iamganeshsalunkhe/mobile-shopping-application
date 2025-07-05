@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Footer() {
     return (
-      <footer className="footer footer-horizontal footer-center bg-gray-200 text-base-content rounded p-10 select-none">
+      <footer className="footer footer-horizontal footer-center bg-gray-100 text-base-content rounded p-10 select-none">
         <nav className="grid grid-flow-col gap-4">
           <Link to="/demo" className="link link-hover">
             About us
