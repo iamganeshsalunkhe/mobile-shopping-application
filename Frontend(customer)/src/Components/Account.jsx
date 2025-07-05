@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { FiEdit, FiSave, FiX } from "react-icons/fi";
 import { useEffect } from "react";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 // function to fetch customer data
 async function fetchCustomerData(){
@@ -19,10 +20,22 @@ async function fetchCustomerData(){
     }
 };
 
-
+//function for updating an account info
+async function updateCustomerData(formData){
+    try {
+        const res = await axios.put("http://localhost:8000/api/customer/account",formData,{
+            withCredentials:true
+        });
+        return res.data;
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+    }
+}
 
 export default function Account() {
-  const { data: customer, isLoading } = useQuery({
+    const queryClient = useQueryClient();
+  const { data: customer, isLoading,isError } = useQuery({
     queryKey: ["customerData"],
     queryFn: fetchCustomerData,
   });
@@ -46,6 +59,22 @@ export default function Account() {
     }
   }, [customer, reset]);
 
+
+  // update the account details
+  const updateAccount = useMutation({
+    mutationFn:updateCustomerData,
+    onSuccess:()=>{
+        toast.success("Account Updated Successfully!!");
+        setIsEditing(false);
+        queryClient.invalidateQueries(['customerData']);
+    },
+    onError:(error)=>{
+        console.log(error)
+        toast.error(error.response?.data?.message);
+    }
+  })
+
+
  function handleEdit()  {
     setIsEditing(true);
   };
@@ -55,6 +84,9 @@ export default function Account() {
     setIsEditing(false);
   };
 
+  async function onSubmit(formData){
+    updateAccount.mutate(formData);
+  };
 
   if (isLoading) return <div className="text-center py-8">Loading...</div>;
 
