@@ -1,0 +1,158 @@
+import { useState } from "react";
+import {
+  FiSearch,
+  FiHome,
+  FiShoppingCart,
+  FiUser,
+  FiMenu,
+  FiX,
+} from "react-icons/fi";
+import { Link } from "react-router-dom";
+
+const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  function handleSearch(e){
+    e.preventDefault();
+    console.log("Searching for:", searchQuery);
+
+  };
+
+  const navItems = [
+    { name: "Home", path: "/", icon: <FiHome className="text-lg" /> },
+    { name: "Products", path: "/products" },
+    { name: "About", path: "/about" },
+  ];
+
+  const dropdownItems = [
+    { name: "Account", path: "/account" },
+    { name: "Orders", path: "/orders" },
+    { name: "Addresses", path: "/address" },
+    { name: "Logout", path: "/logout" },
+  ];
+
+  return (
+    <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Mobile menu button */}
+          <div className="flex items-center sm:hidden">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+            >
+              {isMobileMenuOpen ? (
+                <FiX className="h-6 w-6" />
+              ) : (
+                <FiMenu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
+
+          {/* Logo and desktop nav */}
+          <div className="flex items-center ">
+            <Link
+              to="/"
+              className="flex-shrink-0 flex items-center select-none"
+            >
+              <span className="text-xl font-bold text-indigo-600">MSA</span>
+            </Link>
+
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8 select-none">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className=" md:flex flex-1 max-w-md mx-4 select-none">
+            <form onSubmit={handleSearch} className="w-full">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiSearch className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mt-2"
+                />
+              </div>
+            </form>
+          </div>
+
+          {/* Right side icons */}
+          <div className="flex items-center gap-4">
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative"
+            >
+              <FiShoppingCart className="h-6 w-6" />
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                3
+              </span>
+            </Link>
+
+            {/* Profile dropdown */}
+            <div className="ml-3 relative">
+              <div>
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
+                    <FiUser className="h-5 w-5" />
+                  </div>
+                </button>
+              </div>
+
+              {isDropdownOpen && (
+                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none cursor-pointer">
+                  {dropdownItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.path}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {isMobileMenuOpen && (
+        <div className="sm:hidden">
+          <div className="pt-2 pb-3 space-y-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;
