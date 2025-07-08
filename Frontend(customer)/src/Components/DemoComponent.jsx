@@ -1,20 +1,20 @@
 import { Container, Title, Text, Group, Button } from "@mantine/core";
-import { Link } from "react-router-dom";
-// import { IconHome, IconRocket, IconInfoCircle } from "@mantine/core";
-import { FaHome, FaRocket, FaInfoCircle } from "react-icons/fa";
+import { Link, useParams } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
 
 import classes from "./DemoComponent.module.css";
 
-const DemoComponent = () => {
+function DemoComponent(){
+  const {pageName} = useParams();
   return (
-    <div className={classes.root}>
-      <Container size="md">
+    <div className={classes.root} >
+      <Container size="md "className="select-none">
         {/* Error code/status */}
         <div className={classes.label}>DEMO</div>
 
         {/* Main title */}
-        <Title className={classes.title} order={1}>
-          Welcome to  Demo Component
+        <Title className={`${classes.title} capitalize`} order={1}>
+          Welcome to {pageName} Demo Component
         </Title>
 
         {/* Description with more content */}

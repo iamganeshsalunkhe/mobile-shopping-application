@@ -23,7 +23,7 @@ return (
           <Route path="/signup" element={<SignUpPage/>} />
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/" element={<AccountPage/>}/>
-          <Route path="/demo" element={<DemoPage/>}/>
+          <Route path="/demo/:pageName" element={<DemoPage/>}/>
         </Routes>
       </MantineProvider>
       <Toaster toastOptions={{
