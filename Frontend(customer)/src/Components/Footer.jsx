@@ -10,23 +10,23 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   const companyLinks = [
-    { name: "About Us", path: "/about" },
-    { name: "Careers", path: "/careers" },
-    { name: "Blog", path: "/blog" },
-    { name: "Press", path: "/press" },
+    { name: "About Us", path: "/demo/about" },
+    { name: "Careers", path: "/demo/careers" },
+    { name: "Blog", path: "/demo/blog" },
+    { name: "Press", path: "/demo/press" },
   ];
 
   const helpLinks = [
-    { name: "Contact Us", path: "/contact" },
-    { name: "FAQs", path: "/faqs" },
-    { name: "Shipping", path: "/shipping" },
-    { name: "Returns", path: "/returns" },
+    { name: "Contact Us", path: "/demo/contact" },
+    { name: "FAQs", path: "/demo/faqs" },
+    { name: "Shipping", path: "/demo/shipping" },
+    { name: "Returns", path: "/demo/returns" },
   ];
 
   const legalLinks = [
-    { name: "Privacy Policy", path: "/privacy" },
-    { name: "Terms of Service", path: "/terms" },
-    { name: "Cookie Policy", path: "/cookies" },
+    { name: "Privacy Policy", path: "/demo/privacy" },
+    { name: "Terms of Service", path: "/demo/terms" },
+    { name: "Cookie Policy", path: "/demo/cookies" },
   ];
 
   const socialLinks = [
