@@ -91,7 +91,7 @@ const Navbar = () => {
           </div>
 
           {/* Right side icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 select-none">
             {/* Cart */}
             <Link
               to="/cart"
