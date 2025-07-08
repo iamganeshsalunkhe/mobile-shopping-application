@@ -1,4 +1,3 @@
-// import required modules
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -7,141 +6,156 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 
 function Login() {
-  // get navigation from react-router-dom
   const navigate = useNavigate();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // get useForm from react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  // state for handling password visibility
-  const [isPasswordVisible, setIsPasswordVisible] = useState();
-
-  // function for handling  password visibility
   function handlePasswordVisibility() {
-    setIsPasswordVisible((prevState) => !prevState);
-  }
+    setIsPasswordVisible((prev) => !prev);
+  };
 
-  // function for handling login request
-  async function onSubmit(data) {
+  async function onSubmit(data){
+    setIsLoading(true);
     try {
-      // get data from input fields using react-hook-form
       const res = await axios.post(
         "http://localhost:8000/api/customer/login",
         data,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       if (res.data) {
-        toast.success("Loggedin Successfully");
+        toast.success("Logged in successfully");
         navigate("/");
       }
     } catch (error) {
-      // if any error occurs
       console.error(error);
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Login failed");
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <>
-      <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8 select-none bg-green-200 ">
-        {/* header for Login page */}
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm shadow-xl lg:min-w-xl p-4 border-1 rounded-md">
-          <h1 className="text-center font-bold text-4xl tracking-wider">MSA</h1>
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-indigo-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden select-none">
+        {/* Header */}
+        <div className="bg-indigo-600 p-6 text-center ">
+          <h1 className="text-3xl font-bold text-white">MSA</h1>
+          <p className="mt-2 text-indigo-100">Sign in to your account</p>
+        </div>
 
-          {/* input filed for email address */}
-          <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm ">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-md font-bold text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="email"
-                    type="email"
-                    {...register("email", {
-                      required: true,
-                      pattern: "^S+@S+.S+$",
-                    })}
-                    autoComplete="email"
-                    className="block w-full rounded-md bg-gray-100 focus:bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 focus:scale-105"
-                  />
-                  {errors.email && (
-                    <span className="text-red-500 font-semibold">
-                      This field is required
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-md font-bold text-gray-900"
-                  >
-                    Password
-                  </label>
-                </div>
-                <div className="mt-2 relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={isPasswordVisible ? "text" : "password"}
-                    {...register("password", { required: true })}
-                    className="block w-full rounded-md bg-gray-100 focus:bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 focus:scale-105"
-                  />
-                  {/* handle password visibility */}
-                  <div
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2
-                  cursor-pointer text-gray-600"
-                    onClick={handlePasswordVisibility}
-                  >
-                    {isPasswordVisible ? <FaRegEyeSlash /> : <FaRegEye />}
-                  </div>
-                </div>
-                {errors.password && (
-                  <span className="text-red-500 font-semibold">
-                    This field is required
-                  </span>
+        {/* Form */}
+        <div className="p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-md font-medium text-gray-700"
+              >
+                Email address
+              </label>
+              <div className="mt-1">
+                <input
+                  id="email"
+                  type="email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  autoComplete="email"
+                  className="block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm font-semibold text-red-600">
+                    {errors.email.message}!
+                  </p>
                 )}
               </div>
+            </div>
 
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:scale-105 transition cursor-pointer"
+            {/* Password Field */}
+            <div>
+              <div className="flex justify-between items-center">
+                <label
+                  htmlFor="password"
+                  className="block text-md font-medium text-gray-700"
                 >
-                  Sign in
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={handlePasswordVisibility}
+                  className="text-sm text-indigo-600 hover:text-indigo-500 cursor-pointer"
+                >
+                  {isPasswordVisible ? "Hide" : "Show"}
                 </button>
               </div>
-            </form>
+              <div className="mt-1 relative">
+                <input
+                  id="password"
+                  type={isPasswordVisible ? "text" : "password"}
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
+                  className="block w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
+                <button
+                  type="button"
+                  onClick={handlePasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500 cursor-pointer"
+                >
+                  {isPasswordVisible ? (
+                    <FaRegEyeSlash className="h-5 w-5" />
+                  ) : (
+                    <FaRegEye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600 font-semibold">
+                  {errors.password.message}!
+                </p>
+              )}
+            </div>
 
-            <p className="mt-10 text-center text-md text-gray-800">
-              Don&apos;t have an account with us?
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                  isLoading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {isLoading ? "Signing in..." : "Sign in"}
+              </button>
+            </div>
+          </form>
+
+          {/* Footer Links */}
+          <div className="mt-6 text-center text-sm">
+            <p className="text-gray-600">
+              Don't have an account?{" "}
               <Link
                 to="/signup"
-                className=" m-2 font-semibold text-indigo-500 hover:text-indigo-800"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
               >
-                Register yourself
+                Register now
               </Link>
             </p>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
