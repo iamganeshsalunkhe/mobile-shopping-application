@@ -50,9 +50,32 @@ exports.getSpecificProduct = async (productId) => {
 
   // get BrandLogo key from Vendor table
   const brandLogoKey = product.Vendor.brandLogo;
-  // get pre signedURL
-  const signedProductURL = await getSignedS3URL(productKey);
-  const signedBrandLogoURL = await getSignedS3URL(brandLogoKey);
+  // lets handle some-how image are not available scenario
+
+  let signedProductURL = null;
+  if (productKey){
+    try {
+      // get pre signedURL
+      signedProductURL = await getSignedS3URL(productKey);
+    } catch (error) {
+      // if any error occurs
+      console.error(error);
+      signedProductURL = null;
+  };
+  }
+
+  let signedBrandLogoURL = null;
+
+  if (brandLogoKey){
+    try {
+      // get pre signedURL
+      signedBrandLogoURL = await getSignedS3URL(brandLogoKey);
+    } catch (error) {
+      // if any error occurs
+      console.error(error);
+      signedBrandLogoURL = null;
+    }
+  };
 
   // convert plain text
   const plainProductDetails = product.get({ plain: true });

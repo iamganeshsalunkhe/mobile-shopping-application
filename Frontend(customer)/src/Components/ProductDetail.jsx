@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 
-const fetchProduct = async (productId) => {
+// function to fetch product with particular Id
+async function fetchProduct(productId) {
+  // get productId from params
   try {
     const { data } = await axios.get(
       `http://localhost:8000/api/customer/product/${productId}`
@@ -13,12 +15,15 @@ const fetchProduct = async (productId) => {
     // if any error occurs
     console.error(error);
   }
-};
+}
 
 function ProductDetail() {
+  // get productId from params
+  // get navigate  from useNavigation hook
   const { productId } = useParams();
   const navigate = useNavigate();
 
+  // extract react-query methods/property
   const {
     data: product,
     isLoading,
@@ -26,9 +31,9 @@ function ProductDetail() {
   } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => fetchProduct(productId),
-    staleTime: 1000 * 60 * 1, // 3 minutes
   });
 
+  // if page is loading or data is loading
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -37,6 +42,7 @@ function ProductDetail() {
     );
   }
 
+  // if any error occurs while fetching the productDetails
   if (isError) {
     return (
       <div className="text-center py-12 min-h-screen">
@@ -53,13 +59,15 @@ function ProductDetail() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* back button for navigating backward */}
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center text-indigo-600 hover:text-indigo-800 mb-6 cursor-pointer select-none"
+        className="flex items-center text-indigo-600 hover:text-indigo-800 mb-6 cursor-pointer select-none font-bold"
       >
         <FiArrowLeft className="mr-2" /> Back to Products
       </button>
 
+      {/* product details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="bg-gray-100 rounded-lg overflow-hidden select-none">
@@ -78,6 +86,7 @@ function ProductDetail() {
           </h1>
           <div className="flex items-center mb-4">
             <span className="text-2xl font-bold text-indigo-600">
+              {/* convert price to Indian format */}
               {new Intl.NumberFormat("en-IN", {
                 style: "currency",
                 currency: "INR",
@@ -87,7 +96,10 @@ function ProductDetail() {
             </span>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 select-none">
+            {/* quantity label */}
+            {/* as af now we only assume each product has only one unit  so making input read only*/}
+
             <label
               htmlFor="quantity"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -100,7 +112,7 @@ function ProductDetail() {
               min="1"
               value={1}
               readOnly
-              className="w-16 text-center border-t border-b border-gray-300 py-1"
+              className="w-16 text-center border-t border-b border-gray-300 py-1 select-none"
             />
           </div>
 
@@ -108,7 +120,7 @@ function ProductDetail() {
             <FiShoppingCart /> Add to Cart
           </button>
 
-          {/* Enhanced Product Details Section */}
+          {/* Product Details Section */}
           <div className="mt-10 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Product Details
@@ -153,18 +165,20 @@ function ProductDetail() {
               </ul>
             </div>
 
+            {/* only render this section if brandLogo is available */}
             {/* Brand Logo Section */}
             {product.signedBrandLogoURL && (
               <div className="mt-8 pt-6 border-t border-gray-200 flex items-center space-x-4">
                 <span className="text-gray-600">Sold by</span>
-                <div className="p-2 bg-white rounded-md border border-gray-200">
+                <div className="p-2 bg-white rounded-md border border-gray-300">
                   <img
                     src={product.signedBrandLogoURL}
                     alt="Brand Logo"
                     className="h-20 object-contain"
-                      onError={(e) => {
-                        e.target.parentElement.parentElement.style.display = "none";
-                      }}
+                    onError={(e) => {
+                      e.target.parentElement.parentElement.style.display =
+                        "none";
+                    }}
                   />
                 </div>
               </div>
