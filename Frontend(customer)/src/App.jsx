@@ -11,7 +11,7 @@ import LoginPage from "./Pages/LoginPage";
 import AccountPage from "./Pages/AccountPage";
 import ProductsPage from "./Pages/ProductsPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage";
-
+import ScrollToTop from "./Components/ScrollToTop";
 
 
 // create queryClient instance
@@ -22,6 +22,7 @@ return (
     <QueryClientProvider client = {queryClient} >
     <BrowserRouter>
       <MantineProvider>
+        <ScrollToTop/>
         <Routes>
           <Route path="/signup" element={<SignUpPage/>} />
           <Route path="/login" element={<LoginPage/>}/>
