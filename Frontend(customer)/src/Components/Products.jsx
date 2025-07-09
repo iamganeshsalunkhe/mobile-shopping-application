@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import axios from "axios";
 
 const fetchProducts = async () => {
@@ -55,11 +55,12 @@ function Products () {
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 ">
         {products.map((product) => (
           <div
-            key={product.id}
+            key={product.productId}
             className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
           >
             {/* Product Image */}
             <Link
+              key={product.productId}
               to={`/products/${product.productId}`}
               className="group relative bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 border border-gray-100"
             >
@@ -86,27 +87,30 @@ function Products () {
               </p>
 
               {/* Price */}
-              <div className="flex justify-between items-center select-none">
-                <span className="text-lg font-bold text-blue-600 ">
-                  {new Intl.NumberFormat("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  }).format(product.price)}
-                </span>
-                <div className="flex justify-end gap-4">
-                  <Link
-                    to={`/products/${product.productId}`}
-                    className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded  hover:scale-110 transition duration-300 cursor-pointer select-none"
-                  >
-                    View Details
-                  </Link>
+              <div className="select-none">
+                <div className="flex justify-between items-center select-none">
+                  <span className="text-lg font-bold text-blue-600 ">
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(product.price)}
+                  </span>
+                  <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4  mt-2 sm:mt-0 sm:ml-auto">
+                    <Link
+                      key={product.productId}
+                      to={`/products/${product.productId}`}
+                      className=" hidden sm:inline-block text-sm bg-blue-600  hover:bg-blue-700 text-white px-3 py-1.5 rounded  hover:scale-110 transition-colors duration-300 cursor-pointer select-none text-center sm:text-left"
+                    >
+                      View Details
+                    </Link>
 
-                  {/* button for adding product to the cart */}
-                  <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded  hover:scale-110 transition duration-300 cursor-pointer select-none">
-                    Add to Cart
-                  </button>
+                    {/* button for adding product to the cart */}
+                    <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded  hover:scale-110 transition duration-300 cursor-pointer select-none">
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
