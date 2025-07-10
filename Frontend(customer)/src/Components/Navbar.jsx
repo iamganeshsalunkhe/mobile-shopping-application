@@ -1,3 +1,5 @@
+// import required modules
+import axios from "axios";
 import { useState } from "react";
 import {
   FiSearch,
@@ -7,18 +9,55 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "../stores/authStore";
+import toast from "react-hot-toast";
 
-const Navbar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+function Navbar(){
+  const [searchQuery, setSearchQuery] = useState(""); // state for search input
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // state for mobile devices
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // state for dropdown menu
+  const queryClient = useQueryClient(); // extract queryclient
+  const navigate = useNavigate(); // extract navigate hook
 
-  function handleSearch(e){
+  // function for handling search
+  function handleSearch(e) {
     e.preventDefault();
     console.log("Searching for:", searchQuery);
+  }
+  
+  // function for handling logout and other navigation
+  async function handleClickOnLogout(item) {
+    // first close the dropdown menu options
+    setIsDropdownOpen(false);
 
-  };
+    // if item contains action then
+    if (item.action) {
+      try {
+        // make request to backend for logout
+        await axios.post(
+          "http://localhost:8000/api/customer/logout",{},
+          {withCredentials: true}
+        )
+        console.log("i am clicked  3");
+
+        queryClient.clear(); // clear all cached data
+        useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
+        toast.success("Logged Out Successfully!"); // give success message
+        navigate("/login"); // navigate to home page
+      } catch (error) {
+        // if any error occurs
+        console.error(error);
+        console.log(error);
+        toast.error(error.response?.data?.message);
+      }
+      // item does not contain any action method then its a navigation route
+    } else {
+      // handle regular navigation
+      navigate(item.path);
+    }
+  }
 
   const navItems = [
     { name: "Home", path: "/", icon: <FiHome className="text-lg" /> },
@@ -30,7 +69,7 @@ const Navbar = () => {
     { name: "Account", path: "/account" },
     { name: "Orders", path: "/orders" },
     { name: "Addresses", path: "/address" },
-    { name: "Logout", path: "/logout" },
+    { name: "Logout", path: null, action: true },
   ];
 
   return (
@@ -119,14 +158,14 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none cursor-pointer">
                   {dropdownItems.map((item) => (
-                    <Link
+                    <div
                       key={item.name}
                       to={item.path}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsDropdownOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleClickOnLogout(item)}
                     >
                       {item.name}
-                    </Link>
+                    </div>
                   ))}
                 </div>
               )}

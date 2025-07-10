@@ -7,6 +7,7 @@ export const useAuthStore = create(
     // to store persist data even when page-reloads(in localStorage)
     persist(
         (set) =>({
+            // by default set to false as if user first time visited our app 
             isAuthenticated:false,
 
             // login sets auth state to true

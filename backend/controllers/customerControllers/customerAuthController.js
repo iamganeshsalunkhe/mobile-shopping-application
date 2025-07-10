@@ -4,9 +4,12 @@ const { registerCustomer, loginCustomer } = require("../../services/customerServ
 // signup a new customer
 exports.signUp = async(req,res)=>{
     try {
-        // with data send the request to service layer
-        const customer = await registerCustomer(req);
-        res.status(201).json({message:'Customer registered Successfully!',customer})
+      // with data send the request to service layer
+      const customer = await registerCustomer(req);
+      // response with code 201 as request handled successfully
+      res
+        .status(201)
+        .json({ message: "Customer registered Successfully!", customer });
     } catch (error) {
         // if any error occurs
         console.error(error);
@@ -17,27 +20,34 @@ exports.signUp = async(req,res)=>{
 // login a customer 
 exports.login = async(req,res)=>{
     try {
-        // get customer info and assign token
-        const {LoggedCustomer } = await loginCustomer(req);
-        res.cookie('token',LoggedCustomer.token,{
-            httpOnly:true,
-            maxAge:3600000,
-            secure:false,
-            sameSite:"Lax"
-        })
-        res.status(200).json({message:"Customer logged in successfully!",LoggedCustomer})
+      // get customer info and assign token
+      const { LoggedCustomer } = await loginCustomer(req);
+      res.cookie("token", LoggedCustomer.token, {
+        httpOnly: true,
+        maxAge: 3600000, //1 hour
+        sameSite: "Lax",
+      });
+      // response with code 200 as request handled successfully
+      res
+        .status(200)
+        .json({ message: "Customer logged in successfully!", LoggedCustomer });
     } catch (error) {
+        // if any error occurs
         console.error(error);
         res.status(error.statusCode || 500).json({message:error.message ||"Something went wrong!!"})
     }
 }
 exports.logout = async(req,res) =>{
     try {
+        //clear the token value from the browser cookies
         res.clearCookie('token',{
             httpOnly:true,
             sameSite:"Lax"
-        })
+        });
+        // response with code 200 as request handled successfully
+        res.status(200).json({message:"Logged out successfully!"})
     } catch (error) {
+        // if any error occurs
         console.error(error);
         res.status(500).json({message:"Something went wrong!"})
     }
