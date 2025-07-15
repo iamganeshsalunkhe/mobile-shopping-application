@@ -10,7 +10,7 @@ exports.addToCart = async (customerId, productId) => {
   const existingItem = await Cart.findOne({ where: { customerId, productId } });
 
   // if product already in the cart
-  if (existingItem) throw new Error("Product already in the cart");
+  if (existingItem) throw new Error("Product Already in the Cart");
 
   // if product not present in the cart then add it to cart
   const newItem = await Cart.create({ customerId, productId });
