@@ -10,3 +10,10 @@ export async function addToCart(productId){
         });
         return res.data;
 };
+
+export async function getCartInfo(){
+    const res = await axios.get(`${API_BASE}/cart`,{
+        withCredentials:true
+    });
+    return res.data;
+}

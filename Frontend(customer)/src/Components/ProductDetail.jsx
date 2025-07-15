@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiShoppingCart, FiArrowLeft } from "react-icons/fi";
+import { FiShoppingCart, FiArrowLeft,FiArrowRight } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { addToCart } from "../services/cartService";
 
@@ -130,13 +130,15 @@ function ProductDetail() {
             />
           </div>
 
+          <div className="flex gap-2">
+
           <button
             onClick={() => mutate(productId)}
             disabled={isPending}
             className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer ${
               isPending ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
+              }`}
+              >
             {isPending ? (
               "Adding..."
             ) : (
@@ -145,6 +147,14 @@ function ProductDetail() {
               </>
             )}
           </button>
+
+          <button
+            onClick={()=>navigate('/cart')}
+            className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer`}
+            >
+             Go to cart <FiArrowRight/>
+          </button>
+          </div>
 
           {/* Product Details Section */}
           <div className="mt-10 pt-8 border-t border-gray-200">

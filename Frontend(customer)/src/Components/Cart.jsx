@@ -1,33 +1,68 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FiShoppingBag, FiTrash2, FiArrowLeft } from "react-icons/fi";
+import { useQuery } from "@tanstack/react-query";
+import { getCartInfo } from "../services/cartService";
 
-function Cart ({ removeFromCart })  {
-    const navigate = useNavigate();
-  const  cartItems=[]
+function Cart() {
+  const navigate = useNavigate();
+  const {
+    data: cartItems = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["cartData"],
+    queryFn: getCartInfo,
+    staleTime: 1000 * 60 * 1,
+  });
 
-  let subtotal= 0;
-  if (cartItems> 0){
-   subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+  console.log(cartItems);
+  // Calculate totals
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.product?.price * 1,
     0
-  )};
-
+  );
   const shippingFee = subtotal > 500 ? 0 : 50;
   const total = subtotal + shippingFee;
 
-  // function for handling back button
-  function handleGoBack(){
+  function handleGoBack() {
     navigate(-1);
   }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500">Failed to load cart items</p>
+          <button
+            onClick={()=>navigate(-1)}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       {/* Header */}
       <header className="flex items-center justify-between mb-8">
         <button
           onClick={handleGoBack}
-          className="text-gray-600 hover:text-blue-600 transition cursor-pointer"
+          className="text-gray-600 hover:text-blue-600 transition cursor-pointer "
         >
-          <FiArrowLeft size={24} />
+          <FiArrowLeft size={24} /> 
         </button>
         <h1 className="text-2xl font-bold text-gray-800">Your Cart</h1>
         <div className="w-6" />
@@ -51,35 +86,37 @@ function Cart ({ removeFromCart })  {
           <div className="space-y-6 mb-10">
             {cartItems.map((item) => (
               <div
-                key={item.id}
+                key={item.productId}
                 className="bg-white rounded-xl shadow-sm p-4 md:p-6 flex items-center gap-4 hover:shadow-md transition"
               >
                 <img
-                  src={item.signedProductURL || item.image}
-                  alt={item.name}
+                  src={item.product?.ProductImages?.[0]?.signedURL}
+                  alt={item.product?.productName}
                   className="w-24 h-24 object-contain rounded-lg border"
                 />
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="text-lg font-semibold text-gray-800">
-                      {item.name}
+                      {item.product?.productName}
                     </h3>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      // onClick={() => }
                       className="text-gray-400 hover:text-red-500 transition"
                     >
                       <FiTrash2 size={18} />
                     </button>
                   </div>
-                  <p className="text-sm text-gray-500 mb-2">
-                    {item.Vendor?.vendorName || item.brand}
-                  </p>
                   <div className="flex justify-between items-center">
                     <span className="text-sm bg-gray-100 px-3 py-1 rounded-full font-medium">
-                      Qty: {item.quantity}
+                      Qty: 1
                     </span>
                     <p className="font-semibold text-gray-800 text-lg">
-                      ₹{(item.price * item.quantity).toLocaleString()}
+                      {new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(item.product?.price)}
                     </p>
                   </div>
                 </div>
@@ -117,6 +154,6 @@ function Cart ({ removeFromCart })  {
       )}
     </div>
   );
-};
+}
 
 export default Cart;
