@@ -1,5 +1,5 @@
 //import required modules
-const { registerCustomer, loginCustomer } = require("../../services/customerServices/customerAuthService")
+const { registerCustomer, loginCustomer, checkLoginStatus} = require("../../services/customerServices/customerAuthService")
 
 // signup a new customer
 exports.signUp = async(req,res)=>{
@@ -51,4 +51,22 @@ exports.logout = async(req,res) =>{
         console.error(error);
         res.status(500).json({message:"Something went wrong!"})
     }
-}
+};
+
+
+exports.checkIsLoggedIn = async(req,res)=>{
+    try {
+        // get the userId from the token
+        const {customerId} = req.user.id;
+
+        // pass it to the service layer
+        const customer = await checkLoginStatus(customerId);
+
+        // if request handled successfully
+        res.status(200).json(customer);
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        res.status(500).json({message:error})
+    }
+};

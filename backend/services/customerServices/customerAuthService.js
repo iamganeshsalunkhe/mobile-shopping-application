@@ -67,3 +67,10 @@ exports.loginCustomer = async(req)=>{
 
   return {LoggedCustomer};
 }
+
+exports.checkLoginStatus = async(customerId)=>{
+  // find the customer using customerId
+  const loggedCustomer = await Customers.findByPk(customerId);
+
+  return loggedCustomer;
+};

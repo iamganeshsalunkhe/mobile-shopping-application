@@ -17,7 +17,7 @@ export const useAuthStore = create(
             logout:()=>set({isAuthenticated:false})
         }),
         {
-            name:'Auth-Session',// localStorage key
+            name:'authSession',// localStorage key
 
             // partialize is function that filters the state
             // only save isAuthenticated in localStorage
