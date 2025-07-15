@@ -13,6 +13,7 @@ import ProductsPage from "./Pages/ProductsPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage";
 import ScrollToTop from "./Components/ScrollToTop";
 import AuthGate from "./Components/AuthGate";
+import CartPage from "./Pages/CartPage";
 
 
 // create queryClient instance
@@ -32,6 +33,7 @@ return (
           <Route path="/products" element={<ProductsPage/>}/>
           <Route path="products/:productId" element={<ProductDetailsPage/>}/>
           <Route path="/demo/:pageName" element={<DemoPage/>}/>
+          <Route path="/cart" element={<CartPage/>}/>
         </Routes>
       </MantineProvider>
       <Toaster toastOptions={{
