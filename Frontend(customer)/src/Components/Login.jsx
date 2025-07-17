@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import { useAuthStore } from "../stores/authStore";
 
 function Login() {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ function Login() {
         { withCredentials: true }
       );
       if (res.data) {
+        useAuthStore.getState().login();
         toast.success("Logged in successfully");
         navigate("/");
       }
