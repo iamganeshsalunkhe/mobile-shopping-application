@@ -1,13 +1,9 @@
 function Loader() {
-    return (
-      <>
-        <span className="loading loading-dots loading-xs"></span>
-        <span className="loading loading-dots loading-sm"></span>
-        <span className="loading loading-dots loading-md"></span>
-        <span className="loading loading-dots loading-lg"></span>
-        <span className="loading loading-dots loading-xl"></span>
-      </>
-    );
+   return (
+     <div className="flex justify-center items-center h-96">
+       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+     </div>
+   );
 }
 
 export default Loader

@@ -40,7 +40,6 @@ function Navbar(){
           "http://localhost:8000/api/customer/logout",{},
           {withCredentials: true}
         )
-        console.log("i am clicked  3");
 
         queryClient.clear(); // clear all cached data
         useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
@@ -49,7 +48,6 @@ function Navbar(){
       } catch (error) {
         // if any error occurs
         console.error(error);
-        console.log(error);
         toast.error(error.response?.data?.message);
       }
       // item does not contain any action method then its a navigation route

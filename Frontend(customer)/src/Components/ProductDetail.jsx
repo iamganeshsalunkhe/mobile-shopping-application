@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FiShoppingCart, FiArrowLeft,FiArrowRight } from "react-icons/fi";
@@ -24,6 +24,7 @@ function ProductDetail() {
   // get navigate  from useNavigation hook
   const { productId } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // extract react-query methods/property
   const {
@@ -39,6 +40,9 @@ function ProductDetail() {
     mutationFn: addToCart,
     onSuccess: () => {
       toast.success("Product Added to cart!");
+
+      queryClient.invalidateQueries(['cartData'])
+
       navigate("/cart");
     },
     onError: (error) => {
