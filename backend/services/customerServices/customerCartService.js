@@ -1,5 +1,6 @@
 // import required modules
-const { Cart, Products } = require("../../models");
+const { Cart, Products, ProductImages } = require("../../models");
+const { getSignedS3URL } = require("../../utils/getSignedS3URL");
 // const {Products} = require("../../models");
 
 // add  a product to the cart
@@ -10,7 +11,7 @@ exports.addToCart = async (customerId, productId) => {
   const existingItem = await Cart.findOne({ where: { customerId, productId } });
 
   // if product already in the cart
-  if (existingItem) throw new Error("Product already in the cart");
+  if (existingItem) throw new Error("Product Already in the Cart");
 
   // if product not present in the cart then add it to cart
   const newItem = await Cart.create({ customerId, productId });
@@ -26,17 +27,39 @@ exports.getCustomerCart = async (customerId) => {
   // find the cart table using customerId
   const cartItems = await Cart.findAll({
     where: { customerId },
-    // also include product info using productId which we get from the cart 
+    // also include product info using productId which we get from the cart
     include: [
       {
         model: Products,
         as: "product",
-        attributes: ["productId", "productName", "price","vendorId"],
+        attributes: ["productId", "productName", "price", "vendorId"],
+        include: [
+          {
+            model: ProductImages,
+            attributes: ["imageUrl"],
+          },
+        ],
+
       },
-    ],
-  });
-  
-  // return cartItems
+      ]
+
+    });
+    // now get imageUrl from productImages table
+    await Promise.all(
+      cartItems.map(async(item)=>{
+        const product = item.product;
+
+        product.ProductImages = await Promise.all(
+          product.ProductImages.map(async (image)=>{
+            // get signed URL
+            const signedURL =await getSignedS3URL(image.imageUrl);
+            image.dataValues.signedURL = signedURL;
+          })
+        )
+      })
+    )
+   
+    // console.log(cartItems[0].product.ProductImages[0]?.imageUrl);
   return cartItems;
 };
 

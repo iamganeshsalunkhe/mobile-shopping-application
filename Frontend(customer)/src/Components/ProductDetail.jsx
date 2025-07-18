@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiShoppingCart, FiArrowLeft } from "react-icons/fi";
+import { FiShoppingCart, FiArrowLeft,FiArrowRight } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { addToCart } from "../services/cartService";
 
 // function to fetch product with particular Id
 async function fetchProduct(productId) {
@@ -22,6 +24,7 @@ function ProductDetail() {
   // get navigate  from useNavigation hook
   const { productId } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // extract react-query methods/property
   const {
@@ -31,6 +34,21 @@ function ProductDetail() {
   } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => fetchProduct(productId),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: addToCart,
+    onSuccess: () => {
+      toast.success("Product Added to cart!");
+
+      queryClient.invalidateQueries(['cartData'])
+
+      navigate("/cart");
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Failed to add to cart");
+    },
   });
 
   // if page is loading or data is loading
@@ -116,9 +134,31 @@ function ProductDetail() {
             />
           </div>
 
-          <button className="w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer">
-            <FiShoppingCart /> Add to Cart
+          <div className="flex gap-2">
+
+          <button
+            onClick={() => mutate(productId)}
+            disabled={isPending}
+            className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer ${
+              isPending ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              >
+            {isPending ? (
+              "Adding..."
+            ) : (
+              <>
+                <FiShoppingCart /> Add to Cart
+              </>
+            )}
           </button>
+
+          <button
+            onClick={()=>navigate('/cart')}
+            className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer`}
+            >
+             Go to cart <FiArrowRight/>
+          </button>
+          </div>
 
           {/* Product Details Section */}
           <div className="mt-10 pt-8 border-t border-gray-200">

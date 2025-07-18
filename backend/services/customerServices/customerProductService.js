@@ -9,7 +9,7 @@ exports.allProducts = async () => {
     include: [
       {
         model: ProductImages,
-        attributes: ["imageUrl"],
+        attributes: ["imageUrl"], 
       },
     ],
   });

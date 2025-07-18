@@ -107,9 +107,9 @@ function Products () {
                     </Link>
 
                     {/* button for adding product to the cart */}
-                    <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded  hover:scale-110 transition duration-300 cursor-pointer select-none">
+                    {/* <button className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded  hover:scale-110 transition duration-300 cursor-pointer select-none">
                       Add to Cart
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
