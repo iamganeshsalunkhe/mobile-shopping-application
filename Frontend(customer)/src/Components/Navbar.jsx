@@ -14,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 
-function Navbar(){
+function Navbar() {
   const [searchQuery, setSearchQuery] = useState(""); // state for search input
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // state for mobile devices
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // state for dropdown menu
@@ -23,14 +23,19 @@ function Navbar(){
   const location = useLocation(); // extract location hook
 
   // condition for showing search bar
-  const showSearchBar = location.pathname === "/" || location.pathname === "/products";
- 
+  const showSearchBar =
+    location.pathname === "/" || location.pathname === "/products";
+
+  // get check user is authenticated for not
+  const authData = JSON.parse(localStorage.getItem("authSession")); // have to parse as using zustand(zustand store it as object not as plain text)
+  const isAuthenticated = authData?.state?.isAuthenticated === true;
+
   // function for handling search
   function handleSearch(e) {
     e.preventDefault();
     console.log("Searching for:", searchQuery);
   }
-  
+
   // function for handling logout and other navigation
   async function handleClickOnLogout(item) {
     // first close the dropdown menu options
@@ -41,9 +46,10 @@ function Navbar(){
       try {
         // make request to backend for logout
         await axios.post(
-          "http://localhost:8000/api/customer/logout",{},
-          {withCredentials: true}
-        )
+          "http://localhost:8000/api/customer/logout",
+          {},
+          { withCredentials: true }
+        );
 
         queryClient.clear(); // clear all cached data
         useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
@@ -73,8 +79,6 @@ function Navbar(){
     { name: "Addresses", path: "/address" },
     { name: "Logout", path: null, action: true },
   ];
-
-
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -117,21 +121,22 @@ function Navbar(){
           </div>
 
           <div className=" md:flex flex-1 max-w-md mx-4 select-none">
-            {showSearchBar && <form onSubmit={handleSearch} className="w-full">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FiSearch className="h-5 w-5 text-gray-400" />
+            {showSearchBar && (
+              <form onSubmit={handleSearch} className="w-full">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <FiSearch className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mt-2"
+                  />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mt-2"
-                />
-              </div>
-            </form>}
-            
+              </form>
+            )}
           </div>
 
           {/* Right side icons */}
@@ -149,16 +154,24 @@ function Navbar(){
 
             {/* Profile dropdown */}
             <div className="ml-3 relative">
-              <div>
+              {
+               isAuthenticated ? (
+                 <div>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex text-sm rounded-full focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+                  >
+                    <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
+                      <FiUser className="h-5 w-5" />
+                    </div>
+                  </button>
+                </div>
+               ) : (
                 <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-                    <FiUser className="h-5 w-5" />
-                  </div>
-                </button>
-              </div>
+                onClick={()=>navigate('/login')}
+                className="bg-blue-500 px-3 py-2 hover:bg-blue-700 transition cursor-pointer rounded-xl text-white ">Login</button>
+               )
+              }
 
               {isDropdownOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none cursor-pointer">
@@ -197,6 +210,6 @@ function Navbar(){
       )}
     </nav>
   );
-};
+}
 
 export default Navbar;
