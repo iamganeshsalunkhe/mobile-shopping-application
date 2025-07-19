@@ -1,14 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, Outlet } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
+import { fetchProducts } from "../services/productService";
+import Loader from "./Loader";
+import Error from "./Error";
 
-const fetchProducts = async () => {
-  const { data } = await axios.get("http://localhost:8000/api/customer/product");
-  return data;
-};
 
 function Products () {
-  
+  // destructure using useQuery
   const {
     data: products,
     isLoading,
@@ -20,30 +18,11 @@ function Products () {
   });
 
 
-  
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-      </div>
-    );
-  }
+  // if data is still loading
+  if (isLoading) return <Loader/>
 
-  if (isError) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-500 text-lg">
-          Failed to load products. Please try again.
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
+  // if some error comes then 
+  if (isError) return <Error/>
 
   return (
     <div className="container mx-auto px-4 py-8">

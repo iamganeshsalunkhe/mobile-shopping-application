@@ -50,6 +50,7 @@ export default function Address() {
   } = useQuery({
     queryKey:["addresses"],
     queryFn: getAddresses,
+    staleTime:1000 * 60 * 5, // 5 mins 
     onError: () => toast.error("Failed to load addresses"),
   });
 
