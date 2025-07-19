@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {addAnNewAddress, deleteAnAddress, getAddresses} from "../services/addressService";
+import {addAnNewAddress, deleteAnAddress, getAddresses, updateAnAddress} from "../services/addressService";
 import toast from "react-hot-toast";
 
 export default function Address() {
@@ -53,8 +53,8 @@ export default function Address() {
     onError: () => toast.error("Failed to load addresses"),
   });
 
-  // add an addressMutation
-  const addAddressMutation = useMutation({
+  // add an address mutation
+  const addAnAddressMutation = useMutation({
     mutationFn:addAnNewAddress,
     onSuccess:()=>{
       queryClient.invalidateQueries(['addresses']);
@@ -67,7 +67,21 @@ export default function Address() {
     }
   });
 
-  // delete an addressMutation
+  // update an address mutation
+  const updateAnAddressMutation = useMutation({
+    mutationFn:updateAnAddress,
+    onSuccess:()=>{
+      queryClient.invalidateQueries(['addresses']);
+      toast.success("Address Updated Successfully!");
+      setIsModalOpen(false);
+    },
+    onError:(error)=>{
+      console.error(error);
+      toast.error(error.response?.data?.message);
+    }
+  })
+
+  // delete an address mutation
   const deleteAddressMutation = useMutation({
     mutationFn:(addressId)=>deleteAnAddress(addressId),
     onSuccess:()=>{
@@ -81,8 +95,10 @@ export default function Address() {
   })
 
  function onSubmit(data){
-  if (!editingAddressId){
-    addAddressMutation.mutate(data);
+  if (editingAddressId){
+    updateAnAddressMutation.mutate({addressId:editingAddressId, data});
+  }else{
+    addAnAddressMutation.mutate(data);
   }
 }
 
@@ -371,7 +387,7 @@ export default function Address() {
                     </div>
 
                     {/* Address Type */}
-                    <div>
+                    {/* <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
                         Address Type*
                       </label>
@@ -383,7 +399,7 @@ export default function Address() {
                         <option value="Billing">Billing</option>
                         <option value="Other">Other</option>
                       </select>
-                    </div>
+                    </div> */}
 
                     {/* Default Checkbox */}
                     <div className="flex items-center pt-2">
@@ -471,7 +487,7 @@ export default function Address() {
                     <FiEdit2 size={20} />
                   </button>
                   <button
-                  onClick={()=>handleDeleteAddress(address.addressId)}
+                    onClick={() => handleDeleteAddress(address.addressId)}
                     className="text-gray-500 hover:text-red-600 transition cursor-pointer hover:scale-110"
                     aria-label="Delete address"
                   >
@@ -483,14 +499,12 @@ export default function Address() {
               <div className="text-gray-600 space-y-2">
                 <p>{address.addressLine}</p>
                 <p>Landmark: {address.landMark}</p>
-                <p className="capitalize">
-                  City: {address.city},District: {address.district},{" "}
-                  {address.state} - {address.postalCode}
+                <p className="capitalize">City: {address.city},</p>
+                <p>
+                  District: {address.district}, State: {address.state}
+                   {" "}- {address.postalCode}
                 </p>
                 <p>Mobile no: {address.contactNumber}</p>
-                <p className="text-sm text-gray-500">
-                  Type: {address.addressType}
-                </p>
               </div>
 
               {!address.isDefault && (

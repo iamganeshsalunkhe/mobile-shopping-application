@@ -6,7 +6,7 @@ exports.addAddress = async(customerId,req)=>{
     // get the customerId and data from the controller
     console.log(req.body);
     console.log(customerId);
-    const {fullName,contactNumber,addressLine,landMark,city,district, state, postalCode, country, addressType} = req.body;
+    const {fullName,contactNumber,addressLine,landMark,city,district, state, postalCode, country, addressType,isDefault} = req.body;
 
     // create a new entry in db
     const addressToAdd = await Addresses.create({
@@ -20,7 +20,8 @@ exports.addAddress = async(customerId,req)=>{
         state,
         postalCode,
         country,
-        addressType
+        addressType,
+        isDefault
     });
 
     // return new address to controller level

@@ -35,6 +35,25 @@ export async function addAnNewAddress(data){
     }
 };
 
+// update an address
+
+export async function updateAnAddress({addressId,data}){
+    try {
+        // send request to BE with addressId
+        const res = await axios.put(`${API_BASE}/address/${addressId}`,data,{
+            withCredentials:true
+        }
+        );
+
+        // return the data
+        return res.data;
+    } catch (error) {
+        // if any error occurs
+        console.error("Error while updating an address:",error.response?.data?.message);
+        throw error;
+    }
+}
+
 // delete an address
 export async function deleteAnAddress(addressId){
     try {
@@ -48,4 +67,4 @@ export async function deleteAnAddress(addressId){
         console.error("Error while deleting an address:",error.response?.data?.message);
         throw error;
     }
-}
+};
