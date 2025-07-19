@@ -60,6 +60,10 @@ module.exports = {
         type: Sequelize.ENUM("Shipping", "Billing"),
         defaultValue: "Shipping",
       },
+      isDefault:{
+        type:Sequelize.BOOLEAN,
+        defaultValue:false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
       postalCode: DataTypes.STRING,
       country: DataTypes.STRING,
       addressType: DataTypes.ENUM("Shipping", "Billing"),
+      isDefault:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
