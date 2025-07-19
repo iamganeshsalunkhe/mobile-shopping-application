@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {addAnNewAddress, getAddresses} from "../services/addressService";
+import {addAnNewAddress, deleteAnAddress, getAddresses} from "../services/addressService";
 import toast from "react-hot-toast";
 
 export default function Address() {
@@ -67,11 +67,38 @@ export default function Address() {
     }
   });
 
+  // delete an addressMutation
+  const deleteAddressMutation = useMutation({
+    mutationFn:(addressId)=>deleteAnAddress(addressId),
+    onSuccess:()=>{
+      queryClient.invalidateQueries(['addresses']);
+      toast.success("Address Deleted Successfully!");
+    },
+    onError:(error)=>{
+      console.error(error);
+      toast.error(error.response?.data?.message);
+    }
+  })
+
  function onSubmit(data){
   if (!editingAddressId){
     addAddressMutation.mutate(data);
   }
 }
+
+  // function for deleting address
+  function handleDeleteAddress(addressId){
+    try {
+      const confirmDelete = window.confirm(`Do you really want delete this address?`);
+
+      // if confirmDelete is true
+      if (confirmDelete) deleteAddressMutation.mutate(addressId);
+      return;
+    } catch (error) {
+      // if any error occurs
+      console.error(error);
+    }
+  }
 
   // Form handlers
     function openAddModal  () {
@@ -444,6 +471,7 @@ export default function Address() {
                     <FiEdit2 size={20} />
                   </button>
                   <button
+                  onClick={()=>handleDeleteAddress(address.addressId)}
                     className="text-gray-500 hover:text-red-600 transition cursor-pointer hover:scale-110"
                     aria-label="Delete address"
                   >

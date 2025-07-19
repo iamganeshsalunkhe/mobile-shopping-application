@@ -19,6 +19,7 @@ export async function getAddresses() {
     }
 };
 
+//add an address
 export async function addAnNewAddress(data){
     try {
         // create a post request to BE
@@ -33,3 +34,18 @@ export async function addAnNewAddress(data){
         throw error;
     }
 };
+
+// delete an address
+export async function deleteAnAddress(addressId){
+    try {
+        // send request to BE with addressId
+        const res = await axios.delete(`${API_BASE}/address/${addressId}`,{withCredentials:true});
+
+        // return the data
+        return res.data;
+    } catch (error) {
+        // if any error occurs
+        console.error("Error while deleting an address:",error.response?.data?.message);
+        throw error;
+    }
+}
