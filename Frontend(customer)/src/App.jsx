@@ -14,7 +14,10 @@ import ProductDetailsPage from "./Pages/ProductDetailsPage";
 import ScrollToTop from "./Components/ScrollToTop";
 import AuthGate from "./Components/AuthGate";
 import CartPage from "./Pages/CartPage";
+import AddressPage from "./Pages/AddressPage";
+import PageNotFoundPage from "./Pages/PageNotFoundPage";
 import AboutPage from "./Pages/AboutPage";
+
 
 
 // create queryClient instance
@@ -35,6 +38,8 @@ return (
           <Route path="products/:productId" element={<ProductDetailsPage/>}/>
           <Route path="/demo/:pageName" element={<DemoPage/>}/>
           <Route path="/cart" element={<CartPage/>}/>
+          <Route path="/address" element={<AddressPage/>}/>
+          <Route path="*" element={<PageNotFoundPage/>}/>
           <Route path="/about" element={<AboutPage/>}/>
         </Routes>
       </MantineProvider>
