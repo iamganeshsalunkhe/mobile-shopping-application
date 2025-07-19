@@ -161,7 +161,7 @@ export default function Address() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 select-none">
         <button
           onClick={() => navigate(-1)}
           className="text-gray-600 hover:text-blue-600 transition flex items-center cursor-pointer"
@@ -176,7 +176,7 @@ export default function Address() {
       {/* Add Address Button */}
       <button
         onClick={openAddModal}
-        className="flex items-center justify-center w-full md:w-auto mb-8 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer"
+        className="flex items-center justify-center w-full md:w-auto mb-8 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition cursor-pointer select-none"
       >
         <FiPlus className="mr-2" />
         Add An New Address

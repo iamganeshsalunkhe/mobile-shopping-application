@@ -94,7 +94,7 @@ export default function Account() {
   if (isError) return <Error />;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 select-none">
+    <div className="max-w-screen  mx-auto px-1 py-1 select-none">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         {/* Header */}
         <div className="bg-indigo-600 px-6 py-4 ">

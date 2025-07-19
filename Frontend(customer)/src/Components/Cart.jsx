@@ -101,7 +101,7 @@ function Cart() {
             {cartItems.map((item) => (
               <div
                 key={item.productId}
-                className="bg-white rounded-xl shadow-sm p-4 md:p-6 flex items-center gap-4 hover:shadow-md transition"
+                className="bg-white rounded-xl shadow-sm p-4 md:p-6 flex items-center gap-4 hover:shadow-md transition select-none"
               >
                 <img
                   src={item.product?.ProductImages?.[0]?.signedURL}
