@@ -4,11 +4,11 @@ import { FiPlus, FiEdit2, FiTrash2, FiChevronLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import Error from "./Error";
-import { useQuery} from "@tanstack/react-query";
-import {getAddresses} from "../services/addressService";
+import { useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {addAnNewAddress, getAddresses} from "../services/addressService";
 import toast from "react-hot-toast";
 
-export default function AddressPage() {
+export default function Address() {
     // get navigate hook for navigation
     const navigate = useNavigate();
     // state for modal open/close
@@ -17,9 +17,13 @@ export default function AddressPage() {
     // state for is address is updating or not
     const [editingAddressId, setEditingAddressId] = useState(null);
 
+    // get queryClient
+    const queryClient = useQueryClient();
+
   // Form handling
   const {
     register,
+    handleSubmit,
     reset,
     formState: { errors, isSubmitting},
   } = useForm({
@@ -44,10 +48,30 @@ export default function AddressPage() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: "addresses",
+    queryKey:["addresses"],
     queryFn: getAddresses,
     onError: () => toast.error("Failed to load addresses"),
   });
+
+  // add an addressMutation
+  const addAddressMutation = useMutation({
+    mutationFn:addAnNewAddress,
+    onSuccess:()=>{
+      queryClient.invalidateQueries(['addresses']);
+      toast.success("Address Added Successfully!");
+      setIsModalOpen(false);
+    },
+    onError:(error)=>{
+      console.error(error);
+      toast.error(error.response?.data?.message);
+    }
+  });
+
+ function onSubmit(data){
+  if (!editingAddressId){
+    addAddressMutation.mutate(data);
+  }
+}
 
   // Form handlers
     function openAddModal  () {
@@ -127,7 +151,7 @@ export default function AddressPage() {
 
             {/* Scrollable form area */}
             <div className="overflow-y-auto max-h-[calc(90vh-48px)]">
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 select-none">
                   {/* Column 1 */}
                   <div className="space-y-4">
@@ -165,7 +189,7 @@ export default function AddressPage() {
                           required: "Contact number is required!",
                           pattern: {
                             value: /^[0-9]{10}$/, // validate only number and 10 digits
-                            message: "Invalid phone number",
+                            message: "Invalid Phone number!",
                           },
                         })}
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
@@ -302,7 +326,7 @@ export default function AddressPage() {
                             required: "Postal code is required!",
                             pattern: {
                               value: /^[0-9]{6}$/, // validate pincode and 6 digits only
-                              message: "Invalid postal code",
+                              message: "Invalid Postal Code!",
                             },
                           })}
                           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
@@ -344,7 +368,7 @@ export default function AddressPage() {
                       />
                       <label
                         htmlFor="isDefault"
-                        className="ml-2 text-sm text-gray-700 font-semibold"
+                        className="ml-2 text-sm text-gray-700 font-semibold cursor-pointer"
                       >
                         Set as default address
                       </label>
@@ -382,7 +406,7 @@ export default function AddressPage() {
 
       {/* Address List */}
       {addresses.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
           <p className="text-gray-600 mb-4">
             You haven't saved any addresses yet.
           </p>
