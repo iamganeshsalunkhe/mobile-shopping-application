@@ -15,6 +15,7 @@ import ScrollToTop from "./Components/ScrollToTop";
 import AuthGate from "./Components/AuthGate";
 import CartPage from "./Pages/CartPage";
 import AddressPage from "./Pages/AddressPage";
+import PageNotFoundPage from "./Pages/PageNotFoundPage";
 
 
 // create queryClient instance
@@ -36,6 +37,7 @@ return (
           <Route path="/demo/:pageName" element={<DemoPage/>}/>
           <Route path="/cart" element={<CartPage/>}/>
           <Route path="/address" element={<AddressPage/>}/>
+          <Route path="*" element={<PageNotFoundPage/>}/>
         </Routes>
       </MantineProvider>
       <Toaster toastOptions={{
