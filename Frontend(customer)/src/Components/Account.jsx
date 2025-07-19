@@ -1,65 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { FiEdit, FiSave, FiX } from "react-icons/fi";
-import { useEffect } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useNavigate } from "react-router-dom";
-
-// function to fetch customer data
-async function fetchCustomerData() {
-  try {
-    // get the data of the customer
-    const res = await axios.get("http://localhost:8000/api/customer/account", {
-      withCredentials: true,
-    });
-    return res.data;
-  } catch (error) {
-    // if any error occurs
-    console.error(error);
-  }
-}
-
-//function for updating an account info
-async function updateCustomerData(formData) {
-  try {
-    const res = await axios.put(
-      "http://localhost:8000/api/customer/account",
-      formData,
-      {
-        withCredentials: true,
-      }
-    );
-    return res.data;
-  } catch (error) {
-    // if any error occurs
-    console.error(error);
-  }
-}
-
-// function for deleting the customer Account
-async function deleteCustomerAccount(customerId) {
-  try {
-    const res = await axios.delete(
-      "http://localhost:8000/api/customer/account",
-      {
-        data: { customerId },
-        withCredentials: true,
-      }
-    );
-    return res.data;
-  } catch (error) {
-    // if any error occurs
-    console.error(error);
-  }
-}
+import {
+  deleteCustomerAccount,
+  fetchCustomerData,
+  updateCustomerData,
+} from "../services/accountService";
 
 export default function Account() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient(); // get queryClient
+  const navigate = useNavigate(); // get for navigation
+  // destructure useQuery
   const {
     data: customer,
     isLoading,
@@ -89,7 +45,7 @@ export default function Account() {
   }, [customer, reset]);
 
   // update the account details
-  const updateAccount = useMutation({
+  const updateAnAccount = useMutation({
     mutationFn: updateCustomerData,
     onSuccess: () => {
       toast.success("Account Updated Successfully!!");
@@ -99,11 +55,11 @@ export default function Account() {
     onError: (error) => {
       console.log(error);
       toast.error(error.response?.data?.message);
-    }
+    },
   });
 
   // for deleting the customer account
-  const deleteAccount = useMutation({
+  const deleteAnAccount = useMutation({
     mutationFn: deleteCustomerAccount,
     onSuccess: () => {
       toast.success("Account Deleted Successfully!!");
@@ -127,8 +83,8 @@ export default function Account() {
   }
 
   // function for submitting the form
-  async function onSubmit(formData) {
-    updateAccount.mutate(formData);
+  async function onSubmit(Data) {
+    updateAnAccount.mutate(Data);
   }
 
   // if data is still loading
@@ -259,6 +215,10 @@ export default function Account() {
                         id="contactNumber"
                         {...register("contactNumber", {
                           required: "Contact number is required",
+                          pattern: {
+                            value: /^[0-9]{10}$/, // validate only number and 10 digits
+                            message: "Invalid Phone number!",
+                          },
                         })}
                         className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       />
@@ -293,7 +253,7 @@ export default function Account() {
                     `Do you really want to delete your account? This action can't be reverted back!`
                   );
                   if (isConfirmed) {
-                    deleteAccount.mutate(customer.customerId);
+                    deleteAnAccount.mutate();
                   }
                 }}
                 className="px-4 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition cursor-pointer"
