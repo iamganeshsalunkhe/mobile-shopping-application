@@ -2,14 +2,24 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useAuthStore } from "../stores/authStore";
 
 function Login() {
+  // get navigate for navigation
   const navigate = useNavigate();
+  // from tracing path
+  const location = useLocation();
+  
+  // state for password visibility
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  // state for loading
   const [isLoading, setIsLoading] = useState(false);
+
+  // redirect to page from user came else redirect to home page
+  const from = location.state?.from?.pathname || "/";
 
   const {
     register,
@@ -32,7 +42,7 @@ function Login() {
       if (res.data) {
         useAuthStore.getState().login();
         toast.success("Logged in successfully");
-        navigate("/");
+        navigate(from,{replace:true});
       }
     } catch (error) {
       console.error(error);
