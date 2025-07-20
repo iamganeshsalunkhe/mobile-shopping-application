@@ -13,6 +13,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
+import { useCartStore } from "../stores/cartStore";
 
 function Navbar() {
   const [searchQuery, setSearchQuery] = useState(""); // state for search input
@@ -53,6 +54,7 @@ function Navbar() {
 
         queryClient.clear(); // clear all cached data
         useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
+        useCartStore.getState().clearCart(); // clear all carts value
         toast.success("Logged Out Successfully!"); // give success message
         navigate("/login"); // navigate to home page
       } catch (error) {
