@@ -32,6 +32,10 @@ export const useCartStore = create(
       getTotalAmount: () => {
         return get().items.reduce((total, item) => total + item.price, 0);
       },
+      // get length of item in cart
+      getLengthOfCart:()=>{
+        return get().items.length;
+      }
     }),
     {
       name: "cartStorage", // localStorage name

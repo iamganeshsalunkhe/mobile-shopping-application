@@ -23,6 +23,9 @@ function Navbar() {
   const navigate = useNavigate(); // extract navigate hook
   const location = useLocation(); // extract location hook
 
+  // get length products in the cart
+  const cartLength = useCartStore(state=>state.getLengthOfCart());
+
   // condition for showing search bar
   const showSearchBar =
     location.pathname === "/" || location.pathname === "/products";
@@ -31,6 +34,7 @@ function Navbar() {
   const authData = JSON.parse(localStorage.getItem("authSession")); // have to parse as using zustand(zustand store it as object not as plain text)
   const isAuthenticated = authData?.state?.isAuthenticated === true;
 
+  
   // function for handling search
   function handleSearch(e) {
     e.preventDefault();
@@ -52,11 +56,11 @@ function Navbar() {
           { withCredentials: true }
         );
 
+        navigate("/login",{state:{fromLogout:true}}); // navigate to home page
         queryClient.clear(); // clear all cached data
-        useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
         useCartStore.getState().clearCart(); // clear all carts value
+        useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
         toast.success("Logged Out Successfully!"); // give success message
-        navigate("/login"); // navigate to home page
       } catch (error) {
         // if any error occurs
         console.error(error);
@@ -149,6 +153,7 @@ function Navbar() {
               className="p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative"
             >
               <FiShoppingCart className="h-6 w-6" />
+             {cartLength? (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">{cartLength}</span>) : ""}
             </Link>
 
             {/* Profile dropdown */}

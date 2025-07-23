@@ -19,7 +19,7 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
-    // staleTime: 1000 * 60 * 3, // 3min 
+    staleTime: 1000 * 60 * 3, // 3min 
     onError:()=>{
       toast.error("Failed to load cart data!")
     }
