@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiShoppingCart, FiArrowLeft,FiArrowRight } from "react-icons/fi";
+import { FiShoppingCart, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { addToCart } from "../services/cartService";
 import { useCartStore } from "../stores/cartStore";
@@ -39,17 +39,16 @@ function ProductDetail() {
     queryFn: () => fetchProduct(productId),
   });
 
-  const { mutate:addToCartMutation, isPending } = useMutation({
-    mutationFn: ({productId})=>addToCart(productId),
-    onSuccess: (_data,product) => {
+  const { mutate: addToCartMutation, isPending } = useMutation({
+    mutationFn: ({ productId }) => addToCart(productId),
+    onSuccess: (_data, product) => {
       useCartStore.getState().addItem({
-        productId:product.productId,
-        productName:product.productName,
-        price:product.price
+        productId: product.productId,
+        productName: product.productName,
+        price: product.price,
       });
       toast.success("Added!");
-      queryClient.invalidateQueries(['cartData']);
-      navigate("/cart");
+      queryClient.invalidateQueries(["cartData"]);
     },
     onError: (error) => {
       console.error(error);
@@ -57,11 +56,17 @@ function ProductDetail() {
     },
   });
 
+  // check for product already in the cart or not
+  const productData = JSON.parse(localStorage.getItem("cartStorage"));
+  const isAlreadyInCart = productData?.state?.items?.some(
+    (item) => item.productId === product?.productId
+  );
+
   // if page is loading or data is loading
-  if (isLoading) return <Loader/>; 
+  if (isLoading) return <Loader />;
 
   // if any error occurs while fetching the productDetails
-  if (isError) return <Error/>;
+  if (isError) return <Error />;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -123,29 +128,31 @@ function ProductDetail() {
           </div>
 
           <div className="flex gap-2">
-
-          <button
-            onClick={() => addToCartMutation(product)}
-            disabled={isPending}
-            className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer ${
-              isPending ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+            {/* only render "add to cart" button only if product not already  in the cart */}
+            {!isAlreadyInCart && (
+              <button
+                onClick={() => addToCartMutation(product)}
+                disabled={isPending}
+                className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer ${
+                  isPending ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-            {isPending ? (
-              "Adding..."
-            ) : (
-              <>
-                <FiShoppingCart /> Add to Cart
-              </>
+                {isPending ? (
+                  "Adding..."
+                ) : (
+                  <>
+                    <FiShoppingCart /> Add to Cart
+                  </>
+                )}
+              </button>
             )}
-          </button>
 
-          <button
-            onClick={()=>navigate('/cart')}
-            className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer`}
+            <button
+              onClick={() => navigate("/cart")}
+              className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer`}
             >
-             Go to cart <FiArrowRight/>
-          </button>
+              Go to cart <FiArrowRight />
+            </button>
           </div>
 
           {/* Product Details Section */}
