@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useAuthStore } from "../stores/authStore";
+import { useCartStore } from "../stores/cartStore";
+import { getCartInfo } from "../services/cartService";
 
 function Login() {
   // get navigate for navigation
@@ -40,9 +42,22 @@ function Login() {
         { withCredentials: true }
       );
       if (res.data) {
-        useAuthStore.getState().login();
-        toast.success("Logged in successfully");
-        navigate(from,{replace:true});
+        // get cart data to sync with localstorage
+        const dbCart = await getCartInfo();
+
+        // from data extract required fields
+        const simplified = dbCart.map((item)=>{
+          return{
+            productId:item.product?.productId,
+            productName:item.product?.productName,
+            price:item.product?.price
+          }
+        });
+
+        useAuthStore.getState().login(); // set isAuthentication to true
+        useCartStore.getState().setItems(simplified); // set localstorage data
+        toast.success("Logged in successfully"); // show success toast
+        navigate(from,{replace:true}); 
       }
     } catch (error) {
       console.error(error);
