@@ -1,9 +1,11 @@
+// import required modules
 import { Link, useNavigate } from "react-router-dom";
 import { FiShoppingBag, FiTrash2, FiArrowLeft } from "react-icons/fi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteCartProducts, getCartInfo } from "../services/cartService";
 import toast from "react-hot-toast";
 import Loader from "../Components/Loader";
+import { useCartStore } from "../stores/cartStore";
 
 function Cart() {
   const navigate = useNavigate();
@@ -17,13 +19,17 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
-    staleTime: 1000 * 60 * 1,
+    staleTime: 1000 * 60 * 3, // 3min 
+    onError:()=>{
+      toast.error("Failed to load cart data!")
+    }
   });
 
   // destructure using useMutation
-  const { mutate } = useMutation({
+  const { mutate:deleteProductMutation } = useMutation({
     mutationFn: (productId) => deleteCartProducts(productId),
-    onSuccess: () => {
+    onSuccess: (_,productId) => {
+      useCartStore.getState().removeItem(productId);
       toast.success("Removed!!");
       queryClient.invalidateQueries(["cartData"]);
     },
@@ -48,7 +54,7 @@ function Cart() {
   }
 
 
-  if (isLoading) return <Loader/>
+  if (isLoading) return <Loader/>;
 
   if (isError) {
     return (
@@ -114,7 +120,7 @@ function Cart() {
                       {item.product?.productName}
                     </h3>
                     <button
-                      onClick={() => mutate(item.product?.productId)}
+                      onClick={() => deleteProductMutation(item.productId)}
                       className="text-gray-400 hover:text-red-500 transition cursor-pointer hover:scale-110"
                     >
                       <FiTrash2 size={20} />
