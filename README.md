@@ -1,29 +1,167 @@
-# Mobile Shopping Application
+##  Mobile Shopping Application (MSA)📱
 
-A full-stack e-commerce web app with microfrontends for Admin, Vendors, and Customers.
+A full-stack microservices-based e-commerce platform that allows admins, vendors, and customers to interact through dedicated frontend interfaces. It supports vendor listing, product listings, customer cart/order management, secure payments.
 
-## Features
-### Admin
-✅ Sign up, log in, and log out  
-✅ Review and approve/reject new vendor requests  
-✅ Monitor and manage vendors and customers  
-
-### Vendor
-✅ Sign up, log in, and log out  
-✅ Add, update, and delete their own products  
-✅ Add, update and delete their profile  
-✅ View for their products  
-✅ Get orders track for self listed products 
-
-### Customer
-✅ Sign up, log in, and log out  
-✅ Search and filter products  
-✅ Add and remove products from the cart  
-✅ Make secure payments via Stripe  
-✅ Update profile information and account settings  
-✅ Track orders  
-
+---
 ## Documentation
-- [Basic Functionality](docs/basic_functionality)
-- [Use case diagram](docs/UseCaseDiagram)
+
+- [Basic Functionality](docs/BasicFunctionality/basicFunctionality%20.jpg)
+- [Use case diagram](docs/UseCaseDiagram/useCaseDiagram.png)
 - [Database Schema](docs/DatabaseSchema/)
+
+---
+
+##  Tech Stack
+
+###  Frontend
+
+* **Customer**: React + TailwindCSS + Zustand + React Hook Form + React Query + Axios
+* **Vendor**: React + TailwindCSS + React Hook Form + React Query + Axios
+* **Admin**: React (microfrontend architecture)
+* **Build Tool**: Vite
+
+### Backend
+
+* **Node.js + Express.js**
+* **Service Pattern**
+* **RESTful APIs**
+* **Sequelize ORM** with MySQL
+* **Multer for file upload**
+
+### Third-Party Integrations
+
+* **Stripe** – Payment gateway
+* **AWS S3** – Image upload & storage
+
+---
+
+##  Features
+
+###  Admin Panel
+
+* View all vendors and customers
+* Delete vendors/customers in case of policy violations
+
+###  Vendor Dashboard
+
+* CRUD for product listings
+* Manage orders
+* Update brand logo and profile
+
+###  Customer Portal
+
+* Product search and filtering
+* Add/remove items in the cart
+* Place orders (no cancellations post-placement)
+* Make payments via Stripe
+* Manage profile
+
+---
+
+##  Project Structure
+
+```
+/MSA
+├── /Frontend(Admin) 
+├── /Frontend(Customer)
+├── /Fronted(Vendor)
+├── /backend
+├── /docs
+```
+
+---
+
+
+
+##  Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/iamganeshsalunkhe/mobile-shopping-app.git
+cd MSA
+```
+
+### 2. Install  backend dependencies
+
+**For backend**
+```bash
+cd backend
+npm install
+npm start
+```
+### 3. Setup a MySQL database:
+* Create a new MySQL database and update the database configuration in 
+`
+config/config.json
+` 
+
+### 4. Run database migrations
+
+**In backend folder(MSA/backend)**  
+```sh
+npx sequelize db:migrate
+```
+### 5. Install frontend dependencies
+**For Admin**
+```sh
+cd Frontend(Admin)
+npm run dev
+```
+**For Vendor**
+```sh
+cd Frontend(vendor)
+npm run dev
+```
+**For Customer**
+```sh
+cd Frontend(customer)
+npm run dev
+```
+
+---
+
+##  Authentication & Security
+
+* JWT-based auth stored in **HTTP-only cookies**
+* Role-based access controls: `admin`, `vendor`, `customer`
+
+---
+
+##  Image Upload
+
+* Vendor logo and product images are uploaded via AWS S3
+* Supports **single** image upload (brand-logo) and **multiple** image uploads (products)
+
+---
+
+##  Payments
+
+* Stripe Checkout integration
+* Payments locked after checkout; no cancellation
+
+---
+
+
+##  Dev Tools
+
+* Nodemon for backend dev
+* ESLint + Prettier
+* React-Query DevTools, Zustand Devtools, DaisyUI, mantine UI
+* Postman
+* VS code
+* draw.io
+* dbdiagram.io
+---
+
+
+##  License
+
+MIT License
+
+---
+
+##  Contributing
+
+Pull requests are welcome. For major changes, please open an issue first.
+)
