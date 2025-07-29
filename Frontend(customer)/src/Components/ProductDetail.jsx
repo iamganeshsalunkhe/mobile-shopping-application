@@ -7,6 +7,7 @@ import { addToCart } from "../services/cartService";
 import { useCartStore } from "../stores/cartStore";
 import Loader from "./Loader";
 import Error from "./Error";
+import { useState } from "react";
 
 // function to fetch product with particular Id
 async function fetchProduct(productId) {
@@ -28,6 +29,9 @@ function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  //state for pincode
+  const [pincode,setPincode] = useState("");
 
   // extract react-query methods/property
   const {
@@ -61,6 +65,15 @@ function ProductDetail() {
   const isAlreadyInCart = productData?.state?.items?.some(
     (item) => item.productId === product?.productId
   );
+
+
+  // handle pincode 
+  function handleChange(e){
+    const value = e.target.value;
+    if (/^\d{0,6}$/.test(value)){
+      setPincode(value);
+    }
+  }
 
   // if page is loading or data is loading
   if (isLoading) return <Loader />;
@@ -127,36 +140,82 @@ function ProductDetail() {
             />
           </div>
 
-          <div className="flex gap-2">
-            {/* only render "add to cart" button only if product not already  in the cart */}
-            {!isAlreadyInCart && (
-              <button
-                onClick={() => addToCartMutation(product)}
-                disabled={isPending}
-                className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer ${
-                  isPending ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {isPending ? (
-                  "Adding..."
-                ) : (
-                  <>
-                    <FiShoppingCart /> Add to Cart
-                  </>
+          {/* check pincode availability */}
+          <div className="max-w-md grid gap-4">
+            <div className="min-h-[80px]">
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Check for availability at your pincode
+              </label>
+              <div className="flex items-start gap-2">
+                <input
+                  type="text"
+                  value={pincode}
+                  onChange={handleChange}
+                  placeholder="Enter 6-digit pincode"
+                  minLength={6}
+                  maxLength={6}
+                  className="w-48 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                />
+                {pincode.length === 6 && (
+                  <span className="flex items-center text-green-600 text-sm mt-1">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Delivery in 4-5 days
+                  </span>
                 )}
-              </button>
-            )}
+              </div>
+              {pincode.length > 0 && pincode.length < 6 && (
+                <p className="text-red-500 text-xs mt-1">
+                  Please enter a 6-digit pincode
+                </p>
+              )}
+            </div>
 
-            <button
-              onClick={() => navigate("/cart")}
-              className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer`}
-            >
-              Go to cart <FiArrowRight />
-            </button>
+
+            <div className="flex gap-2 mt-2">
+              {!isAlreadyInCart ? (
+                <button
+                  onClick={() => addToCartMutation(product)}
+                  disabled={isPending}
+                  className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 ${
+                    isPending
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {isPending ? (
+                    "Adding..."
+                  ) : (
+                    <>
+                      {" "}
+                      <FiShoppingCart /> Add to Cart{" "}
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate("/cart")}
+                  className="w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  Go to cart <FiArrowRight />
+                </button>
+              )}
+            </div>
           </div>
-
           {/* Product Details Section */}
-          <div className="mt-10 pt-8 border-t border-gray-200">
+          <div className="mt-7 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Product Details
             </h2>

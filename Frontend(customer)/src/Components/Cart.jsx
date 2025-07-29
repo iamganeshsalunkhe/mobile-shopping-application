@@ -19,16 +19,16 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
-    staleTime: 1000 * 60 * 3, // 3min 
-    onError:()=>{
-      toast.error("Failed to load cart data!")
-    }
+    staleTime: 1000 * 60 * 3, // 3min
+    onError: () => {
+      toast.error("Failed to load cart data!");
+    },
   });
 
   // destructure using useMutation
-  const { mutate:deleteProductMutation } = useMutation({
+  const { mutate: deleteProductMutation } = useMutation({
     mutationFn: (productId) => deleteCartProducts(productId),
-    onSuccess: (_,productId) => {
+    onSuccess: (_, productId) => {
       useCartStore.getState().removeItem(productId);
       toast.success("Removed!!");
       queryClient.invalidateQueries(["cartData"]);
@@ -53,9 +53,10 @@ function Cart() {
     navigate(-1);
   }
 
+  // if data is still loading
+  if (isLoading) return <Loader />;
 
-  if (isLoading) return <Loader/>;
-
+  // if any error occurs
   if (isError) {
     return (
       <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex items-center justify-center">
@@ -163,7 +164,9 @@ function Cart() {
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold">Shipping</span>
-                <span className={shippingFee ? "font-semibold":""}>{shippingFee === 0 ? "Free" : `₹${shippingFee}`}</span>
+                <span className={shippingFee ? "font-semibold" : ""}>
+                  {shippingFee === 0 ? "Free" : `₹${shippingFee}`}
+                </span>
               </div>
               <hr className="my-3" />
               <div className="flex justify-between font-bold text-lg">
