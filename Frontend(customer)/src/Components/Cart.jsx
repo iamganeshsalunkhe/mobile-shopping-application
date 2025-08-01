@@ -6,6 +6,8 @@ import { deleteCartProducts, getCartInfo } from "../services/cartService";
 import toast from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { useCartStore } from "../stores/cartStore";
+import { getDefaultAddress } from "../services/addressService";
+import { FaUser, FaMapMarkerAlt, FaCity, FaPhoneAlt } from "react-icons/fa";
 
 function Cart() {
   const navigate = useNavigate();
@@ -24,6 +26,15 @@ function Cart() {
       toast.error("Failed to load cart data!");
     },
   });
+
+  // get default address 
+  const {data:address=[]}= useQuery({
+    queryKey:["defaultAddress"],
+    queryFn:getDefaultAddress,
+    onError:()=>{
+      toast.error("Failed to load address");
+    }
+  })
 
   // destructure using useMutation
   const { mutate: deleteProductMutation } = useMutation({
@@ -53,6 +64,7 @@ function Cart() {
     navigate(-1);
   }
 
+  console.log(address);
   // if data is still loading
   if (isLoading) return <Loader />;
 
@@ -143,6 +155,46 @@ function Cart() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Address Summary */}
+          <div className="bg-white rounded-2xl shadow-md p-6 mb-10">
+            <h2 className="text-xl flex justify-between font-bold text-gray-800 mb-6 border-b pb-2">
+              Delivering to this address
+            <Link to='/address' className="text-blue-500 font-semibold hover:text-blue-800">Edit or change default</Link>
+            </h2>
+
+            <div className="space-y-3 text-gray-700">
+              <div className="flex items-start">
+                <FaUser className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <span className="font-semibold">{address.fullName}</span>
+              </div>
+
+              <div className="flex items-start">
+                <FaMapMarkerAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">{address.addressLine}</p>
+                  {address.landMark && (
+                    <p className="text-sm text-gray-600 mt-1 font-medium">
+                      {address.landMark}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <FaCity className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <p className="font-semibold">
+                  {address.city}, {address.district}, {address.state} -{" "}
+                  {address.postalCode}
+                </p>
+              </div>
+
+              <div className="flex items-start">
+                <FaPhoneAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <p className="font-semibold">{address.contactNumber}</p>
+              </div>
+            </div>
           </div>
 
           {/* Order Summary */}

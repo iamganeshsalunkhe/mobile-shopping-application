@@ -93,15 +93,40 @@ exports.setDefaultAddress = async(req,res)=>{
       // get the addressId from params
       const addressId = req.params.addressId;
 
-        // pass it to the service layer
-      const setDefault = await customerAddressService.setDefault(customerId,addressId);
+      // pass it to the service layer
+      const setDefault = await customerAddressService.setDefault(
+        customerId,
+        addressId
+      );
 
-      res.status(200).json({message:"Default address changed successfully!!"});
+      // if request handled successfully
+      res
+        .status(200)
+        .json({ message: "Default address changed successfully!!" });
     } catch (error) {
         // if any error occurs
         console.error(error);
         res
           .status(500)
           .json({ message: error.message || "Something went wrong" });
+    }
+};
+
+exports.getDefaultAddress = async(req,res)=>{
+    try {
+      // get the customerId from token
+      const customerId = req.user.id;
+
+      // pass it to the service layer
+      const defaultAddress = await customerAddressService.getDefaultAddress(
+        customerId
+      );
+
+      // if request handled successfully
+      res.status(200).json(defaultAddress);
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        res.status(500).json({message:error.message || "Something went wrong!"});
     }
 }

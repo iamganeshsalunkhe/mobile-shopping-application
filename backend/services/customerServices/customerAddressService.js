@@ -110,4 +110,13 @@ exports.setDefault = async(customerId,addressId)=>{
 
     return address;
 
+};
+
+exports.getDefaultAddress = async (customerId)=>{
+  // get the customerId and addressId from the controller layer
+
+  const address = await Addresses.findOne({
+    where:{customerId,isDefault:true}
+  });
+  return address;
 }

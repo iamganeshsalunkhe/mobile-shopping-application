@@ -406,6 +406,7 @@ export default function Address() {
                         type="checkbox"
                         id="isDefault"
                         {...register("isDefault")}
+                        checked
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                       />
                       <label
