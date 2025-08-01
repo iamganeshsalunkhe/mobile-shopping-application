@@ -68,3 +68,17 @@ export async function deleteAnAddress(addressId){
         throw error;
     }
 };
+
+// set an address 
+export async function setDefaultAddress(addressId,data){
+    try {
+        // send request to BE with addressId
+        const res = await axios.post(`${API_BASE}/address/${addressId}`,data,{withCredentials:true});
+
+        return res.data;
+    } catch (error) {
+        // if any error occurs
+        console.error("Error while setting default address:",error.response?.data?.message);
+        throw error;
+    }
+}

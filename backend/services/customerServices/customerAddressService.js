@@ -4,9 +4,15 @@ const {Addresses} = require('../../models');
 // add a new address
 exports.addAddress = async(customerId,req)=>{
     // get the customerId and data from the controller
-    console.log(req.body);
-    console.log(customerId);
     const {fullName,contactNumber,addressLine,landMark,city,district, state, postalCode, country, addressType,isDefault} = req.body;
+
+    // if isDefault is true then set all other that customer specific to false
+    if (isDefault){
+        await Addresses.update(
+            {isDefault:false},
+            {where:{customerId}}
+        )
+    }
 
     // create a new entry in db
     const addressToAdd = await Addresses.create({
@@ -51,7 +57,15 @@ exports.updateAddress = async(customerId, addressId, data)=>{
     // if address not found
     if (!address){
         throw new Error("Address not found")    
-    }
+    };
+    // check if user want set default address
+    console.log(data);
+    if (data.isDefault){
+        await Addresses.update(
+            {isDefault:false},
+            {where:{customerId}}
+        )
+    };
     
     // update the address
     const updatedAddress =  await address.update(data)
@@ -75,4 +89,25 @@ exports.deleteAddress = async(customerId, addressId)=>{
 
     // delete the address
     return await address.destroy();
+};
+
+exports.setDefault = async(customerId,addressId)=>{
+    // get the customerId and addressId from the controller layer
+
+    // find the address in db using customerId, addressId
+    const address = await Addresses.findOne({where:{
+        customerId:customerId,
+        addressId:addressId
+    }});
+
+    // make all address isDefault to false
+    await Addresses.update(
+        {isDefault:false},
+        {where:{customerId}}
+    )
+
+    await address.update({isDefault:true})
+
+    return address;
+
 }

@@ -172,7 +172,7 @@ function ProductDetail() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    Delivery in 4-5 days
+                    {pincode < 400000 ? "Delivery in 4-5 days":pincode < 800000 ? "Delivery in 6-7 days":"Delivery in 8-9 days"}
                   </span>
                 )}
               </div>
