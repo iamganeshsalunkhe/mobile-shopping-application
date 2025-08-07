@@ -6,6 +6,8 @@ import { deleteCartProducts, getCartInfo } from "../services/cartService";
 import toast from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { useCartStore } from "../stores/cartStore";
+import { getDefaultAddress } from "../services/addressService";
+import { FaUser, FaMapMarkerAlt, FaCity, FaPhoneAlt } from "react-icons/fa";
 
 function Cart() {
   const navigate = useNavigate();
@@ -19,16 +21,25 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
-    staleTime: 1000 * 60 * 3, // 3min 
-    onError:()=>{
-      toast.error("Failed to load cart data!")
-    }
+    staleTime: 1000 * 60 * 3, // 3min
+    onError: () => {
+      toast.error("Failed to load cart data!");
+    },
   });
 
+  // get default address 
+  const {data:address=[]}= useQuery({
+    queryKey:["defaultAddress"],
+    queryFn:getDefaultAddress,
+    onError:()=>{
+      toast.error("Failed to load address");
+    }
+  })
+
   // destructure using useMutation
-  const { mutate:deleteProductMutation } = useMutation({
+  const { mutate: deleteProductMutation } = useMutation({
     mutationFn: (productId) => deleteCartProducts(productId),
-    onSuccess: (_,productId) => {
+    onSuccess: (_, productId) => {
       useCartStore.getState().removeItem(productId);
       toast.success("Removed!!");
       queryClient.invalidateQueries(["cartData"]);
@@ -53,9 +64,11 @@ function Cart() {
     navigate(-1);
   }
 
+  console.log(address);
+  // if data is still loading
+  if (isLoading) return <Loader />;
 
-  if (isLoading) return <Loader/>;
-
+  // if any error occurs
   if (isError) {
     return (
       <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex items-center justify-center">
@@ -144,6 +157,46 @@ function Cart() {
             ))}
           </div>
 
+          {/* Address Summary */}
+          <div className="bg-white rounded-2xl shadow-md p-6 mb-10">
+            <h2 className="text-xl flex justify-between font-bold text-gray-800 mb-6 border-b pb-2">
+              Delivering to this address
+            <Link to='/address' className="text-blue-500 font-semibold hover:text-blue-800">Edit or change default</Link>
+            </h2>
+
+            <div className="space-y-3 text-gray-700">
+              <div className="flex items-start">
+                <FaUser className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <span className="font-semibold">{address.fullName}</span>
+              </div>
+
+              <div className="flex items-start">
+                <FaMapMarkerAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">{address.addressLine}</p>
+                  {address.landMark && (
+                    <p className="text-sm text-gray-600 mt-1 font-medium">
+                      {address.landMark}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <FaCity className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <p className="font-semibold">
+                  {address.city}, {address.district}, {address.state} -{" "}
+                  {address.postalCode}
+                </p>
+              </div>
+
+              <div className="flex items-start">
+                <FaPhoneAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                <p className="font-semibold">{address.contactNumber}</p>
+              </div>
+            </div>
+          </div>
+
           {/* Order Summary */}
           <div className="bg-white rounded-2xl shadow-md p-6 mb-10">
             <h2 className="text-xl font-bold text-gray-800 mb-4">
@@ -163,7 +216,9 @@ function Cart() {
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold">Shipping</span>
-                <span className={shippingFee ? "font-semibold":""}>{shippingFee === 0 ? "Free" : `₹${shippingFee}`}</span>
+                <span className={shippingFee ? "font-semibold" : ""}>
+                  {shippingFee === 0 ? "Free" : `₹${shippingFee}`}
+                </span>
               </div>
               <hr className="my-3" />
               <div className="flex justify-between font-bold text-lg">

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {addAnNewAddress, deleteAnAddress, getAddresses, updateAnAddress} from "../services/addressService";
+import {addAnNewAddress, deleteAnAddress, getAddresses, setDefaultAddress, updateAnAddress} from "../services/addressService";
 import toast from "react-hot-toast";
 
 export default function Address() {
@@ -88,6 +88,19 @@ export default function Address() {
     onSuccess:()=>{
       queryClient.invalidateQueries(['addresses']);
       toast.success("Address Deleted Successfully!");
+    },
+    onError:(error)=>{
+      console.error(error);
+      toast.error(error.response?.data?.message);
+    }
+  });
+
+  // set a default address
+  const setDefaultAddressMutation = useMutation({
+    mutationFn:setDefaultAddress,
+    onSuccess:()=>{
+      queryClient.invalidateQueries(['addresses']);
+      toast.success("Default Address Set!")
     },
     onError:(error)=>{
       console.error(error);
@@ -387,27 +400,13 @@ export default function Address() {
                       </div>
                     </div>
 
-                    {/* Address Type */}
-                    {/* <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Address Type*
-                      </label>
-                      <select
-                        {...register("addressType", { required: true })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="Shipping">Shipping</option>
-                        <option value="Billing">Billing</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div> */}
-
                     {/* Default Checkbox */}
                     <div className="flex items-center pt-2">
                       <input
                         type="checkbox"
                         id="isDefault"
                         {...register("isDefault")}
+                        checked
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                       />
                       <label
@@ -509,7 +508,9 @@ export default function Address() {
               </div>
 
               {!address.isDefault && (
-                <button className="mt-4 text-sm text-blue-600 hover:text-blue-800 transition cursor-pointer">
+                <button 
+                onClick={()=>setDefaultAddressMutation.mutate(address.addressId)}
+                className="mt-4 text-sm text-blue-600 hover:text-blue-800 transition cursor-pointer">
                   Set as default
                 </button>
               )}

@@ -25,5 +25,11 @@ router.delete(
     authenticate,
     customerAddressController.deleteAnAddress
 );
+// set default address
+router.post("/address/:addressId",authenticate,customerAddressController.setDefaultAddress);
+
+// get default address
+router.get("/defaultAddress",authenticate,customerAddressController.getDefaultAddress);
+
 
 module.exports = router;
