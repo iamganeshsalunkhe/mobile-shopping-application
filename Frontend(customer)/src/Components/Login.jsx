@@ -49,8 +49,7 @@ function Login() {
         const simplified = dbCart.map((item)=>{
           return{
             productId:item.product?.productId,
-            productName:item.product?.productName,
-            price:item.product?.price
+            productName:item.product?.productName
           }
         });
 

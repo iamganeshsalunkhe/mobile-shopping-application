@@ -8,12 +8,17 @@ import Loader from "../Components/Loader";
 import { useCartStore } from "../stores/cartStore";
 import { getDefaultAddress } from "../services/addressService";
 import { FaUser, FaMapMarkerAlt, FaCity, FaPhoneAlt } from "react-icons/fa";
+import { useAddressStore } from "../stores/addressStore";
+import { useEffect } from "react";
 
 function Cart() {
   const navigate = useNavigate();
   // get queryClient
   const queryClient = useQueryClient();
-  // destructure using useQuery
+
+  // set addressId in localstorage
+  const setAddressId = useAddressStore(state=>state.setAddressId);
+
   const {
     data: cartItems = [],
     isLoading,
@@ -27,14 +32,23 @@ function Cart() {
     },
   });
 
+  console.log("Query mounted");
   // get default address 
-  const {data:defaultAddress=[]}= useQuery({
+  const {data:defaultAddress}= useQuery({
     queryKey:["defaultAddress"],
     queryFn:getDefaultAddress,
     onError:()=>{
       toast.error("Failed to load address");
     }
-  })
+  });
+
+  // set addressId in the localstorage
+  useEffect(()=>{
+    if (defaultAddress?.addressId){
+      console.log(defaultAddress);
+      setAddressId(defaultAddress.addressId);
+    }
+  },[defaultAddress,setAddressId]);
 
   // destructure using useMutation
   const { mutate: deleteProductMutation } = useMutation({

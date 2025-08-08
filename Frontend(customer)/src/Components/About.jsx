@@ -39,27 +39,27 @@ export default function About() {
               Founded in 2021 with a simple vision
             </h3>
             <p className="text-gray-600 mb-6">
-              MSA began with a simple dream — a humble online store built on one
+              MSA began with a simple dream a humble online store built on one
               core belief:{" "}
               <span className="font-semibold text-gray-700">
                 Every customer deserves a shopping experience they can genuinely
                 trust.
               </span>{" "}
-              From the very beginning, our mission has been clear — to offer not
+              From the very beginning, our mission has been clear to offer not
               just top-quality mobile devices, but also peace of mind with every
               purchase.
             </p>
 
             <p className="text-gray-600">
               What began as a modest startup has grown into one of the most
-              trusted names in mobile retail. We’re proud to have earned the
-              confidence of thousands of customers across the country — not just
+              trusted names in mobile retail. We're proud to have earned the
+              confidence of thousands of customers across the country not just
               by selling the latest smartphones, but by standing behind every
               product with genuine care and support. Today, MSA continues to
               deliver top-brand devices at competitive prices, backed by fast
               service and real people who care.{" "}
               <span className="font-semibold text-gray-700">
-                We're not just here to sell — we’re here to help you choose
+                We're not just here to sell we're here to help you choose
                 confidently, shop securely, and stay connected with ease.
               </span>
             </p>
