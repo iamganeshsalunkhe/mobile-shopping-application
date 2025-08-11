@@ -30,7 +30,7 @@ A full-stack microservices-based e-commerce platform that allows admins, vendors
 
 ### Third-Party Integrations
 
-* **Stripe** – Payment gateway
+* **Razorpay** – Payment gateway
 * **AWS S3** – Image upload & storage
 
 ---
@@ -137,7 +137,7 @@ npm run dev
 
 ##  Payments
 
-* Stripe Checkout integration
+* Razorpay Checkout integration
 * Payments locked after checkout; no cancellation
 
 ---
@@ -164,4 +164,4 @@ MIT License
 ##  Contributing
 
 Pull requests are welcome. For major changes, please open an issue first.
-)
+:)
