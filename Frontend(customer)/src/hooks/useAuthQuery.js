@@ -9,6 +9,7 @@ export const useAuthChecker = ()=>{
         retry:false,
         staleTime:1000 * 60 * 5, // revalidate every 5 mins
         refetchOnWindowFocus: true,// refetch if user switches back to the  tab
+        refetchInterval:1000 * 60 * 5, // refetch after every 5 min
         onSuccess:()=>{
             useAuthStore.getState().login();
         },

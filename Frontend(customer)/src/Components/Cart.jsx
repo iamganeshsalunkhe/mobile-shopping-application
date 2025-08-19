@@ -32,7 +32,6 @@ function Cart() {
     },
   });
 
-  console.log("Query mounted");
   // get default address 
   const {data:defaultAddress}= useQuery({
     queryKey:["defaultAddress"],
@@ -45,7 +44,6 @@ function Cart() {
   // set addressId in the localstorage
   useEffect(()=>{
     if (defaultAddress?.addressId){
-      console.log(defaultAddress);
       setAddressId(defaultAddress.addressId);
     }
   },[defaultAddress,setAddressId]);
