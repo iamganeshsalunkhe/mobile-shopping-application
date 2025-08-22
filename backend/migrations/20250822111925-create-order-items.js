@@ -2,32 +2,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("SubOrders", {
-      subOrderId: {
+    await queryInterface.createTable("OrderItems", {
+      OrderItemsId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      orderId: {
+      subOrderId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Orders",
-          key: "orderId",
+          model: "SubOrders",
+          key: "subOrderId",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      vendorId: {
+      productId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Vendors",
-          key: "vendorId",
+          model: "Products",
+          key: "productId",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      subTotal: {
+      productName: {
+        type: Sequelize.STRING,
+      },
+      productPrice: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -41,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("SubOrders");
+    await queryInterface.dropTable("OrderItems");
   },
 };
