@@ -28,6 +28,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      paymentId:{
+        type:Sequelize.INTEGER,
+        references:{
+          model:"Payments",
+          key:"paymentId"
+        }
+      },
       totalAmount: {
         type: Sequelize.STRING,
       },

@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       customerId: DataTypes.INTEGER,
+      paymentId:DataTypes.INTEGER,
       status:{
         type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED")
       },
