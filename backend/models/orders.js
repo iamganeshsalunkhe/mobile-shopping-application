@@ -9,22 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Orders.belongsTo(models.Products, {
-        foreignKey: "productId",
-        onDelete: "CASCADE",
-      });
       Orders.belongsTo(models.Customers, {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
-      Orders.belongsTo(models.Vendors, {
-        foreignKey: "VendorId",
+      Orders.belongsTo(models.Addresses, {
+        foreignKey: "addressId",
         onDelete: "CASCADE",
       });
-      Orders.belongsTo(models.Addresses,{
-        foreignKey:'addressId',
-        onDelete:"CASCADE"
-      })
     }
   }
   Orders.init(
@@ -34,16 +26,24 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      productId: DataTypes.INTEGER,
       customerId: DataTypes.INTEGER,
-      vendorId:DataTypes.INTEGER,
-      addressId:DataTypes.INTEGER,
-      amountPaid: {
+      status:{
+        type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED")
+      },
+      totalAmount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
-      dateOfOrderPlaced: DataTypes.DATE,
-      transactionId: DataTypes.STRING,
+      addressId: DataTypes.INTEGER,
+      shippingName:DataTypes.STRING,
+      shippingPhone:DataTypes.STRING,
+      shippingStreet:DataTypes.STRING,
+      shippingLandMark:DataTypes.STRING,
+      shippingCity:DataTypes.STRING,
+      shippingDistrict:DataTypes.STRING,
+      shippingState:DataTypes.STRING,
+      shippingPincode:DataTypes.STRING,
+
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

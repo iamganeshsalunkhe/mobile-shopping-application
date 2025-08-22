@@ -9,15 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      productId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Products",
-          key: "productId",
-        },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      },
+     
       customerId: {
         type: Sequelize.INTEGER,
         references: {
@@ -26,15 +18,6 @@ module.exports = {
         },
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
-      },
-      vendorId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Vendors",
-          key: "vendorId",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       addressId: {
         type: Sequelize.INTEGER,
@@ -45,15 +28,12 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      amountPaid: {
+      totalAmount: {
         type: Sequelize.STRING,
       },
-      dateOfOrderPlaced: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-      },
-      transactionId: {
-        type: Sequelize.STRING,
+      status:{
+        type:Sequelize.ENUM("PENDING_PAYMENT","PAID","FAILED","CANCELLED","SHIPPED","DELIVERED"),
+        defaultValue:"PENDING_PAYMENT"
       },
       createdAt: {
         allowNull: false,
