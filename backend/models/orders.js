@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "addressId",
         onDelete: "CASCADE",
       });
+      Orders.hasMany(models.Payments,{
+        foreignKey:"orderId",
+        onDelete:"CASCADE"
+      });
+      Orders.hasMany(models.SubOrders,{
+        foreignKey:"orderId",
+        onDelete:"CASCADE"
+      })
     }
   }
   Orders.init(

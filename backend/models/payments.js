@@ -9,6 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Payments.belongsTo(models.Orders,{
+        foreignKey:'paymentId',
+        onDelete:"CASCADE"
+      });
+      Payments.belongsTo(models.Customers,{
+        foreignKey:"customerId",
+        onDelete:"CASCADE"
+      })
     }
   }
   Payments.init(
@@ -30,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       paymentDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       method: DataTypes.STRING,
-      status:DataTypes.ENUM("PENDING","SUCCESS","FAILED")
+      status:DataTypes.ENUM("CREATED","CAPTURED","FAILED")
     },
     {
       sequelize,
