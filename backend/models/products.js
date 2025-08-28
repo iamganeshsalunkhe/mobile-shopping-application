@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         as: "cartEntries"
       });
-      Products.hasMany(models.OrderItems,{
-        foreignKey:'productId',
-        onDelete:"CASCADE"
-      })
     }
   }
   Products.init(

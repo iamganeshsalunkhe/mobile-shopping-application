@@ -26,8 +26,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
       },
-      orderId:DataTypes.INTEGER,
-      customerId:DataTypes.INTEGER,
+      orderId: DataTypes.INTEGER,
+      customerId: DataTypes.INTEGER,
       razorpayPaymentId: DataTypes.STRING,
       razorpayOrderId: DataTypes.STRING,
       razorpaySignature: DataTypes.STRING,
@@ -36,9 +36,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: "INR",
       },
-      paymentDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
       method: DataTypes.STRING,
-      status:DataTypes.ENUM("CREATED","CAPTURED","FAILED")
+      status: DataTypes.ENUM(
+        "created",
+        "authorized",
+        "captured",
+        "failed",
+        "refunded"
+      ),
     },
     {
       sequelize,

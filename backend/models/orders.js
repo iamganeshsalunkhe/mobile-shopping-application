@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
-      Orders.belongsTo(models.Addresses, {
-        foreignKey: "addressId",
-        onDelete: "CASCADE",
-      });
       Orders.hasMany(models.Payments,{
         foreignKey:"orderId",
         onDelete:"CASCADE"
@@ -35,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       customerId: DataTypes.INTEGER,
-      paymentId:DataTypes.INTEGER,
       status:{
         type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED")
       },
@@ -43,7 +38,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
-      addressId: DataTypes.INTEGER,
       shippingName:DataTypes.STRING,
       shippingPhone:DataTypes.STRING,
       shippingStreet:DataTypes.STRING,
