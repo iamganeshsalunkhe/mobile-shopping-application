@@ -7,9 +7,16 @@ import toast from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { useCartStore } from "../stores/cartStore";
 import { getDefaultAddress } from "../services/addressService";
-import { FaUser, FaMapMarkerAlt, FaCity, FaPhoneAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaMapMarkerAlt,
+  FaCity,
+  FaPhoneAlt,
+  FaEnvelope,
+} from "react-icons/fa";
 import { useAddressStore } from "../stores/addressStore";
 import { useEffect } from "react";
+import { createOrder } from "../services/paymentService";
 
 function Cart() {
   const navigate = useNavigate();
@@ -74,7 +81,34 @@ function Cart() {
   // function for going one step back
   function handleGoBack() {
     navigate(-1);
-  }
+  };
+
+  // handlePayment
+  async function handlePayment(){
+    if (!defaultAddress) throw toast.error("Please Select Delivery Address!")
+
+    const order = await createOrder();
+
+    const options = {
+      key:order.key,
+      amount:order.amount * 100,// convert to paise
+      currency:order.currency,
+      name:"MSA",
+      description:"Happy to serve you!!",
+      order_id:order.razorPayOrderId,
+      prefill:{
+        name:order?.customer?.fullName,
+        email:order?.customer?.email,
+        contact:order?.customer?.contact
+      },
+      theme:{
+        color:'#4c98f5'
+      }
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
 
   // if data is still loading
   if (isLoading) return <Loader />;
@@ -191,6 +225,13 @@ function Cart() {
                   </div>
 
                   <div className="flex items-start">
+                    <FaEnvelope className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0"/>
+                    <span className="font-semibold">
+                      {defaultAddress.email}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start">
                     <FaMapMarkerAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
                     <div>
                       <p className="font-semibold">
@@ -208,7 +249,7 @@ function Cart() {
                     <FaCity className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
                     <p className="font-semibold">
                       {defaultAddress.city}, {defaultAddress.district},{" "}
-                      {defaultAddress.state} -{defaultAddress.postalCode}
+                      {defaultAddress.state} - {defaultAddress.postalCode}
                     </p>
                   </div>
 
@@ -274,7 +315,10 @@ function Cart() {
           </div>
 
           {/* Checkout Button */}
-          <button className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition cursor-pointer  duration-200">
+          <button
+            className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition cursor-pointer  duration-200 "
+            onClick={handlePayment}
+          >
             Proceed to Checkout
           </button>
         </>

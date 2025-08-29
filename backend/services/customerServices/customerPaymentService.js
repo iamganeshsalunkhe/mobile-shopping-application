@@ -38,6 +38,7 @@ exports.orderToCreated = async (customerId) => {
    const createOrder = await Orders.create({
     customerId,
     shippingName:deliveryAddress.fullName,
+    shippingEmail:deliveryAddress.email,
     shippingPhone:deliveryAddress.contactNumber,
     shippingStreet:deliveryAddress.addressLine +" " + deliveryAddress.landMark,
     shippingCity:deliveryAddress.city,
@@ -55,13 +56,7 @@ exports.orderToCreated = async (customerId) => {
    const razorpayOrder = await rzp.orders.create({
     amount:totalAmount * 100, // convert to paise 
     currency:"INR",
-    receipt:`order_number_${orderId}`,
-    notes:{
-      customerName:deliveryAddress.fullName,
-      orderId
-    }
-  })
-  console.log(razorpayOrder);
+  });
 
   // update the razorpayOrderId in order table
   await createOrder.update({
@@ -70,9 +65,17 @@ exports.orderToCreated = async (customerId) => {
 
   return {
     orderId,
-    razorPayOrderId:razorpayOrder.id,
-    amount:totalAmount,
-    currency:"INR",
-    status:"PENDING_PAYMENT"
-  }   
+    razorPayOrderId: razorpayOrder.id,
+    amount: totalAmount,
+    currency: "INR",
+    status: "PENDING_PAYMENT",
+    key: process.env.razorPay_key,
+
+    // return to prefill field in FE
+    customer: {
+      name: deliveryAddress.fullName,
+      email: deliveryAddress.email,
+      contactNumber: deliveryAddress.contactNumber,
+    },
+  };
 };

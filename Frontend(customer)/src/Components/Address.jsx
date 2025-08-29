@@ -29,6 +29,7 @@ export default function Address() {
   } = useForm({
     defaultValues: {
       fullName: "",
+      email:"",
       contactNumber: "",
       addressLine: "",
       landMark: "",
@@ -135,6 +136,7 @@ export default function Address() {
     setEditingAddressId(null);
     reset({
       fullName: "",
+      email:"",
       contactNumber: "",
       addressLine: "",
       landMark: "",
@@ -215,7 +217,7 @@ export default function Address() {
                     {/* Full Name */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Full Name*
+                        Full Name<span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -235,10 +237,36 @@ export default function Address() {
                       )}
                     </div>
 
+                    {/* for email */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                        Email<span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        {...register("email", {
+                          required: "email is required!",
+                          pattern: {
+                            message: "Invalid email address!",
+                          },
+                        })}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                          errors.email
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-blue-500"
+                        }`}
+                      />
+                      {errors.contactNumber && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.contactNumber.message}
+                        </p>
+                      )}
+                    </div>
+
                     {/* Contact Number */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Contact Number*
+                        Contact Number<span className="text-red-600">*</span>
                       </label>
                       <input
                         type="tel"
@@ -265,7 +293,7 @@ export default function Address() {
                     {/* Address Line */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Address Line*
+                        Address Line<span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -288,7 +316,7 @@ export default function Address() {
                     {/* Landmark */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Landmark*
+                        Landmark<span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -306,7 +334,7 @@ export default function Address() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">
-                          City*
+                          City<span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -328,7 +356,7 @@ export default function Address() {
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">
-                          District*
+                          District<span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -353,7 +381,7 @@ export default function Address() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">
-                          State*
+                          State<span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -375,7 +403,7 @@ export default function Address() {
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">
-                          Postal Code*
+                          Postal Code<span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -495,21 +523,25 @@ export default function Address() {
                 </div>
               </div>
 
-              <div className="text-gray-600 space-y-2">
+              <div className="text-gray-600 space-y-2 font-semibold">
                 <p>{address.addressLine}</p>
                 <p>Landmark: {address.landMark}</p>
                 <p className="capitalize">City: {address.city},</p>
                 <p>
-                  District: {address.district}, State: {address.state}
-                   {" "}- {address.postalCode}
+                  District: {address.district}, State: {address.state} -{" "}
+                  {address.postalCode}
                 </p>
                 <p>Mobile no: {address.contactNumber}</p>
+                <p>Email: {address.email}</p>
               </div>
 
               {!address.isDefault && (
-                <button 
-                onClick={()=>setDefaultAddressMutation.mutate(address.addressId)}
-                className="mt-4 text-sm text-blue-600 hover:text-blue-800 transition cursor-pointer">
+                <button
+                  onClick={() =>
+                    setDefaultAddressMutation.mutate(address.addressId)
+                  }
+                  className="mt-4 text-sm text-blue-600 hover:text-blue-800 transition cursor-pointer"
+                >
                   Set as default
                 </button>
               )}
