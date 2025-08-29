@@ -22,7 +22,7 @@ module.exports = {
       shippingPhone:{type:Sequelize.STRING},
       shippingStreet:{type:Sequelize.STRING},
       shippingCity:{type:Sequelize.STRING},
-      shippingCity:{type:Sequelize.STRING},
+      shippingDistrict:{type:Sequelize.STRING},
       shippingState:{type:Sequelize.STRING},
       shippingPincode:{type:Sequelize.STRING},
       totalAmount: {
@@ -39,6 +39,7 @@ module.exports = {
         ),
         defaultValue: "PENDING_PAYMENT",
       },
+      razorpayOrderId:Sequelize.STRING,
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

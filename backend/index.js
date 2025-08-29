@@ -19,6 +19,7 @@ const customerAddressRoutes = require('./routes/customerRoutes/customerAddressRo
 const customerProductRoutes = require('./routes/customerRoutes/customerProductRoutes.js');
 const customerCartRoutes = require('./routes/customerRoutes/customerCartRoute.js');
 const customerOrderRoutes = require('./routes/customerRoutes/customerOrderRoute');
+const customerPaymentRoutes = require("./routes/customerRoutes/customerPaymentRoute.js");
 
 // config the dotenv
 dotenv.config();
@@ -37,7 +38,7 @@ const allowedOrigin =['http://localhost:5173','http://localhost:5174']
 app.use(cors({origin:allowedOrigin,credentials:true}));
 
 app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes,vendorBrandLogoRoutes]);
-app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes,customerOrderRoutes]);
+app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes,customerOrderRoutes,customerPaymentRoutes]);
 
 // listening 
 app.listen(PORT,()=>{

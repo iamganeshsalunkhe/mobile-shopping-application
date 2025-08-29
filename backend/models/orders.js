@@ -41,12 +41,11 @@ module.exports = (sequelize, DataTypes) => {
       shippingName:DataTypes.STRING,
       shippingPhone:DataTypes.STRING,
       shippingStreet:DataTypes.STRING,
-      shippingLandMark:DataTypes.STRING,
       shippingCity:DataTypes.STRING,
       shippingDistrict:DataTypes.STRING,
       shippingState:DataTypes.STRING,
       shippingPincode:DataTypes.STRING,
-
+      razorpayOrderId:DataTypes.STRING,
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
