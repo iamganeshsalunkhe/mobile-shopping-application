@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { useAddressStore } from "../stores/addressStore";
 import { useEffect } from "react";
-import { createOrder } from "../services/paymentService";
+import { createOrder} from "../services/paymentService";
 
 function Cart() {
   const navigate = useNavigate();
@@ -97,13 +97,16 @@ function Cart() {
       description:"Happy to serve you!!",
       order_id:order.razorPayOrderId,
       prefill:{
-        name:order?.customer?.fullName,
-        email:order?.customer?.email,
-        contact:order?.customer?.contact
+        name:order.customer.fullName,
+        email:order.customer.email,
+        contact:order.customer.contactNumber
       },
       theme:{
         color:'#4c98f5'
-      }
+      },
+      timeout:900,
+      send_sms_hash:true,
+
     };
     const rzp = new window.Razorpay(options);
     rzp.open();
