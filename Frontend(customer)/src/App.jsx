@@ -18,6 +18,7 @@ import AddressPage from "./Pages/AddressPage";
 import PageNotFoundPage from "./Pages/PageNotFoundPage";
 import AboutPage from "./Pages/AboutPage";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import PaymentSuccessPage from "./Pages/PaymentSuccessPage";
 
 // create queryClient instance
 const queryClient = new QueryClient();
@@ -61,6 +62,13 @@ function App() {
                   <AddressPage />
                 </ProtectedRoute>
               }
+            />
+            <Route path="/paymentsuccess"
+            element={
+              <ProtectedRoute>
+                <PaymentSuccessPage/>
+              </ProtectedRoute>
+            }
             />
             <Route path="*" element={<PageNotFoundPage />} />
             <Route path="/about" element={<AboutPage />} />

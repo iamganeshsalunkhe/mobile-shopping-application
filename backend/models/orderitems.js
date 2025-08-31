@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       subOrderId: DataTypes.INTEGER,
       productName: DataTypes.STRING,
       productPrice: DataTypes.STRING,
-      quantity:DataTypes.INTEGER
+      quantity: DataTypes.INTEGER,
+      status: DataTypes.ENUM("PENDING", "CONFIRMED", "CANCELLED", "RETURNED"),
     },
     {
       sequelize,

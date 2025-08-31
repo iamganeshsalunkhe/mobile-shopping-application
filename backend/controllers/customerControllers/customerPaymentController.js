@@ -17,3 +17,17 @@ exports.createOrder = async(req,res)=>{
     }
 };
 
+exports.verifyPayment = async (req,res)=>{
+    try {
+
+        // pass the data to the service layer
+        const isVerified = await customerPaymentService.verify(req);
+
+        // if req handled successfully
+        res.status(200).json(isVerified);
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        return {success:false,message:"Something went wrong while processing payment!!"}
+    }
+};

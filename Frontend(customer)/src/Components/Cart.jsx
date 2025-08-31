@@ -17,6 +17,7 @@ import {
 import { useAddressStore } from "../stores/addressStore";
 import { useEffect } from "react";
 import { createOrder} from "../services/paymentService";
+import useVerifyPayment from "../hooks/useVerifyPayment";
 
 function Cart() {
   const navigate = useNavigate();
@@ -26,6 +27,9 @@ function Cart() {
   // set addressId in localstorage
   const setAddressId = useAddressStore(state=>state.setAddressId);
 
+  // get useVerifyPaymentHook
+  const verifyPaymentMutation = useVerifyPayment();
+
   const {
     data: cartItems = [],
     isLoading,
@@ -33,7 +37,6 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
-    staleTime: 1000 * 60 * 3, // 3min
     onError: () => {
       toast.error("Failed to load cart data!");
     },
@@ -106,6 +109,25 @@ function Cart() {
       },
       timeout:900,
       send_sms_hash:true,
+      // handler function when razorpay capture or if payment fails then this fn will run
+      handler:(response)=>{
+        verifyPaymentMutation.mutate(response,{
+          onSuccess:(data)=>{
+            if (data.success){
+              toast.success("Payment Successful!!");
+              useCartStore.getState().clearCart();
+              navigate('/paymentsuccess',{state:data});
+            }else{
+              toast.error(response.message);
+              navigate("/paymentfailed",{state:data});
+            }
+          },
+          onError:(error)=>{
+            console.error(error);
+          }
+        }
+        )
+      }
 
     };
     const rzp = new window.Razorpay(options);

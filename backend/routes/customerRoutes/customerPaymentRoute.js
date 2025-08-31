@@ -10,7 +10,7 @@ const router = express.Router();
 // route for creating an order
 router.post("/createOrder",authenticate,paymentController.createOrder);
 
-
+router.post("/verifyPayment",authenticate,paymentController.verifyPayment);
 
 module.exports = router;
 

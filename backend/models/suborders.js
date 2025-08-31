@@ -32,7 +32,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       orderId: DataTypes.INTEGER,
       vendorId: DataTypes.INTEGER,
-      status: DataTypes.ENUM("PENDING", "CONFIRMED", "SHIPPED", "DELIVERED"),
+      status: DataTypes.ENUM(
+        "PENDING",
+        "CONFIRMED",
+        "SHIPPED",
+        "DELIVERED",
+        "FAILED"
+      ),
       subTotal: DataTypes.STRING,
     },
     {
