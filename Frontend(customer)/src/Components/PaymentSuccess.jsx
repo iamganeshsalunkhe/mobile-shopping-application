@@ -35,17 +35,17 @@ const PaymentSuccess = ({ show=true}) => {
           <div className="bg-green-100 rounded-xl rounded-b-none p-8">
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <div className="absolute inset-0 bg-green-100 rounded-full animate-ping"></div>
+                <div className="absolute inset-0 bg-green-100 rounded-full animate-ping \"></div>
                 <CheckCircleIcon className="w-20 h-20 text-green-600 relative z-10" />
               </div>
             </div>
 
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                Payment Successful!
+                Order Placed Successfully!
               </h2>
               <p className="text-gray-600 font-semibold">
-                Thank you for your purchase. Your order has been confirmed.
+                Thank you for your purchase.
               </p>
             </div>
           </div>
@@ -70,7 +70,7 @@ const PaymentSuccess = ({ show=true}) => {
                   Customer Email :
                 </p>
                 <p className="font-semibold">
-                  {customerEmail || "ganusalunkhe1998@gmail.com"}
+                  {customerEmail}
                 </p>
               </div>
               <div>

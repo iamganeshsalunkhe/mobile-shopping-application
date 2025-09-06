@@ -76,7 +76,7 @@ exports.orderToCreated = async (customerId) => {
   // group the product by vendor
   const vendorGrouped = cartInfo.reduce((acc, item) => {
     const vendorId = item.product.vendorId;
-    // make an array if not present already
+    // make a new array if not present already
     if (!acc[vendorId]) acc[vendorId] = [];
 
     // push all details about that item with mapping that vendorId
@@ -149,44 +149,67 @@ exports.verify = async (req) => {
 
   // if no data received
   if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-    return { success: false, message: "Invalid payment details received." };
+    return { success: false, message: "Invalid Payment Details Received." };
   } 
 
+  // generate signature to compare with razorpay signature
   const generatedSignature = crypto
     .createHmac("sha256", process.env.razorPay_secret_key)
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest("hex");
 
+  // if signature is mismatched
   if (generatedSignature !== razorpay_signature) return { success: false, message: "Payment verification failed." };
 
+  
+  // if signature matches then find order details in our db using razorpayOrderId
   const order = await Orders.findOne({
     where: { razorpayOrderId: razorpay_order_id },
   });
 
+  // didn't  found order details
   if (!order)  return { success: false, message: "Order not found." };
 
+  // if find update the status column
   order.status = "PAID";
+
+  // save the update 
   await order.save();
 
+  // extract the orderId from order details for further use cases
   const orderId = order.orderId;
 
+  // find all suborders linked to that order using orderId
   const subOrders = await SubOrders.findAll({ where: { orderId } });
 
+  // loop over all suborders
   for (const subOrder of subOrders) {
+    // update the status column 
     subOrder.status = "CONFIRMED";
+
+    // save the updated value
     await subOrder.save();
 
+    // find the all orderItems for that suborder/order using suborderId
     const orderItems = await OrderItems.findAll({
-      where: { subOrderId: subOrder.subOrderId },
+      where: { subOrderId: subOrder.subOrderId }
     });
 
+    // loop over each orderItem 
     for (const orderItem of orderItems) {
+      // update the status column 
       orderItem.status = "CONFIRMED";
 
+      // save the update
       await orderItem.save();
     }
   }
 
+  const PaymentDetails = await rzp.payments.fetch(razorpay_payment_id);
+  console.log(PaymentDetails);
+
+
+  // make an entry in payment table
   const payment = await Payments.create({
     orderId,
     customerId: order.customerId,
@@ -198,14 +221,18 @@ exports.verify = async (req) => {
     method: "card",
   });
 
+  // if all transaction successful then remove the products from the cart using customerId
   await Cart.destroy({ where: { customerId: order.customerId } });
-
+  
+  // return required fields
   return {
+    PaymentDetails,
     success: true,
     orderId: order.orderId,
     amount: order.totalAmount,
     paymentId: payment.razorpayPaymentId,
     customerName: order.shippingName,
     customerPhone: order.shippingPhone,
+    customerEmail:order.shippingEmail
   };
 };

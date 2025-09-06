@@ -20,6 +20,7 @@ module.exports = {
       },
       shippingName:{type:Sequelize.STRING},
       shippingPhone:{type:Sequelize.STRING},
+      shippingEmail:{type:Sequelize.STRING},
       shippingStreet:{type:Sequelize.STRING},
       shippingCity:{type:Sequelize.STRING},
       shippingDistrict:{type:Sequelize.STRING},

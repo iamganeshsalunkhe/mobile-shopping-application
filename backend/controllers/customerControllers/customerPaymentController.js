@@ -28,6 +28,9 @@ exports.verifyPayment = async (req,res)=>{
     } catch (error) {
         // if any error occurs
         console.error(error);
-        return {success:false,message:"Something went wrong while processing payment!!"}
+        res.status(500).json({
+          success: false,
+          message: "Something went wrong while processing payment!!",
+        });
     }
 };

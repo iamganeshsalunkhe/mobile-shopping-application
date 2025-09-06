@@ -37,6 +37,7 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
+    staleTime:1000 * 60 * 3, // 3 min
     onError: () => {
       toast.error("Failed to load cart data!");
     },
@@ -74,7 +75,7 @@ function Cart() {
 
   // Calculate totals
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.product?.price * 1,
+    (sum, item) => sum + item.product?.price * item.quantity,
     0
   );
   // add shipping charges only if subtotal is less than 500
@@ -88,10 +89,13 @@ function Cart() {
 
   // handlePayment
   async function handlePayment(){
+    // throw an error if customer didn't selected a default address
     if (!defaultAddress) throw toast.error("Please Select Delivery Address!")
 
+      // create an razorpay order 
     const order = await createOrder();
 
+    // tells razorpay to open and  prefill payment form
     const options = {
       key:order.key,
       amount:order.amount * 100,// convert to paise
@@ -113,18 +117,21 @@ function Cart() {
       handler:(response)=>{
         verifyPaymentMutation.mutate(response,{
           onSuccess:(data)=>{
-            if (data.success){
-              toast.success("Payment Successful!!");
+            if (data?.success){
+              toast.success("Order Placed Successfully!!");
               useCartStore.getState().clearCart();
+              queryClient.invalidateQueries(['cartData']);
               navigate('/paymentsuccess',{state:data});
             }else{
-              toast.error(response.message);
+              toast.error(data?.message || "Failed to Place Order!");
               navigate("/paymentfailed",{state:data});
             }
           },
           onError:(error)=>{
-            console.error(error);
-          }
+            toast.error(error.message)
+             console.error(error);
+            navigate('paymentfailed');
+            }
         }
         )
       }
@@ -211,7 +218,7 @@ function Cart() {
                   </div>
                   <div className="flex  justify-between items-center">
                     <span className="text-sm bg-gray-100 px-3 py-1 rounded-full font-medium">
-                      Qty: 1
+                      Qty: {item.quantity}
                     </span>
                     <p className="font-semibold text-gray-800 text-lg">
                       {new Intl.NumberFormat("en-IN", {
