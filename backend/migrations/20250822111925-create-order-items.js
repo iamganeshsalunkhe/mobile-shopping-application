@@ -2,59 +2,48 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Orders", {
-      orderId: {
+    await queryInterface.createTable("OrderItems", {
+      OrderItemsId: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-     
-      customerId: {
+      subOrderId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Customers",
-          key: "customerId",
-        },
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      },
-      addressId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Addresses",
-          key: "addressId",
+          model: "SubOrders",
+          key: "subOrderId",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      paymentId:{
-        type:Sequelize.INTEGER,
-        references:{
-          model:"Payments",
-          key:"paymentId"
-        }
+      productId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Products",
+          key: "productId",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
-      totalAmount: {
+      productName: {
         type: Sequelize.STRING,
       },
-      status:{
-        type:Sequelize.ENUM("PENDING_PAYMENT","PAID","FAILED","CANCELLED","SHIPPED","DELIVERED"),
-        defaultValue:"PENDING_PAYMENT"
+      productPrice: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Orders");
+    await queryInterface.dropTable("OrderItems");
   },
 };

@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      productId:DataTypes.INTEGER,
       imageUrl: DataTypes.STRING,
       createdAt: {
         allowNull: false,

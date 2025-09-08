@@ -8,12 +8,17 @@ import Loader from "../Components/Loader";
 import { useCartStore } from "../stores/cartStore";
 import { getDefaultAddress } from "../services/addressService";
 import { FaUser, FaMapMarkerAlt, FaCity, FaPhoneAlt } from "react-icons/fa";
+import { useAddressStore } from "../stores/addressStore";
+import { useEffect } from "react";
 
 function Cart() {
   const navigate = useNavigate();
   // get queryClient
   const queryClient = useQueryClient();
-  // destructure using useQuery
+
+  // set addressId in localstorage
+  const setAddressId = useAddressStore(state=>state.setAddressId);
+
   const {
     data: cartItems = [],
     isLoading,
@@ -28,13 +33,20 @@ function Cart() {
   });
 
   // get default address 
-  const {data:address=[]}= useQuery({
+  const {data:defaultAddress}= useQuery({
     queryKey:["defaultAddress"],
     queryFn:getDefaultAddress,
     onError:()=>{
       toast.error("Failed to load address");
     }
-  })
+  });
+
+  // set addressId in the localstorage
+  useEffect(()=>{
+    if (defaultAddress?.addressId){
+      setAddressId(defaultAddress.addressId);
+    }
+  },[defaultAddress,setAddressId]);
 
   // destructure using useMutation
   const { mutate: deleteProductMutation } = useMutation({
@@ -64,7 +76,6 @@ function Cart() {
     navigate(-1);
   }
 
-  console.log(address);
   // if data is still loading
   if (isLoading) return <Loader />;
 
@@ -159,42 +170,69 @@ function Cart() {
 
           {/* Address Summary */}
           <div className="bg-white rounded-2xl shadow-md p-6 mb-10">
-            <h2 className="text-xl flex justify-between font-bold text-gray-800 mb-6 border-b pb-2">
-              Delivering to this address
-            <Link to='/address' className="text-blue-500 font-semibold hover:text-blue-800">Edit or change default</Link>
-            </h2>
+            {defaultAddress ? (
+              <>
+                <h2 className="text-xl flex justify-between font-bold text-gray-800 mb-6 border-b pb-2">
+                  Delivering to this address
+                  <Link
+                    to="/address"
+                    className="text-blue-500 font-semibold hover:text-blue-800"
+                  >
+                    Edit or change default
+                  </Link>
+                </h2>
 
-            <div className="space-y-3 text-gray-700">
-              <div className="flex items-start">
-                <FaUser className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
-                <span className="font-semibold">{address.fullName}</span>
-              </div>
+                <div className="space-y-3 text-gray-700">
+                  <div className="flex items-start">
+                    <FaUser className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                    <span className="font-semibold">
+                      {defaultAddress.fullName}
+                    </span>
+                  </div>
 
-              <div className="flex items-start">
-                <FaMapMarkerAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">{address.addressLine}</p>
-                  {address.landMark && (
-                    <p className="text-sm text-gray-600 mt-1 font-medium">
-                      {address.landMark}
+                  <div className="flex items-start">
+                    <FaMapMarkerAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold">
+                        {defaultAddress.addressLine}
+                      </p>
+                      {defaultAddress.landMark && (
+                        <p className="text-sm text-gray-600 mt-1 font-medium">
+                          {defaultAddress.landMark}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start">
+                    <FaCity className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                    <p className="font-semibold">
+                      {defaultAddress.city}, {defaultAddress.district},{" "}
+                      {defaultAddress.state} -{defaultAddress.postalCode}
                     </p>
-                  )}
+                  </div>
+
+                  <div className="flex items-start">
+                    <FaPhoneAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
+                    <p className="font-semibold">
+                      {defaultAddress.contactNumber}
+                    </p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-start">
-                <FaCity className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
-                <p className="font-semibold">
-                  {address.city}, {address.district}, {address.state} -{" "}
-                  {address.postalCode}
-                </p>
-              </div>
-
-              <div className="flex items-start">
-                <FaPhoneAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
-                <p className="font-semibold">{address.contactNumber}</p>
-              </div>
-            </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold text-gray-800 mb-6 border-b pb-2 flex flex-wrap gap-2 items-center">
+                  Please select at least one address as default
+                  <Link
+                    to="/address"
+                    className="text-blue-500 font-semibold hover:text-blue-800 underline"
+                  >
+                    Go to Addresses
+                  </Link>
+                </h2>
+              </>
+            )}
           </div>
 
           {/* Order Summary */}

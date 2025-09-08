@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
+      Customers.hasMany(models.Payments,{
+        foreignKey:'customerId',
+        onDelete:"CASCADE"
+      });
     }
   }
   Customers.init(
@@ -26,7 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      email: DataTypes.STRING,
+      email: {
+        type:DataTypes.STRING,
+        unique:true
+      },
       fullName: DataTypes.STRING,
       password: DataTypes.STRING,
       contactNumber: DataTypes.STRING,

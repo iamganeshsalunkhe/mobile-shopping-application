@@ -7,12 +7,16 @@ import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { useAuthStore } from "../stores/authStore";
 import { useCartStore } from "../stores/cartStore";
 import { getCartInfo } from "../services/cartService";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Login() {
   // get navigate for navigation
   const navigate = useNavigate();
   // from tracing path
   const location = useLocation();
+
+  // create queryClient instance
+  const queryClient = useQueryClient();
   
   // state for password visibility
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -49,11 +53,10 @@ function Login() {
         const simplified = dbCart.map((item)=>{
           return{
             productId:item.product?.productId,
-            productName:item.product?.productName,
-            price:item.product?.price
+            productName:item.product?.productName
           }
         });
-
+        queryClient.invalidateQueries(['me']);
         useAuthStore.getState().login(); // set isAuthentication to true
         useCartStore.getState().setItems(simplified); // set localstorage data
         toast.success("Logged in successfully"); // show success toast

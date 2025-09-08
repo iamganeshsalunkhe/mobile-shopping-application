@@ -13,10 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "vendorId",
         onDelete: "CASCADE",
       });
-      Vendors.hasMany(models.Orders, {
-        foreignKey: "vendorId",
-        onDelete: "CASCADE",
-      });
+      Vendors.hasMany(models.SubOrders,{
+        foreignKey:"vendorId",
+        onDelete:"CASCADE"
+      })
     }
     toJSON() {
       return {
@@ -33,7 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      email: DataTypes.STRING,
+      email:{
+        type: DataTypes.STRING,
+        unique:true
+      },
       vendorName: DataTypes.STRING,
       password: DataTypes.STRING,
       brandLogo: DataTypes.STRING,

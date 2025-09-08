@@ -25,7 +25,6 @@ function Navbar() {
 
   // get length products in the cart
   const cartLength = useCartStore(state=>state.getLengthOfCart());
-
   // condition for showing search bar
   const showSearchBar =
     location.pathname === "/" || location.pathname === "/products";
@@ -153,7 +152,7 @@ function Navbar() {
               className="p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative"
             >
               <FiShoppingCart className="h-6 w-6" />
-             {cartLength? (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">{cartLength}</span>) : ""}
+             {isAuthenticated && Number(cartLength) > 0 && (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">{cartLength}</span>)}
             </Link>
 
             {/* Profile dropdown */}

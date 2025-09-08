@@ -48,8 +48,7 @@ function ProductDetail() {
     onSuccess: (_data, product) => {
       useCartStore.getState().addItem({
         productId: product.productId,
-        productName: product.productName,
-        price: product.price,
+        productName: product.productName
       });
       toast.success("Added!");
       queryClient.invalidateQueries(["cartData"]);
