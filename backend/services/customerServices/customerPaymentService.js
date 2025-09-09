@@ -1,4 +1,5 @@
 // import required modules
+const { validateWebhookSignature } = require("razorpay/dist/utils/razorpay-utils");
 const rzp = require("../../lib/razorpay");
 const {
   Cart,
@@ -147,6 +148,12 @@ exports.verify = async (req) => {
   const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
     req.body.paymentData;
 
+    console.log(`------------------------------verify payment api----------------------------------`);
+    console.log(req.body);
+    console.log(
+      `------------------------------verify payment api----------------------------------`
+    );
+
   // if no data received
   if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
     return { success: false, message: "Invalid Payment Details Received." };
@@ -161,78 +168,156 @@ exports.verify = async (req) => {
   // if signature is mismatched
   if (generatedSignature !== razorpay_signature) return { success: false, message: "Payment verification failed." };
 
+  // find the order with razorpayOrderId 
+  const order = await Orders.findOne({where:{razorpayOrderId:razorpay_order_id}});
+
+  if (!order)  throw new Error("Order Not Found!!");
+
   
-  // if signature matches then find order details in our db using razorpayOrderId
-  const order = await Orders.findOne({
-    where: { razorpayOrderId: razorpay_order_id },
-  });
+  console.log(`-----------------order from verify---------------------------------`);
+  console.log(order);
 
-  // didn't  found order details
-  if (!order)  return { success: false, message: "Order not found." };
-
-  // if find update the status column
-  order.status = "PAID";
-
-  // save the update 
-  await order.save();
-
-  // extract the orderId from order details for further use cases
-  const orderId = order.orderId;
-
-  // find all suborders linked to that order using orderId
-  const subOrders = await SubOrders.findAll({ where: { orderId } });
-
-  // loop over all suborders
-  for (const subOrder of subOrders) {
-    // update the status column 
-    subOrder.status = "CONFIRMED";
-
-    // save the updated value
-    await subOrder.save();
-
-    // find the all orderItems for that suborder/order using suborderId
-    const orderItems = await OrderItems.findAll({
-      where: { subOrderId: subOrder.subOrderId }
-    });
-
-    // loop over each orderItem 
-    for (const orderItem of orderItems) {
-      // update the status column 
-      orderItem.status = "CONFIRMED";
-
-      // save the update
-      await orderItem.save();
-    }
-  }
-
-  const PaymentDetails = await rzp.payments.fetch(razorpay_payment_id);
-  console.log(PaymentDetails);
-
-
-  // make an entry in payment table
-  const payment = await Payments.create({
-    orderId,
-    customerId: order.customerId,
-    razorpayPaymentId: razorpay_payment_id,
-    razorpayOrderId: razorpay_order_id,
-    razorpaySignature: razorpay_signature,
-    amountPaid: order.totalAmount,
-    status: "captured",
-    method: "card",
-  });
-
-  // if all transaction successful then remove the products from the cart using customerId
-  await Cart.destroy({ where: { customerId: order.customerId } });
-  
-  // return required fields
-  return {
-    PaymentDetails,
-    success: true,
-    orderId: order.orderId,
-    amount: order.totalAmount,
-    paymentId: payment.razorpayPaymentId,
-    customerName: order.shippingName,
-    customerPhone: order.shippingPhone,
-    customerEmail:order.shippingEmail
+  if (order.status !== "PAID") {
+    order.status = "PAYMENT_PROCESSING";
+    await order.save();
   };
+    `-----------------order from verify---------------------------------`;
+
+  console.log(order);
+  console.log(
+    `-----------------order from verify---------------------------------`
+  );
+
+  
+
+  // if all request handled successfully return success 
+   return {
+     success: true
+   };
+ 
 };
+
+exports.paymentStatus = async (req)=>{
+
+  const webhookSignature = req.get('X-Razorpay-Signature');
+
+  // return a boolean value about webhook
+
+  const isWebhookValid = validateWebhookSignature(
+    JSON.stringify(req.body),
+    webhookSignature,
+    process.env.razorPay_Webhook_Secret
+  );
+
+  if (!isWebhookValid) throw new Error("Webhook not valid!!");
+
+
+  if (req.body.event === 'payment.captured'){
+
+    const paymentData = req.body.payload.payment.entity;
+
+    const razorpayOrderId = paymentData.order_id;
+    const razorpayPaymentId = paymentData.id;
+    const amountPaid = paymentData.amount / 100;
+    const paymentMethod = paymentData.method;
+    const paymentStatus = paymentData.status;
+
+     const order = await Orders.findOne({
+       where: { razorpayOrderId},
+     });
+
+     console.log(`-------------------------------webhook order----------------------`);
+     console.log(order);
+     console.log(
+       `-------------------------------webhook order----------------------`
+     );
+
+     if (order.status === 'PAID') return {success:true,message:"Payment already processed"}
+
+     // didn't  found order details
+     if (!order) return { success: false, message: "Order not found." };
+
+     // if find update the status column
+     order.status = "PAID";
+
+     // save the update
+     await order.save();
+     console.log(
+       `---------------------------order--------------------------------------`
+     );
+     console.log(order);
+     console.log(
+       `---------------------------order--------------------------------------`
+     );
+
+     // extract the orderId from order details for further use cases
+     const orderId = order.orderId;
+     
+     // find all suborders linked to that order using orderId
+     const subOrders = await SubOrders.findAll({ where: { orderId } });
+
+     // loop over all suborders
+     for (const subOrder of subOrders) {
+       // update the status column
+       subOrder.status = "CONFIRMED";
+
+       // save the updated value
+       await subOrder.save();
+
+       // find the all orderItems for that suborder/order using suborderId
+       const orderItems = await OrderItems.findAll({
+         where: { subOrderId: subOrder.subOrderId },
+       });
+
+       // loop over each orderItem
+       for (const orderItem of orderItems) {
+         // update the status column
+         orderItem.status = "CONFIRMED";
+         // save the update
+         await orderItem.save();
+       }
+     }
+
+     // make an entry in payment table
+     const payment = await Payments.create({
+       orderId,
+       customerId: order.customerId,
+       razorpayPaymentId,
+       razorpayOrderId,
+       amountPaid: amountPaid,
+       status: paymentStatus,
+       method: paymentMethod,
+     });
+     
+
+     // if all transaction successful then remove the products from the cart using customerId
+     await Cart.destroy({ where: { customerId: order.customerId } });
+     
+     
+
+     return {
+       orderId: order.orderId,
+       amount: order.totalAmount,
+       paymentId: payment.razorpayPaymentId,
+       customerName: order.shippingName,
+       customerPhone: order.shippingPhone,
+       customerEmail: order.shippingEmail,
+     };
+
+
+  }else if (req.body.event ==='payment.failed'){
+
+    const paymentData = req.body.payload.payment.entity;
+
+    const razorpayOrderId = paymentData.order_id;
+
+    const order = await Orders.findOne({where:{razorpayOrderId}});
+
+    if (order){
+      order.status = 'FAILED'
+      await order.save();
+    }
+
+  return {message:'payment failed'}
+  }
+}

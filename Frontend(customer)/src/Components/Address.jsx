@@ -217,7 +217,7 @@ export default function Address() {
                     {/* Full Name */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        Full Name<span className="text-red-600">*</span>
+                        Full Name <span className="text-red-600">*</span>
                       </label>
                       <input
                         type="text"
@@ -256,9 +256,9 @@ export default function Address() {
                             : "border-gray-300 focus:ring-blue-500"
                         }`}
                       />
-                      {errors.contactNumber && (
+                      {errors.email && (
                         <p className="mt-1 text-sm text-red-600">
-                          {errors.contactNumber.message}
+                          {errors.email.message}
                         </p>
                       )}
                     </div>

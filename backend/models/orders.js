@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       customerId: DataTypes.INTEGER,
       status:{
-        type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED")
+        type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED","PAYMENT_PROCESSING")
       },
       totalAmount: {
         type: DataTypes.DECIMAL(10, 2),

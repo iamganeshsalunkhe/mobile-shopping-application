@@ -31,3 +31,16 @@ export async function verifyPayment(paymentData){
         console.error(error);
     }
 };
+
+// extract order status after confirming payment 
+export async function orderStatus(orderId){
+    try {
+        // make a get request to fetch order status 
+        const res = await axios.get(`${API_BASE}/order/${orderId}/status`,{withCredentials:true});
+        console.log(res.data);
+        return res.data;
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+    }
+}

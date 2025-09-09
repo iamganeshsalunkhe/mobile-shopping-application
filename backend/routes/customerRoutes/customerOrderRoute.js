@@ -15,5 +15,8 @@ router.get('/order',authenticate,customerOrderController.getAllOrders);
 // get a specific order details
 router.get('/order/:orderId',authenticate,customerOrderController.specificOrder);
 
+// get order status 
+router.get('/order/:orderId/status',authenticate,customerOrderController.orderStatus);
+
 // export router
 module.exports = router;

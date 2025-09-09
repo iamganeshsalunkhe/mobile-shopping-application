@@ -14,18 +14,17 @@ import {
   FaPhoneAlt,
   FaEnvelope,
 } from "react-icons/fa";
-import { useAddressStore } from "../stores/addressStore";
-import { useEffect } from "react";
-import { createOrder} from "../services/paymentService";
+import { createOrder, orderStatus} from "../services/paymentService";
 import useVerifyPayment from "../hooks/useVerifyPayment";
+import { useEffect, useState } from "react";
 
 function Cart() {
+  const [orderId,setOrderId] = useState(null);
+  const [startPolling,setStartPolling] = useState(false);
+  
   const navigate = useNavigate();
   // get queryClient
   const queryClient = useQueryClient();
-
-  // set addressId in localstorage
-  const setAddressId = useAddressStore(state=>state.setAddressId);
 
   // get useVerifyPaymentHook
   const verifyPaymentMutation = useVerifyPayment();
@@ -52,12 +51,6 @@ function Cart() {
     }
   });
 
-  // set addressId in the localstorage
-  useEffect(()=>{
-    if (defaultAddress?.addressId){
-      setAddressId(defaultAddress.addressId);
-    }
-  },[defaultAddress,setAddressId]);
 
   // destructure using useMutation
   const { mutate: deleteProductMutation } = useMutation({
@@ -72,6 +65,46 @@ function Cart() {
       toast.error(error.response?.data?.message || "Failed to remove");
     },
   });
+
+
+  // get order status after payment
+  const {data:orderStatusData,isLoading:statusLoading,isFetching} = useQuery({
+    queryKey:['orderStatus',orderId],
+    // pass the queryKey to queryFn 
+    //react- query will pass that queryFn as an object 
+    // as queryKey is an array we need to destructure with array 
+    queryFn:()=>orderStatus(orderId),
+    enabled:!!orderId,
+    refetchInterval:true,
+    refetchOnWindowFocus:true,
+    onSettled:(data)=>{
+      if (data?.orderStatus === 'PAID'){
+        setOrderId(null);
+        console.log('hii from orderstatus')
+        useCartStore.getState().clearCart();
+        queryClient.invalidateQueries(['cartData'])
+        setTimeout(() => {
+          navigate("/paymentsuccess", { state: data });
+        }, 0);
+      }
+    },
+    onError:(err)=>{
+      console.log(err);
+    }
+  });
+
+  
+
+  useEffect(()=>{
+    if (orderId){
+      console.log(orderId)
+    }
+  },[orderId]);
+
+  useEffect(()=>{
+    console.log('startpolling',startPolling);
+  },[startPolling]);
+
 
   // Calculate totals
   const subtotal = cartItems.reduce(
@@ -94,6 +127,7 @@ function Cart() {
 
       // create an razorpay order 
     const order = await createOrder();
+    setOrderId(order.orderId)
 
     // tells razorpay to open and  prefill payment form
     const options = {
@@ -118,12 +152,10 @@ function Cart() {
         verifyPaymentMutation.mutate(response,{
           onSuccess:(data)=>{
             if (data?.success){
-              toast.success("Order Placed Successfully!!");
-              useCartStore.getState().clearCart();
-              queryClient.invalidateQueries(['cartData']);
-              navigate('/paymentsuccess',{state:data});
+              toast.success("Payment Successful!!");
+              setStartPolling(true);
             }else{
-              toast.error(data?.message || "Failed to Place Order!");
+              toast.error("Payment Failed!!");
               navigate("/paymentfailed",{state:data});
             }
           },
@@ -143,8 +175,14 @@ function Cart() {
 
 
   // if data is still loading
-  if (isLoading) return <Loader />;
+  if ((isLoading || (startPolling &&statusLoading) || isFetching )) return <Loader />;
 
+  if (orderStatusData?.orderStatus === "PAYMENT_PROCESSING" || orderStatusData?.orderStatus === 'PENDING_PAYMENT'){
+    return <Loader/>
+  };
+  console.log(orderStatusData)
+
+  
   // if any error occurs
   if (isError) {
     return (

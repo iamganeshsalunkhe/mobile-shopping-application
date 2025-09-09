@@ -56,3 +56,21 @@ exports.specificOrder = async(req,res)=>{
         res.status(500).json({message:error.message || "Something went wrong!"});
     }
 };
+
+
+exports.orderStatus = async (req,res)=>{
+    try {
+        // get orderId from the params
+        const orderId = req.params.orderId;
+
+        // pass it to the service layer
+        const orderStatus = await customerOrderServices.getOrderStatus(orderId);
+
+        // if request handled successfully
+        res.status(200).json({orderStatus});
+    } catch (error) {
+        // if any error occurs
+        console.error(error);
+        res.status(404).json({message:"Something went wrong!!"})
+    }
+};

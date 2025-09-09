@@ -22,6 +22,7 @@ exports.verifyPayment = async (req,res)=>{
 
         // pass the data to the service layer
         const isVerified = await customerPaymentService.verify(req);
+       
 
         // if req handled successfully
         res.status(200).json(isVerified);
@@ -32,5 +33,16 @@ exports.verifyPayment = async (req,res)=>{
           success: false,
           message: "Something went wrong while processing payment!!",
         });
+    }
+};
+
+exports.PaymentDetailsThroughWebhook =async(req,res)=>{
+    try {
+        const PaymentDetails = await customerPaymentService.paymentStatus(req);
+
+        res.status(200).json(PaymentDetails);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:"Something went wrong!!"})
     }
 };

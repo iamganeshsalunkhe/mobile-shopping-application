@@ -59,3 +59,11 @@ exports.getAnOrder = async(orderId)=>{
     // return to the controller layers
     return order;
 };
+
+exports.getOrderStatus = async (orderId)=>{
+    
+    const order = await Orders.findOne({where:{orderId}});
+    
+    return order?.status;
+
+}
