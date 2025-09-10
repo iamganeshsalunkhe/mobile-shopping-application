@@ -11,6 +11,7 @@ const {
   Payments
 } = require("../../models");
 const crypto = require("crypto");
+const sendOrderConfirmationEmail = require('../../utils/emailService');
 
 exports.orderToCreated = async (customerId) => {
   // find the default address for customer
@@ -290,10 +291,16 @@ exports.paymentStatus = async (req)=>{
      });
      
 
+    const {totalAmount,shippingName,shippingEmail,shippingPhone} = order;
+    const {method} = payment;
+
+    await sendOrderConfirmationEmail({
+    to:shippingEmail,amount:totalAmount,method,fullName:shippingName,phoneNumber:shippingPhone,orderId
+    })
      // if all transaction successful then remove the products from the cart using customerId
-     await Cart.destroy({ where: { customerId: order.customerId } });
+    await Cart.destroy({ where: { customerId: order.customerId } });
      
-     
+
 
      return {
        orderId: order.orderId,

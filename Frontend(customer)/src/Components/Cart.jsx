@@ -16,11 +16,11 @@ import {
 } from "react-icons/fa";
 import { createOrder, orderStatus} from "../services/paymentService";
 import useVerifyPayment from "../hooks/useVerifyPayment";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function Cart() {
   const [orderId,setOrderId] = useState(null);
-  const [startPolling,setStartPolling] = useState(false);
+  // const [startPolling,setStartPolling] = useState(false);
   
   const navigate = useNavigate();
   // get queryClient
@@ -68,16 +68,16 @@ function Cart() {
 
 
   // get order status after payment
-  const {data:orderStatusData,isLoading:statusLoading,isFetching} = useQuery({
+  const {data:orderStatusData,isLoading:statusLoading,} = useQuery({
     queryKey:['orderStatus',orderId],
     // pass the queryKey to queryFn 
     //react- query will pass that queryFn as an object 
     // as queryKey is an array we need to destructure with array 
     queryFn:()=>orderStatus(orderId),
     enabled:!!orderId,
-    refetchInterval:true,
+    refetchInterval:4000,
     refetchOnWindowFocus:true,
-    onSettled:(data)=>{
+    onSuccess:(data)=>{
       if (data?.orderStatus === 'PAID'){
         setOrderId(null);
         console.log('hii from orderstatus')
@@ -93,17 +93,6 @@ function Cart() {
     }
   });
 
-  
-
-  useEffect(()=>{
-    if (orderId){
-      console.log(orderId)
-    }
-  },[orderId]);
-
-  useEffect(()=>{
-    console.log('startpolling',startPolling);
-  },[startPolling]);
 
 
   // Calculate totals
@@ -153,7 +142,7 @@ function Cart() {
           onSuccess:(data)=>{
             if (data?.success){
               toast.success("Payment Successful!!");
-              setStartPolling(true);
+              // setStartPolling(true);
             }else{
               toast.error("Payment Failed!!");
               navigate("/paymentfailed",{state:data});
@@ -175,7 +164,7 @@ function Cart() {
 
 
   // if data is still loading
-  if ((isLoading || (startPolling &&statusLoading) || isFetching )) return <Loader />;
+  if (isLoading || statusLoading) return <Loader />;
 
   if (orderStatusData?.orderStatus === "PAYMENT_PROCESSING" || orderStatusData?.orderStatus === 'PENDING_PAYMENT'){
     return <Loader/>
