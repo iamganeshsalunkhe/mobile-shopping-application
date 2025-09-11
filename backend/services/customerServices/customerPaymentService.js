@@ -115,6 +115,7 @@ exports.orderToCreated = async (customerId) => {
       // create an entry in orderItems table (per entry per product)
       await OrderItems.create({
         subOrderId: subOrder.subOrderId,
+        productId:item.product.productId,
         productName: item.product.productName,
         quantity: item.product.quantity,
         productPrice,

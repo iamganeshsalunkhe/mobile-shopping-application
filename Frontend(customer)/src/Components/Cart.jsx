@@ -20,7 +20,7 @@ import { useState } from "react";
 
 function Cart() {
   const [orderId,setOrderId] = useState(null);
-  // const [startPolling,setStartPolling] = useState(false);
+  const [loading,setLoading] = useState(false);
   
   const navigate = useNavigate();
   // get queryClient
@@ -68,30 +68,30 @@ function Cart() {
 
 
   // get order status after payment
-  const {data:orderStatusData,isLoading:statusLoading,} = useQuery({
-    queryKey:['orderStatus',orderId],
-    // pass the queryKey to queryFn 
-    //react- query will pass that queryFn as an object 
-    // as queryKey is an array we need to destructure with array 
-    queryFn:()=>orderStatus(orderId),
-    enabled:!!orderId,
-    refetchInterval:4000,
-    refetchOnWindowFocus:true,
-    onSuccess:(data)=>{
-      if (data?.orderStatus === 'PAID'){
-        setOrderId(null);
-        console.log('hii from orderstatus')
-        useCartStore.getState().clearCart();
-        queryClient.invalidateQueries(['cartData'])
-        setTimeout(() => {
-          navigate("/paymentsuccess", { state: data });
-        }, 0);
-      }
-    },
-    onError:(err)=>{
-      console.log(err);
-    }
-  });
+  // const {data:orderStatusData,isLoading:statusLoading,} = useQuery({
+  //   queryKey:['orderStatus',orderId],
+  //   // pass the queryKey to queryFn 
+  //   //react- query will pass that queryFn as an object 
+  //   // as queryKey is an array we need to destructure with array 
+  //   queryFn:()=>orderStatus(orderId),
+  //   enabled:!!orderId,
+  //   refetchInterval:4000,
+  //   refetchOnWindowFocus:true,
+  //   onSuccess:(data)=>{
+  //     if (data?.orderStatus === 'PAID'){
+  //       setOrderId(null);
+  //       console.log('hii from orderstatus')
+  //       useCartStore.getState().clearCart();
+  //       queryClient.invalidateQueries(['cartData'])
+  //       setTimeout(() => {
+  //         navigate("/paymentsuccess", { state: data });
+  //       }, 0);
+  //     }
+  //   },
+  //   onError:(err)=>{
+  //     console.log(err);
+  //   }
+  // });
 
 
 
@@ -116,7 +116,7 @@ function Cart() {
 
       // create an razorpay order 
     const order = await createOrder();
-    setOrderId(order.orderId)
+    // setOrderId(order.orderId)
 
     // tells razorpay to open and  prefill payment form
     const options = {
@@ -142,7 +142,7 @@ function Cart() {
           onSuccess:(data)=>{
             if (data?.success){
               toast.success("Payment Successful!!");
-              // setStartPolling(true);
+              setLoading(true);
             }else{
               toast.error("Payment Failed!!");
               navigate("/paymentfailed",{state:data});
@@ -164,12 +164,16 @@ function Cart() {
 
 
   // if data is still loading
-  if (isLoading || statusLoading) return <Loader />;
+  if (isLoading ) return <Loader />;
 
-  if (orderStatusData?.orderStatus === "PAYMENT_PROCESSING" || orderStatusData?.orderStatus === 'PENDING_PAYMENT'){
-    return <Loader/>
-  };
-  console.log(orderStatusData)
+  if (loading) return <Loader/>;
+
+  // if (orderStatusData?.orderStatus === "PAYMENT_PROCESSING" || orderStatusData?.orderStatus === 'PENDING_PAYMENT'){
+  //   return <Loader/>
+  // };
+
+
+  
 
   
   // if any error occurs

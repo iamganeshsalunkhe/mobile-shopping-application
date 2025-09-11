@@ -18,15 +18,22 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      productId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Products",
+          key: "productId",
+        },
+      },
       productName: {
         type: Sequelize.STRING,
       },
       productPrice: {
         type: Sequelize.STRING,
       },
-      quantity:{
-        type:Sequelize.INTEGER,
-        defaultValue:1
+      quantity: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1,
       },
       createdAt: {
         allowNull: false,
