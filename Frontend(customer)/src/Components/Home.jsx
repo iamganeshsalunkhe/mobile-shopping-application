@@ -287,7 +287,7 @@ function Home(){
             {/* Brand Card 5 */}
             <div
               className="bg-gradient-to-br from-purple-800 to-purple-900 rounded-xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer group"
-              onClick={() => navigate("/products?brand=xiaomi")}
+              onClick={() => navigate(`/products?brand=xiaomi`)}
             >
               <div className="bg-white rounded-full p-4 w-20 h-20 mx-auto flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                 <img
