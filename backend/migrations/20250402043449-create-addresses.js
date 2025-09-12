@@ -24,6 +24,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      email:{
+        type:Sequelize.STRING,
+      },
       contactNumber: {
         type: Sequelize.STRING,
         allowNull: false,

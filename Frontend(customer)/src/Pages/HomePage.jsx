@@ -1,15 +1,15 @@
 import Footer from "../Components/Footer";
-import Login from "../Components/Login";
 import Navbar from "../Components/Navbar";
+import Home from "../Components/Home";
 
-function LoginPage() {
+function HomePage() {
     return (
-        <>  
+        <div>
             <Navbar/>
-            <Login/>
+            <Home/>
             <Footer/>
-        </>
+        </div>
     )
 }
 
-export default LoginPage
+export default HomePage

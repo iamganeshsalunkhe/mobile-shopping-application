@@ -8,92 +8,179 @@ import {
   FiUser,
   FiMenu,
   FiX,
+  FiBox,
+  FiInfo,
+  FiLogOut,
+  FiShoppingBag,
+  FiMapPin,
+  FiUserCheck,
 } from "react-icons/fi";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 import { useCartStore } from "../stores/cartStore";
 
 function Navbar() {
-  const [searchQuery, setSearchQuery] = useState(""); // state for search input
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // state for mobile devices
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // state for dropdown menu
-  const queryClient = useQueryClient(); // extract queryclient
-  const navigate = useNavigate(); // extract navigate hook
-  const location = useLocation(); // extract location hook
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  // get length products in the cart
-  const cartLength = useCartStore(state=>state.getLengthOfCart());
-  // condition for showing search bar
-  const showSearchBar =
-    location.pathname === "/" || location.pathname === "/products";
-
-  // get check user is authenticated for not
-  const authData = JSON.parse(localStorage.getItem("authSession")); // have to parse as using zustand(zustand store it as object not as plain text)
+  const cartLength = useCartStore((state) => state.getLengthOfCart());
+  const authData = JSON.parse(localStorage.getItem("authSession"));
   const isAuthenticated = authData?.state?.isAuthenticated === true;
 
-  
-  // function for handling search
-  function handleSearch(e) {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-  }
-
-  // function for handling logout and other navigation
   async function handleClickOnLogout(item) {
-    // first close the dropdown menu options
     setIsDropdownOpen(false);
 
-    // if item contains action then
     if (item.action) {
       try {
-        // make request to backend for logout
         await axios.post(
           "http://localhost:8000/api/customer/logout",
           {},
           { withCredentials: true }
         );
 
-        navigate("/login",{state:{fromLogout:true}}); // navigate to home page
-        queryClient.clear(); // clear all cached data
-        useCartStore.getState().clearCart(); // clear all carts value
-        useAuthStore.getState().logout(); // set isAuthentication to false(in localStorage)
-        toast.success("Logged Out Successfully!"); // give success message
+        navigate("/login", { state: { fromLogout: true } });
+        queryClient.clear();
+        useCartStore.getState().clearCart();
+        useAuthStore.getState().logout();
+        toast.success("Logged Out Successfully!");
       } catch (error) {
-        // if any error occurs
         console.error(error);
         toast.error(error.response?.data?.message);
       }
-      // item does not contain any action method then its a navigation route
     } else {
-      // handle regular navigation
       navigate(item.path);
     }
   }
 
   const navItems = [
     { name: "Home", path: "/", icon: <FiHome className="text-lg" /> },
-    { name: "Products", path: "/products" },
-    { name: "About", path: "/about" },
+    {
+      name: "Products",
+      path: "/products",
+      icon: <FiBox className="text-lg" />,
+    },
+    { name: "About", path: "/about", icon: <FiInfo className="text-lg" /> },
   ];
 
   const dropdownItems = [
-    { name: "Account", path: "/account" },
-    { name: "Orders", path: "/orders" },
-    { name: "Addresses", path: "/address" },
-    { name: "Logout", path: null, action: true },
+    {
+      name: "Account",
+      path: "/account",
+      icon: <FiUserCheck className="mr-2" />,
+    },
+    {
+      name: "Orders",
+      path: "/orders",
+      icon: <FiShoppingBag className="mr-2" />,
+    },
+    {
+      name: "Addresses",
+      path: "/address",
+      icon: <FiMapPin className="mr-2" />,
+    },
+    {
+      name: "Logout",
+      path: null,
+      action: true,
+      icon: <FiLogOut className="mr-2" />,
+    },
   ];
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50">
+    <nav className="bg-white shadow-md sticky top-0 z-50 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
+          {/* Logo and desktop nav */}
+          <div className="flex items-center">
+            <Link
+              to="/"
+              className="flex-shrink-0 flex items-center select-none"
+            >
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                MSA
+              </span>
+            </Link>
+
+            <div className="hidden sm:ml-8 sm:flex sm:space-x-6 select-none">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className="text-gray-600 hover:text-blue-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200 group"
+                >
+                  <span className="mr-1 opacity-80 group-hover:opacity-100">
+                    {item.icon}
+                  </span>
+                  {item.name}
+                  <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-blue-600"></span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Right side icons */}
+          <div className="flex items-center gap-4 select-none">
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="p-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative transition-colors duration-200"
+            >
+              <FiShoppingCart className="h-5 w-5" />
+              {isAuthenticated && Number(cartLength) > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartLength}
+                </span>
+              )}
+            </Link>
+
+            {/* Profile dropdown */}
+            <div className="ml-3 relative">
+              {isAuthenticated ? (
+                <div>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-blue-100"
+                  >
+                    <div className="h-9 w-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white">
+                      <FiUser className="h-4 w-4" />
+                    </div>
+                  </button>
+
+                  {isDropdownOpen && (
+                    <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-lg shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 border border-gray-100">
+                      {dropdownItems.map((item) => (
+                        <div
+                          key={item.name}
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 cursor-pointer transition-colors duration-150"
+                          onClick={() => handleClickOnLogout(item)}
+                        >
+                          {item.icon}
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 cursor-pointer rounded-lg text-white shadow-md hover:shadow-lg font-medium"
+                >
+                  Login
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-colors duration-200"
             >
               {isMobileMenuOpen ? (
                 <FiX className="h-6 w-6" />
@@ -102,112 +189,42 @@ function Navbar() {
               )}
             </button>
           </div>
-
-          {/* Logo and desktop nav */}
-          <div className="flex items-center ">
-            <Link
-              to="/"
-              className="flex-shrink-0 flex items-center select-none"
-            >
-              <span className="text-xl font-bold text-indigo-600">MSA</span>
-            </Link>
-
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8 select-none">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className=" md:flex flex-1 max-w-md mx-4 select-none items-center">
-            {showSearchBar && (
-              <form onSubmit={handleSearch} className="w-full">
-                <div className="relative ">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
-                    <FiSearch className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mt-2"
-                  />
-                </div>
-              </form>
-            )}
-          </div>
-
-          {/* Right side icons */}
-          <div className="flex items-center gap-4 select-none">
-            {/* Cart */}
-            <Link
-              to="/cart"
-              className="p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative"
-            >
-              <FiShoppingCart className="h-6 w-6" />
-             {isAuthenticated && Number(cartLength) > 0 && (<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">{cartLength}</span>)}
-            </Link>
-
-            {/* Profile dropdown */}
-            <div className="ml-3 relative">
-              {
-               isAuthenticated ? (
-                 <div>
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex text-sm rounded-full focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
-                  >
-                    <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
-                      <FiUser className="h-5 w-5" />
-                    </div>
-                  </button>
-                </div>
-               ) : (
-                <button
-                onClick={()=>navigate('/login')}
-                className="bg-blue-500 px-3 py-2 hover:bg-blue-700 transition cursor-pointer rounded-xl text-white ">Login</button>
-               )
-              }
-
-              {isDropdownOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none cursor-pointer">
-                  {dropdownItems.map((item) => (
-                    <div
-                      key={item.name}
-                      to={item.path}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => handleClickOnLogout(item)}
-                    >
-                      {item.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="sm:hidden">
+        <div className="sm:hidden bg-white border-t border-gray-100">
           <div className="pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                className="flex items-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 pl-3 pr-4 py-3 text-base font-medium transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
               >
+                <span className="mr-3">{item.icon}</span>
                 {item.name}
               </Link>
             ))}
+
+            {isAuthenticated && (
+              <div className="border-t border-gray-100 pt-2">
+                {dropdownItems.map((item) => (
+                  <div
+                    key={item.name}
+                    className="flex items-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 pl-3 pr-4 py-3 text-base font-medium transition-colors duration-200 cursor-pointer"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleClickOnLogout(item);
+                    }}
+                  >
+                    <span className="mr-3">{item.icon}</span>
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
