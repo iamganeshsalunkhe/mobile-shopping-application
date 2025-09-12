@@ -35,6 +35,7 @@ function Products() {
     formState: { errors ,isSubmitting},
   } = useForm({
     defaultValues:{
+      brandName:"",
       productName:"",
       specification:"",
       price:"",
@@ -49,6 +50,7 @@ function Products() {
     setEditProduct(null);
     setIsModalOpen(true);
     reset({
+      brandName: "",
       productName: "",
       specification: "",
       price: "",
@@ -60,10 +62,11 @@ function Products() {
   function openUpdateModal(product) {
     setEditProduct(product);
     reset({
+      brandName:product.brandName,
       productName: product.productName,
       specification: product.specification,
       price: product.price,
-      productImage:null
+      productImage: null,
     });
     setIsModalOpen(true);
   }
@@ -118,6 +121,8 @@ function Products() {
     try {
     
       const price = parseFloat(data.price).toFixed(2);
+
+      formData.append('brandName',data.brandName);
 
       formData.append('productName',data.productName);
 
@@ -215,8 +220,11 @@ function Products() {
 
                 {/* Product Details */}
                 <div className="p-5 space-y-3">
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-xl font-bold text-gray-900 capitalize">
                     {product.productName}
+                  </h3>
+                  <h3 className="text-xl font-semibold text-gray-900 capitalize">
+                    {product.brandName}
                   </h3>
                   <p className="text-gray-600 text-md font-bold min-h-[40px] truncate capitalize">
                     {product.specification}
@@ -267,8 +275,28 @@ function Products() {
                 {isEditProduct ? "Update a Product" : "Add a new product"}
               </h2>
               <form onSubmit={handleSubmit(onSubmit)}>
+                  {/* input tag for the brandName */}
                 <div>
+                  <label htmlFor="brandName" className="font-bold ">
+                    Brand Name :-
+                  </label>
+                  <input
+                    {...register("brandName", {
+                      required: "Brand name is required",
+                    })}
+                    id="brandName"
+                    className="w-full mb-1 p-2 border rounded outline-sky-600 focus:outline-2 font-semibold "
+                  />
+                  {errors.brandName && (
+                    <span className="text-red-500 font-semibold block">
+                      {errors.brandName.message}
+                    </span>
+                  )}
+                </div>
+
+
                   {/* input tag for the productName */}
+                <div>
                   <label htmlFor="productName" className="font-bold ">
                     Product Name :-
                   </label>
