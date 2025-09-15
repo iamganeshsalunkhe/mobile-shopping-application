@@ -33,7 +33,7 @@ exports.getAllOrders = async(req,res)=>{
         const allOrders = await customerOrderServices.getOrder(customerId);
 
         // if request handled successfully
-        res.status(200).json({data:allOrders});
+        res.status(200).json(allOrders);
     } catch (error) {
         console.error(error);
         res.status(500).json({message:error.message || "Something went wrong!"});

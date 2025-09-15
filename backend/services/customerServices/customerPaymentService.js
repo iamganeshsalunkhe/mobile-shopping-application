@@ -49,7 +49,7 @@ exports.orderToCreated = async (customerId) => {
     shippingEmail: deliveryAddress.email,
     shippingPhone: deliveryAddress.contactNumber,
     shippingStreet:
-      deliveryAddress.addressLine + " " + deliveryAddress.landMark,
+      deliveryAddress.addressLine+"," + " "+ + deliveryAddress.landMark,
     shippingCity: deliveryAddress.city,
     shippingDistrict: deliveryAddress.district,
     shippingState: deliveryAddress.state,
@@ -97,6 +97,7 @@ exports.orderToCreated = async (customerId) => {
 
     // create a suborder
     const subOrder = await SubOrders.create({
+      customerId,
       orderId,
       vendorId,
       status: "PENDING",
@@ -114,6 +115,9 @@ exports.orderToCreated = async (customerId) => {
 
       // create an entry in orderItems table (per entry per product)
       await OrderItems.create({
+        orderId,
+        customerId,
+        vendorId,
         subOrderId: subOrder.subOrderId,
         productId:item.product.productId,
         productName: item.product.productName,
@@ -150,11 +154,6 @@ exports.verify = async (req) => {
   const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
     req.body.paymentData;
 
-    console.log(`------------------------------verify payment api----------------------------------`);
-    console.log(req.body);
-    console.log(
-      `------------------------------verify payment api----------------------------------`
-    );
 
   // if no data received
   if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
@@ -175,22 +174,10 @@ exports.verify = async (req) => {
 
   if (!order)  throw new Error("Order Not Found!!");
 
-  
-  console.log(`-----------------order from verify---------------------------------`);
-  console.log(order);
-
   if (order.status !== "PAID") {
     order.status = "PAYMENT_PROCESSING";
     await order.save();
   };
-    `-----------------order from verify---------------------------------`;
-
-  console.log(order);
-  console.log(
-    `-----------------order from verify---------------------------------`
-  );
-
-  
 
   // if all request handled successfully return success 
    return {
@@ -245,11 +232,11 @@ exports.paymentStatus = async (req)=>{
      // save the update
      await order.save();
      console.log(
-       `---------------------------order--------------------------------------`
+       `------------------------webhook--order--------------------------------------`
      );
      console.log(order);
      console.log(
-       `---------------------------order--------------------------------------`
+       `----------------------webhook-----order--------------------------------------`
      );
 
      // extract the orderId from order details for further use cases

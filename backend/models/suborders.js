@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:"vendorId",
         onDelete:"CASCADE"
       });
+      SubOrders.belongsTo(models.Customers,{
+        foreignKey:'customerId',
+        onDelete:"CASCADE"
+      });
       SubOrders.hasMany(models.OrderItems,{
         foreignKey:"subOrderId",
         onDelete:"CASCADE"
@@ -30,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      customerId:DataTypes.INTEGER,
       orderId: DataTypes.INTEGER,
       vendorId: DataTypes.INTEGER,
       status: DataTypes.ENUM(

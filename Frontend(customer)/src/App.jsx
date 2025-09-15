@@ -20,6 +20,7 @@ import AboutPage from "./Pages/AboutPage";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import PaymentSuccessPage from "./Pages/PaymentSuccessPage";
 import PaymentFailedPage from "./Pages/PaymentFailedPage";
+import OrdersPage from "./Pages/OrdersPage";
 
 // create queryClient instance
 const queryClient = new QueryClient();
@@ -55,6 +56,14 @@ function App() {
                   <CartPage />
                 </ProtectedRoute>
               }
+            />
+            <Route 
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrdersPage/>
+              </ProtectedRoute>
+            }
             />
             <Route
               path="/address"

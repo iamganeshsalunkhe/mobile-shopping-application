@@ -9,6 +9,33 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      orderId:{
+        type:Sequelize.INTEGER,
+        references:{
+          model:'Orders',
+          key:'orderId'
+        },
+        onUpdate:"CASCADE",
+        onDelete:"CASCADE"
+      },
+      customerId:{
+        type:Sequelize.INTEGER,
+        references:{
+          model:"Customers",
+          key:'customerId'
+        },
+        onUpdate:"CASCADE",
+        onDelete:"CASCADE"
+      },
+      vendorId:{
+        type:Sequelize.INTEGER,
+        references:{
+          model:"Vendors",
+          key:'vendorId'
+        },
+        onUpdate:"CASCADE",
+        onDelete:"CASCADE"
+      },
       subOrderId: {
         type: Sequelize.INTEGER,
         references: {
@@ -34,6 +61,16 @@ module.exports = {
       quantity: {
         type: Sequelize.INTEGER,
         defaultValue: 1,
+      },
+      status: {
+        type: Sequelize.ENUM(
+          "PENDING",
+          "CONFIRMED",
+          "CANCELLED",
+          "RETURNED",
+          "SHIPPED",
+          "DELIVERED"
+        ),
       },
       createdAt: {
         allowNull: false,
