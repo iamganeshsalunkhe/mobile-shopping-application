@@ -9,7 +9,7 @@ export async function getOrders(){
     try {
         const {data} = await axios.get(`${API_BASE}/order`,{withCredentials:true});
     
-        
+        console.log(data);
         return data;
 
     } catch (error) {

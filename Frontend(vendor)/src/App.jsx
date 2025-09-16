@@ -4,21 +4,14 @@ import {Toaster} from 'react-hot-toast';
 import DemoComponent from "./components/DemoComponent";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
 
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import AccountPage from "./pages/AccountPage";
-import OrderPage from "./pages/OrderPage";
+import OrdersPage from "./pages/OrdersPage";
 
-const queryClient = new QueryClient({
-    defaultOptions:{
-      queries:{
-        staleTime:0
-      }
-    }
-})
+const queryClient = new QueryClient();
 
 function App() {
   return (
@@ -32,7 +25,7 @@ function App() {
           <Route path="/demo" element={<DemoComponent />} />
           <Route path="/products" element={<ProductPage />} />
           <Route path="/account" element={<AccountPage />} />
-          <Route path="/orders" element={<OrderPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Routes>
         <Toaster
           toastOptions={{

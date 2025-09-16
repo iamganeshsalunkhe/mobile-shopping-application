@@ -11,6 +11,7 @@ const vendorAuthRoutes = require('./routes/vendorRoutes/vendorAuthRoutes');
 const vendorProductRoutes = require("./routes/vendorRoutes/vendorProductRoutes");
 const vendorProfileRoutes = require("./routes/vendorRoutes/vendorProfileRoutes");
 const vendorBrandLogoRoutes = require('./routes/vendorRoutes/vendorBrandLogoRoutes');
+const vendorOrderRoutes = require('./routes/vendorRoutes/vendorOrderRoutes.js');
 
 // customerRoutes
 const customerAuthRoutes = require('./routes/customerRoutes/customerAuthRoutes.js');
@@ -37,7 +38,7 @@ const allowedOrigin =['http://localhost:5173','http://localhost:5174']
 
 app.use(cors({origin:allowedOrigin,credentials:true}));
 
-app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes,vendorBrandLogoRoutes]);
+app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes,vendorBrandLogoRoutes,vendorOrderRoutes]);
 app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes,customerOrderRoutes,customerPaymentRoutes]);
 
 // listening 

@@ -49,7 +49,7 @@ exports.orderToCreated = async (customerId) => {
     shippingEmail: deliveryAddress.email,
     shippingPhone: deliveryAddress.contactNumber,
     shippingStreet:
-      deliveryAddress.addressLine+"," + " "+ + deliveryAddress.landMark,
+      deliveryAddress.addressLine+ ",  "+  deliveryAddress.landMark,
     shippingCity: deliveryAddress.city,
     shippingDistrict: deliveryAddress.district,
     shippingState: deliveryAddress.state,

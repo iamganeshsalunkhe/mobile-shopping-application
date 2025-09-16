@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-//import required modules
+// import required modules
 import {useQuery} from '@tanstack/react-query';
 import { getOrders } from '../services/orderService';
 import toast from 'react-hot-toast';
@@ -9,25 +8,26 @@ import {format} from 'date-fns';
 import { Link } from 'react-router-dom';
 
 
-
 function Orders() {
-   
-
-    
+   // get query from our service    
     const {data:orderItems,isLoading,isError}= useQuery({
         queryKey:['orders'],
         queryFn:getOrders,
         onError:(err)=>{
             toast.error(err);
         }
-        
-    })
+    });
     
+    console.log(orderItems)
+    // if loading
     if (isLoading) return <Loader/>;
+    
+    // if any error occurs
     if (isError) return <Error/>;
 
     return (
       <>
+
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Your Orders</h1>
@@ -35,10 +35,24 @@ function Orders() {
               View your order history and track recent purchases
             </p>
           </div>
-
-
           {/* Orders List */}
+          {/* conditional rendering  */}
+          {orderItems.length === 0 ? (
+                <div className="bg-white rounded-lg shadow overflow-hidden p-12 text-center">
+      <div className="mx-auto w-24 h-24 mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <h3 className="text-2xl font-medium text-gray-700 mb-2">No orders yet</h3>
+      <p className="text-gray-500 mb-6">You haven't placed any orders. Start shopping to see your orders here.</p>
+      <Link to='/products' className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition">
+        Start Shopping
+      </Link>
+    </div>
+          ) : (
           <div className="space-y-6">
+
             {orderItems.map((item) => (
               <div
                 key={item.orderItemsId}
@@ -138,9 +152,10 @@ function Orders() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </>
     );
-        }
+  }
 
 export default Orders;
