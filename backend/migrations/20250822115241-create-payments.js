@@ -48,7 +48,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       status:{
-        type:Sequelize.ENUM("PENDING","SUCCESS","FAILED")
+        type:Sequelize.ENUM("created","authorized","captured","failed","refunded")
       },
       createdAt: {
         allowNull: false,

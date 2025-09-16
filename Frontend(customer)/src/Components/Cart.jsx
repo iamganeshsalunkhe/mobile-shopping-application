@@ -7,17 +7,27 @@ import toast from "react-hot-toast";
 import Loader from "../Components/Loader";
 import { useCartStore } from "../stores/cartStore";
 import { getDefaultAddress } from "../services/addressService";
-import { FaUser, FaMapMarkerAlt, FaCity, FaPhoneAlt } from "react-icons/fa";
-import { useAddressStore } from "../stores/addressStore";
-import { useEffect } from "react";
+import {
+  FaUser,
+  FaMapMarkerAlt,
+  FaCity,
+  FaPhoneAlt,
+  FaEnvelope,
+} from "react-icons/fa";
+import { createOrder, orderStatus} from "../services/paymentService";
+import useVerifyPayment from "../hooks/useVerifyPayment";
+import { useState } from "react";
 
 function Cart() {
+  const [orderId,setOrderId] = useState(null);
+  const [loading,setLoading] = useState(false);
+  
   const navigate = useNavigate();
   // get queryClient
   const queryClient = useQueryClient();
 
-  // set addressId in localstorage
-  const setAddressId = useAddressStore(state=>state.setAddressId);
+  // get useVerifyPaymentHook
+  const verifyPaymentMutation = useVerifyPayment();
 
   const {
     data: cartItems = [],
@@ -26,7 +36,7 @@ function Cart() {
   } = useQuery({
     queryKey: ["cartData"],
     queryFn: getCartInfo,
-    staleTime: 1000 * 60 * 3, // 3min
+    staleTime:1000 * 60 * 3, // 3 min
     onError: () => {
       toast.error("Failed to load cart data!");
     },
@@ -41,12 +51,6 @@ function Cart() {
     }
   });
 
-  // set addressId in the localstorage
-  useEffect(()=>{
-    if (defaultAddress?.addressId){
-      setAddressId(defaultAddress.addressId);
-    }
-  },[defaultAddress,setAddressId]);
 
   // destructure using useMutation
   const { mutate: deleteProductMutation } = useMutation({
@@ -62,9 +66,38 @@ function Cart() {
     },
   });
 
+
+  // get order status after payment
+  // const {data:orderStatusData,isLoading:statusLoading,} = useQuery({
+  //   queryKey:['orderStatus',orderId],
+  //   // pass the queryKey to queryFn 
+  //   //react- query will pass that queryFn as an object 
+  //   // as queryKey is an array we need to destructure with array 
+  //   queryFn:()=>orderStatus(orderId),
+  //   enabled:!!orderId,
+  //   refetchInterval:4000,
+  //   refetchOnWindowFocus:true,
+  //   onSuccess:(data)=>{
+  //     if (data?.orderStatus === 'PAID'){
+  //       setOrderId(null);
+  //       console.log('hii from orderstatus')
+  //       useCartStore.getState().clearCart();
+  //       queryClient.invalidateQueries(['cartData'])
+  //       setTimeout(() => {
+  //         navigate("/paymentsuccess", { state: data });
+  //       }, 0);
+  //     }
+  //   },
+  //   onError:(err)=>{
+  //     console.log(err);
+  //   }
+  // });
+
+
+
   // Calculate totals
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.product?.price * 1,
+    (sum, item) => sum + item.product?.price * item.quantity,
     0
   );
   // add shipping charges only if subtotal is less than 500
@@ -74,11 +107,75 @@ function Cart() {
   // function for going one step back
   function handleGoBack() {
     navigate(-1);
-  }
+  };
+
+  // handlePayment
+  async function handlePayment(){
+    // throw an error if customer didn't selected a default address
+    if (!defaultAddress) throw toast.error("Please Select Delivery Address!")
+
+      // create an razorpay order 
+    const order = await createOrder();
+    // setOrderId(order.orderId)
+
+    // tells razorpay to open and  prefill payment form
+    const options = {
+      key:order.key,
+      amount:order.amount * 100,// convert to paise
+      currency:order.currency,
+      name:"MSA",
+      description:"Happy to serve you!!",
+      order_id:order.razorPayOrderId,
+      prefill:{
+        name:order.customer.fullName,
+        email:order.customer.email,
+        contact:order.customer.contactNumber
+      },
+      theme:{
+        color:'#4c98f5'
+      },
+      timeout:900,
+      send_sms_hash:true,
+      // handler function when razorpay capture or if payment fails then this fn will run
+      handler:(response)=>{
+        verifyPaymentMutation.mutate(response,{
+          onSuccess:(data)=>{
+            if (data?.success){
+              toast.success("Payment Successful!!");
+              setLoading(true);
+            }else{
+              toast.error("Payment Failed!!");
+              navigate("/paymentfailed",{state:data});
+            }
+          },
+          onError:(error)=>{
+            toast.error(error.message)
+             console.error(error);
+            navigate('paymentfailed');
+            }
+        }
+        )
+      }
+
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
 
   // if data is still loading
-  if (isLoading) return <Loader />;
+  if (isLoading ) return <Loader />;
 
+  if (loading) return <Loader/>;
+
+  // if (orderStatusData?.orderStatus === "PAYMENT_PROCESSING" || orderStatusData?.orderStatus === 'PENDING_PAYMENT'){
+  //   return <Loader/>
+  // };
+
+
+  
+
+  
   // if any error occurs
   if (isError) {
     return (
@@ -152,7 +249,7 @@ function Cart() {
                   </div>
                   <div className="flex  justify-between items-center">
                     <span className="text-sm bg-gray-100 px-3 py-1 rounded-full font-medium">
-                      Qty: 1
+                      Qty: {item.quantity}
                     </span>
                     <p className="font-semibold text-gray-800 text-lg">
                       {new Intl.NumberFormat("en-IN", {
@@ -191,6 +288,13 @@ function Cart() {
                   </div>
 
                   <div className="flex items-start">
+                    <FaEnvelope className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0"/>
+                    <span className="font-semibold">
+                      {defaultAddress.email}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start">
                     <FaMapMarkerAlt className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
                     <div>
                       <p className="font-semibold">
@@ -208,7 +312,7 @@ function Cart() {
                     <FaCity className="w-4 h-4 mt-1 mr-3 text-gray-500 flex-shrink-0" />
                     <p className="font-semibold">
                       {defaultAddress.city}, {defaultAddress.district},{" "}
-                      {defaultAddress.state} -{defaultAddress.postalCode}
+                      {defaultAddress.state} - {defaultAddress.postalCode}
                     </p>
                   </div>
 
@@ -274,7 +378,10 @@ function Cart() {
           </div>
 
           {/* Checkout Button */}
-          <button className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition cursor-pointer  duration-200">
+          <button
+            className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition cursor-pointer  duration-200 "
+            onClick={handlePayment}
+          >
             Proceed to Checkout
           </button>
         </>

@@ -13,18 +13,20 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
-      Orders.belongsTo(models.Addresses, {
-        foreignKey: "addressId",
-        onDelete: "CASCADE",
-      });
       Orders.hasMany(models.Payments,{
         foreignKey:"orderId",
         onDelete:"CASCADE"
       });
+      Orders.hasMany(models.OrderItems, {
+        foreignKey: "orderId",
+        onDelete: "CASCADE",
+      });
+      
       Orders.hasMany(models.SubOrders,{
         foreignKey:"orderId",
         onDelete:"CASCADE"
-      })
+      });
+
     }
   }
   Orders.init(
@@ -35,24 +37,22 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       customerId: DataTypes.INTEGER,
-      paymentId:DataTypes.INTEGER,
       status:{
-        type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED")
+        type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED","PAYMENT_PROCESSING")
       },
       totalAmount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
-      addressId: DataTypes.INTEGER,
       shippingName:DataTypes.STRING,
       shippingPhone:DataTypes.STRING,
+      shippingEmail:DataTypes.STRING,
       shippingStreet:DataTypes.STRING,
-      shippingLandMark:DataTypes.STRING,
       shippingCity:DataTypes.STRING,
       shippingDistrict:DataTypes.STRING,
       shippingState:DataTypes.STRING,
       shippingPincode:DataTypes.STRING,
-
+      razorpayOrderId:DataTypes.STRING,
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

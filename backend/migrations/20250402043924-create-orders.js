@@ -9,7 +9,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-     
       customerId: {
         type: Sequelize.INTEGER,
         references: {
@@ -19,29 +18,29 @@ module.exports = {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
-      addressId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Addresses",
-          key: "addressId",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      paymentId:{
-        type:Sequelize.INTEGER,
-        references:{
-          model:"Payments",
-          key:"paymentId"
-        }
-      },
+      shippingName:{type:Sequelize.STRING},
+      shippingPhone:{type:Sequelize.STRING},
+      shippingEmail:{type:Sequelize.STRING},
+      shippingStreet:{type:Sequelize.STRING},
+      shippingCity:{type:Sequelize.STRING},
+      shippingDistrict:{type:Sequelize.STRING},
+      shippingState:{type:Sequelize.STRING},
+      shippingPincode:{type:Sequelize.STRING},
       totalAmount: {
         type: Sequelize.STRING,
       },
-      status:{
-        type:Sequelize.ENUM("PENDING_PAYMENT","PAID","FAILED","CANCELLED","SHIPPED","DELIVERED"),
-        defaultValue:"PENDING_PAYMENT"
+      status: {
+        type: Sequelize.ENUM(
+          "PENDING_PAYMENT",
+          "PAID",
+          "FAILED",
+          "CANCELLED",
+          "SHIPPED",
+          "DELIVERED"
+        ),
+        defaultValue: "PENDING_PAYMENT",
       },
+      razorpayOrderId:Sequelize.STRING,
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -1,13 +1,12 @@
 // import required modules 
 const vendorProductServices = require('../../services/vendorServices/vendorProductService');
-const v4 = require('uuid');
 
 // get all  products(self-listed)
 exports.getAllProducts = async(req,res)=>{
     try {
         // get vendorId from token
         const vendorId = req.user.id;
-        console.log(vendorId);
+ 
         // passing data to service layer
         const productsList = await vendorProductServices.AllProducts(vendorId);
         

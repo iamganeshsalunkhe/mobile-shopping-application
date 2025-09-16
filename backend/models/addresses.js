@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
-      Addresses.hasMany(models.Orders,{
-        foreignKey:"addressId",
-        onDelete:"CASCADE"
-      })
     }
   }
   Addresses.init(
@@ -28,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       customerId: DataTypes.INTEGER,
       fullName: DataTypes.STRING,
+      email:DataTypes.STRING,
       contactNumber: DataTypes.STRING,
       addressLine: DataTypes.STRING,
       landMark: DataTypes.STRING,

@@ -9,6 +9,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      customerId:{
+        type:Sequelize.INTEGER,
+        references:{
+          model:'Customers',
+          key:'customerId'
+        },
+        onUpdate:"CASCADE",
+        onDelete:"CASCADE"
+      },
       orderId: {
         type: Sequelize.INTEGER,
         references: {
@@ -29,6 +38,15 @@ module.exports = {
       },
       subTotal: {
         type: Sequelize.STRING,
+      },
+      status: {
+        type: Sequelize.ENUM(
+          "PENDING",
+          "CONFIRMED",
+          "SHIPPED",
+          "DELIVERED",
+          "FAILED"
+        ),
       },
       createdAt: {
         allowNull: false,

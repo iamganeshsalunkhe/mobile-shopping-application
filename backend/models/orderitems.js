@@ -9,15 +9,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+       OrderItems.belongsTo(models.Orders, {
+         foreignKey: "orderId",
+         onDelete: "CASCADE",
+       });
       OrderItems.belongsTo(models.SubOrders,{
         foreignKey:"subOrderId",
         onDelete:"CASCADE"
       });
       OrderItems.belongsTo(models.Products,{
-        foreignKey:"productId",
+        foreignKey:'productId'
+      });
+      OrderItems.belongsTo(models.Customers,{
+        foreignKey:'customerId',
         onDelete:"CASCADE"
-      }
-      )
+      });
+      OrderItems.belongsTo(models.Vendors,{
+        foreignKey:'vendorId',
+        onDelete:"CASCADE"
+      });
     }
   }
   OrderItems.init(
@@ -27,10 +37,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         primaryKey: true,
       },
+      customerId:DataTypes.INTEGER,
+      vendorId:DataTypes.INTEGER,
+      orderId:DataTypes.INTEGER,
       subOrderId: DataTypes.INTEGER,
-      productId: DataTypes.INTEGER,
+      productId:DataTypes.INTEGER,
       productName: DataTypes.STRING,
       productPrice: DataTypes.STRING,
+      quantity: DataTypes.INTEGER,
+      status: DataTypes.ENUM("PENDING", "CONFIRMED", "CANCELLED", "RETURNED"),
     },
     {
       sequelize,
