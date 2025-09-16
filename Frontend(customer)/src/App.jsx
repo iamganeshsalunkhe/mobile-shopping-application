@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import SignUpPage from "./Pages/SignUpPage";
 import DemoPage from "./Pages/DemoPage";
 import LoginPage from "./Pages/LoginPage";
+import HomePage from "./Pages/HomePage";
 import AccountPage from "./Pages/AccountPage";
 import ProductsPage from "./Pages/ProductsPage";
 import ProductDetailsPage from "./Pages/ProductDetailsPage";
@@ -35,8 +36,9 @@ function App() {
           <Routes>
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/"element={<HomePage/>}/>
             <Route
-              path="/"
+              path="/account"
               element={
                 <ProtectedRoute>
                   <AccountPage />

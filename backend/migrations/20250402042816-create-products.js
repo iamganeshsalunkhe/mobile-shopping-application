@@ -18,6 +18,10 @@ module.exports = {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       },
+      brandName: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       productName: {
         allowNull: false,
         type: Sequelize.STRING,

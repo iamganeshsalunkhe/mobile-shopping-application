@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       vendorId: DataTypes.INTEGER,
+      brandName:DataTypes.STRING,
       productName: DataTypes.STRING,
       price: {
         type: DataTypes.DECIMAL(10, 2),
