@@ -4,16 +4,21 @@ const {Orders,Products,Addresses,OrderItems,Vendors} = require('../../models');
 // get all order for the customer
 exports.getOrder = async(customerId)=>{
     // got the customerId from controller layer
+
+    // filter out order using customerId and status = 'confirmed'
     const ordersData = await OrderItems.findAll({where:{customerId,status:"CONFIRMED"},
     
         include:[
+            // join vendor table using vendorId
             {
                 model:Vendors
             },
+            // join orders table  using orderId
             {
                     model:Orders
             }
         ],
+        // get data as newest first
         order:[['updatedAt','DESC']]
     }
     );

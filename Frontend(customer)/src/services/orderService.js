@@ -6,10 +6,10 @@ const API_BASE = `http://localhost:8000/api/customer`;
 
 
 export async function getOrders(){
+    // fetch order 
     try {
         const {data} = await axios.get(`${API_BASE}/order`,{withCredentials:true});
-    
-        console.log(data);
+
         return data;
 
     } catch (error) {

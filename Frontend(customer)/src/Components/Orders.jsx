@@ -18,7 +18,6 @@ function Orders() {
         }
     });
     
-    console.log(orderItems)
     // if loading
     if (isLoading) return <Loader/>;
     
