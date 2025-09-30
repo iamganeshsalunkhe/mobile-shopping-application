@@ -215,11 +215,6 @@ exports.paymentStatus = async (req)=>{
        where: { razorpayOrderId},
      });
 
-     console.log(`-------------------------------webhook order----------------------`);
-     console.log(order);
-     console.log(
-       `-------------------------------webhook order----------------------`
-     );
 
      if (order.status === 'PAID') return {success:true,message:"Payment already processed"}
 
@@ -231,13 +226,6 @@ exports.paymentStatus = async (req)=>{
 
      // save the update
      await order.save();
-     console.log(
-       `------------------------webhook--order--------------------------------------`
-     );
-     console.log(order);
-     console.log(
-       `----------------------webhook-----order--------------------------------------`
-     );
 
      // extract the orderId from order details for further use cases
      const orderId = order.orderId;
