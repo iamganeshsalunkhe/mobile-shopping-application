@@ -37,12 +37,13 @@ exports.AllProducts = async (vendorId) => {
 exports.createProduct = async (data) => {
   console.log(data);
   //get data from req
-  const { vendorId, productName, specification, price, file } = data;
+  const { vendorId, productName, specification, price, file ,brandName} = data;
 
   if (!file) throw new Error("Product image is required!!");
 
   // create product
   const product = await Products.create({
+    brandName,
     vendorId,
     productName,
     specification,

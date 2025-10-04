@@ -35,8 +35,8 @@ function Products() {
       // Filter by search query
       return (
         product.productName.toLowerCase().includes(query.toLowerCase()) ||
-        product.specification.toLowerCase().includes(query.toLowerCase()) 
-        // product.brand.toLowerCase().includes(query.toLowerCase())
+        product.specification.toLowerCase().includes(query.toLowerCase()) || 
+        product.brandName.toLowerCase().includes(query.toLowerCase())
       );
     });
   }, [products, query]);

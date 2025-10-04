@@ -31,7 +31,11 @@ function ProductDetail() {
   const queryClient = useQueryClient();
 
   //state for pincode
-  const [pincode,setPincode] = useState("");
+  const [pincode, setPincode] = useState("");
+  
+  //get isAuthenticated value from zustand store
+  const authData = JSON.parse(localStorage.getItem("authSession"));
+  const isAuthenticated = authData?.state?.isAuthenticated === true;
 
   // extract react-query methods/property
   const {
@@ -186,7 +190,7 @@ function ProductDetail() {
             <div className="flex gap-2 mt-2">
               {!isAlreadyInCart ? (
                 <button
-                  onClick={() => addToCartMutation(product)}
+                  onClick={isAuthenticated ? () => addToCartMutation(product):()=>toast.error("Please Login First!!")}
                   disabled={isPending}
                   className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 ${
                     isPending
