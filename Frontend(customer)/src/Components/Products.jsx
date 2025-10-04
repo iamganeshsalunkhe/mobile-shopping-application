@@ -5,16 +5,23 @@ import { fetchProducts } from "../services/productService";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useEffect, useMemo, useState } from "react";
+import { useRef } from "react";
 
 function Products() {
   const [query, setQuery] = useState("");
   const [searchParams,setSearchParams]= useSearchParams();
+  const inputRef = useRef(null);
 
-
-  useEffect(()=>{
+  
+  useEffect(() => {
     const brandParams = searchParams.get('brand');
-    if (brandParams)setQuery(brandParams);
-  },[searchParams])
+    if (brandParams) setQuery(brandParams);
+
+    inputRef.current?.focus();
+
+  }, [searchParams]);
+
+
 
   // destructure using useQuery
   const {
@@ -74,6 +81,8 @@ function Products() {
               />
             </svg>
           </div>
+
+          {/*  search bar for browsing */}
           <input
             type="text"
             id="searchProducts"
@@ -81,6 +90,7 @@ function Products() {
             placeholder="Search mobile..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            ref={inputRef}
           />
           {query && (
             <button

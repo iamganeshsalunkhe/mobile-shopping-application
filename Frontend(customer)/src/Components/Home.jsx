@@ -9,7 +9,7 @@ const latestMobiles = [
     brand: "Apple",
     price: "134999",
     latest:true,
-    databaseId: 1,
+    databaseId: 4,
     image:
       "https://ea-unboxed-assets.croma.com/cromaunboxed-as/2025/09/68c07f744f567-68c07f744f568iPhone-17-17-Pro-and-17-Pro-Max-price-in-India.png.png",
     discount: 0,
@@ -18,8 +18,8 @@ const latestMobiles = [
     id: 2,
     name: "Samsung Galaxy S25 Ultra",
     brand: "Samsung",
-    price: "129999",
-    databaseId: 1,
+    price: "124999",
+    databaseId: 9,
     image:
       "https://images.samsung.com/is/image/samsung/assets/in/smartphones/galaxy-s25-ultra/buy/S25_Titanium_PDP_720x480.jpg?imbypass=true",
     discount: 5,

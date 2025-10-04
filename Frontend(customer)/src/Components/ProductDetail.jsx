@@ -9,6 +9,9 @@ import Loader from "./Loader";
 import Error from "./Error";
 import { useState } from "react";
 
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
+
 // function to fetch product with particular Id
 async function fetchProduct(productId) {
   // get productId from params
@@ -98,12 +101,15 @@ function ProductDetail() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Product Image */}
         <div className="bg-gray-100 rounded-lg overflow-hidden select-none">
+          {/* user can zoom the images */}
+          <Zoom>
           <img
             src={product.signedProductURL}
             alt={product.productName}
             className="w-full h-full object-cover"
             loading="lazy"
-          />
+            />
+          </Zoom>
         </div>
 
         {/* Product Info */}
