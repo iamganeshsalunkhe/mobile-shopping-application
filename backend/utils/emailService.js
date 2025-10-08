@@ -12,8 +12,8 @@ async function sendOrderConfirmationEmail({
   phoneNumber,
 }) {
   try {
-      await resend.emails.send({
-      from: "onboarding@resend.dev",
+    await resend.emails.send({
+      from: "MSA <msa@updates.ganeshsalunkhe.in>",
       to,
       subject: "Order Confirmed!!",
       html: `

@@ -12,7 +12,7 @@ const PaymentFailed = ({ show = true }) => {
   const { state } = useLocation();
   
   const {
-    message,
+    data
   } = state || {};
 
   const [isVisible] = useState(true);
@@ -40,7 +40,7 @@ const PaymentFailed = ({ show = true }) => {
               </p>
             
                 <p className="text-red-500 text-sm mt-2 bg-red-100 p-2 rounded-md font-medium">
-                {message || "Error while processing your payment!!"}
+                {data || "Error while processing your payment!!"}
                 </p>
             </div>
           </div>

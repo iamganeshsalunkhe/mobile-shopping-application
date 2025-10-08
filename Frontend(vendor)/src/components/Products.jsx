@@ -229,7 +229,7 @@ function Products() {
                   <p className="text-gray-600 text-md font-bold min-h-[40px] truncate capitalize">
                     {product.specification}
                   </p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-3">
                     <span className="text-lg font-bold text-gray-900">
                       {new Intl.NumberFormat("en-IN", {
                         style: "currency",
@@ -238,7 +238,7 @@ function Products() {
                         maximumFractionDigits: 0,
                       }).format(product.price)}
                     </span>
-                    <div className="">
+                    <div className="flex justify-evenly">
                       <button
                         onClick={() => openUpdateModal(product)}
                         className=" mr-2 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition cursor-pointer hover:scale-115 duration-300 font-semibold"

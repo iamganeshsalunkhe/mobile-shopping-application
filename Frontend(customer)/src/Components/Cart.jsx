@@ -14,20 +14,16 @@ import {
   FaPhoneAlt,
   FaEnvelope,
 } from "react-icons/fa";
-import { createOrder, orderStatus} from "../services/paymentService";
-import useVerifyPayment from "../hooks/useVerifyPayment";
 import { useState } from "react";
+import { createOrder } from "../services/paymentService";
 
 function Cart() {
-  const [orderId,setOrderId] = useState(null);
   const [loading,setLoading] = useState(false);
   
   const navigate = useNavigate();
   // get queryClient
   const queryClient = useQueryClient();
 
-  // get useVerifyPaymentHook
-  const verifyPaymentMutation = useVerifyPayment();
 
   const {
     data: cartItems = [],
@@ -66,35 +62,6 @@ function Cart() {
     },
   });
 
-
-  // get order status after payment
-  // const {data:orderStatusData,isLoading:statusLoading,} = useQuery({
-  //   queryKey:['orderStatus',orderId],
-  //   // pass the queryKey to queryFn 
-  //   //react- query will pass that queryFn as an object 
-  //   // as queryKey is an array we need to destructure with array 
-  //   queryFn:()=>orderStatus(orderId),
-  //   enabled:!!orderId,
-  //   refetchInterval:4000,
-  //   refetchOnWindowFocus:true,
-  //   onSuccess:(data)=>{
-  //     if (data?.orderStatus === 'PAID'){
-  //       setOrderId(null);
-  //       console.log('hii from orderstatus')
-  //       useCartStore.getState().clearCart();
-  //       queryClient.invalidateQueries(['cartData'])
-  //       setTimeout(() => {
-  //         navigate("/paymentsuccess", { state: data });
-  //       }, 0);
-  //     }
-  //   },
-  //   onError:(err)=>{
-  //     console.log(err);
-  //   }
-  // });
-
-
-
   // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.product?.price * item.quantity,
@@ -116,7 +83,6 @@ function Cart() {
 
       // create an razorpay order 
     const order = await createOrder();
-    // setOrderId(order.orderId)
 
     // tells razorpay to open and  prefill payment form
     const options = {
@@ -134,46 +100,34 @@ function Cart() {
       theme:{
         color:'#4c98f5'
       },
+      notes: {
+        
+      },
+      retry:false,
       timeout:900,
       send_sms_hash:true,
       // handler function when razorpay capture or if payment fails then this fn will run
-      handler:(response)=>{
-        verifyPaymentMutation.mutate(response,{
-          onSuccess:(data)=>{
-            if (data?.success){
-              toast.success("Payment Successful!!");
-              setLoading(true);
-            }else{
-              toast.error("Payment Failed!!");
-              navigate("/paymentfailed",{state:data});
-            }
-          },
-          onError:(error)=>{
-            toast.error(error.message)
-             console.error(error);
-            navigate('paymentfailed');
-            }
-        }
-        )
+      handler: () => {
+        toast.loading("Verifying payment...", { duration: 5000 });
+        useCartStore.getState().clearCart();
+        setTimeout(() => navigate('/paymentsuccess'), 4500);
       }
 
     };
     const rzp = new window.Razorpay(options);
+    rzp.on('payment.failed', function (response) {
+      setLoading(false)
+      const data = response.error.description;
+      navigate('/paymentfailed', { state: {data} })
+
+    })
     rzp.open();
   };
 
 
   // if data is still loading
-  if (isLoading ) return <Loader />;
+  if (isLoading || loading ) return <Loader />;
 
-  if (loading) return <Loader/>;
-
-  // if (orderStatusData?.orderStatus === "PAYMENT_PROCESSING" || orderStatusData?.orderStatus === 'PENDING_PAYMENT'){
-  //   return <Loader/>
-  // };
-
-
-  
 
   
   // if any error occurs

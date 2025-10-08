@@ -289,18 +289,44 @@ exports.paymentStatus = async (req)=>{
 
 
   }else if (req.body.event ==='payment.failed'){
-
     const paymentData = req.body.payload.payment.entity;
 
     const razorpayOrderId = paymentData.order_id;
 
-    const order = await Orders.findOne({where:{razorpayOrderId}});
+    const order = await Orders.findOne({ where: { razorpayOrderId } });
 
-    if (order){
-      order.status = 'FAILED'
+    if (order) {
+      order.status = "FAILED";
       await order.save();
     }
 
-  return {message:'payment failed'}
+    const orderId = order.orderId;
+
+    // find all suborders linked to that order using orderId
+    const subOrders = await SubOrders.findAll({ where: { orderId } });
+
+    // loop over all suborders
+    for (const subOrder of subOrders) {
+      // update the status column
+      subOrder.status = "FAILED";
+
+      // save the updated value
+      await subOrder.save();
+
+      // find the all orderItems for that suborder/order using suborderId
+      const orderItems = await OrderItems.findAll({
+        where: { subOrderId: subOrder.subOrderId },
+      });
+
+      // loop over each orderItem
+      for (const orderItem of orderItems) {
+        // update the status column
+        orderItem.status = "FAILED";
+        // save the update
+        await orderItem.save();
+      }
+    }
+
+    return { message: "payment failed" };
   }
 }
