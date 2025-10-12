@@ -7,7 +7,7 @@ import { addToCart } from "../services/cartService";
 import { useCartStore } from "../stores/cartStore";
 import Loader from "./Loader";
 import Error from "./Error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
@@ -35,7 +35,7 @@ function ProductDetail() {
 
   //state for pincode
   const [pincode, setPincode] = useState("");
-  
+
   //get isAuthenticated value from zustand store
   const authData = JSON.parse(localStorage.getItem("authSession"));
   const isAuthenticated = authData?.state?.isAuthenticated === true;
@@ -50,12 +50,17 @@ function ProductDetail() {
     queryFn: () => fetchProduct(productId),
   });
 
+  // over-ride the title
+  useEffect(() => {
+    if (product) document.title = `${product.productName} | MSA`;
+  }, [product]);
+
   const { mutate: addToCartMutation, isPending } = useMutation({
     mutationFn: ({ productId }) => addToCart(productId),
     onSuccess: (_data, product) => {
       useCartStore.getState().addItem({
         productId: product.productId,
-        productName: product.productName
+        productName: product.productName,
       });
       toast.success("Added!");
       queryClient.invalidateQueries(["cartData"]);
@@ -72,11 +77,10 @@ function ProductDetail() {
     (item) => item.productId === product?.productId
   );
 
-
-  // handle pincode 
-  function handleChange(e){
+  // handle pincode
+  function handleChange(e) {
     const value = e.target.value;
-    if (/^\d{0,6}$/.test(value)){
+    if (/^\d{0,6}$/.test(value)) {
       setPincode(value);
     }
   }
@@ -103,11 +107,11 @@ function ProductDetail() {
         <div className="bg-gray-100 rounded-lg overflow-hidden select-none">
           {/* user can zoom the images */}
           <Zoom>
-          <img
-            src={product.signedProductURL}
-            alt={product.productName}
-            className="w-full h-full object-cover"
-            loading="lazy"
+            <img
+              src={product.signedProductURL}
+              alt={product.productName}
+              className="w-full h-full object-cover"
+              loading="lazy"
             />
           </Zoom>
         </div>
@@ -115,7 +119,7 @@ function ProductDetail() {
         {/* Product Info */}
         <div className="select-none">
           <h1 className="text-3xl font-bold text-gray-800 mb-2 capitalize">
-            {product.productName}
+          {product.brandName} {product.productName}
           </h1>
           <div className="flex items-center mb-4">
             <span className="text-2xl font-bold text-indigo-600">
@@ -181,7 +185,11 @@ function ProductDetail() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    {pincode < 400000 ? "Delivery in 4-5 days":pincode < 800000 ? "Delivery in 6-7 days":"Delivery in 8-9 days"}
+                    {pincode < 400000
+                      ? "Delivery in 4-5 days"
+                      : pincode < 800000
+                      ? "Delivery in 6-7 days"
+                      : "Delivery in 8-9 days"}
                   </span>
                 )}
               </div>
@@ -192,11 +200,14 @@ function ProductDetail() {
               )}
             </div>
 
-
             <div className="flex gap-2 mt-2">
               {!isAlreadyInCart ? (
                 <button
-                  onClick={isAuthenticated ? () => addToCartMutation(product):()=>toast.error("Please Login First!!")}
+                  onClick={
+                    isAuthenticated
+                      ? () => addToCartMutation(product)
+                      : () => toast.error("Please Login First!!")
+                  }
                   disabled={isPending}
                   className={`w-full md:w-auto px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center gap-2 ${
                     isPending

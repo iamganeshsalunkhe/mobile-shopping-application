@@ -22,14 +22,22 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import PaymentSuccessPage from "./Pages/PaymentSuccessPage";
 import PaymentFailedPage from "./Pages/PaymentFailedPage";
 import OrdersPage from "./Pages/OrdersPage";
+import usePageTitle from "./hooks/usePageTitle";
 
 // create queryClient instance
 const queryClient = new QueryClient();
 
+// create a component 
+function TitleManager() {
+  usePageTitle();
+}
+
 function App() {
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <TitleManager/>
         <MantineProvider>
           <AuthGate />
           <ScrollToTop />
@@ -47,7 +55,7 @@ function App() {
             />
             <Route path="/products" element={<ProductsPage />} />
             <Route
-              path="products/:productId"
+              path="/products/:productId"
               element={<ProductDetailsPage />}
             />
             <Route path="/demo/:pageName" element={<DemoPage />} />

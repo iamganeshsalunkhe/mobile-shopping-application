@@ -3,9 +3,23 @@ import { Link, useParams } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
 
 import classes from "./DemoComponent.module.css";
+import { useEffect } from "react";
 
 function DemoComponent(){
-  const {pageName} = useParams();
+  const { pageName } = useParams();
+  
+  useEffect(() => {
+    if (pageName) {
+      let capitalizedPageName;
+      if (pageName === 'faqs') {
+        capitalizedPageName = pageName.toUpperCase();
+        document.title = `${capitalizedPageName} Demo | MSA`
+      } else {
+        capitalizedPageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
+        document.title = `${capitalizedPageName} Demo | MSA`
+      }
+      }
+    },[pageName])
   return (
     <div className={classes.root} >
       <Container size="md "className="select-none">
