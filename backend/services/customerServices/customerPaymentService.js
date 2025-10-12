@@ -1,5 +1,7 @@
 // import required modules
-const { validateWebhookSignature } = require("razorpay/dist/utils/razorpay-utils");
+const {
+  validateWebhookSignature,
+} = require("razorpay/dist/utils/razorpay-utils");
 const rzp = require("../../lib/razorpay");
 const {
   Cart,
@@ -8,11 +10,10 @@ const {
   Orders,
   SubOrders,
   OrderItems,
-  Payments
+  Payments,
 } = require("../../models");
 const crypto = require("crypto");
-const sendOrderConfirmationEmail = require('../../utils/emailService');
-
+const sendOrderConfirmationEmail = require("../../utils/emailService");
 exports.orderToCreated = async (customerId) => {
   // find the default address for customer
   const deliveryAddress = await Addresses.findOne({
@@ -49,7 +50,7 @@ exports.orderToCreated = async (customerId) => {
     shippingEmail: deliveryAddress.email,
     shippingPhone: deliveryAddress.contactNumber,
     shippingStreet:
-      deliveryAddress.addressLine+ ",  "+  deliveryAddress.landMark,
+      deliveryAddress.addressLine + ",  " + deliveryAddress.landMark,
     shippingCity: deliveryAddress.city,
     shippingDistrict: deliveryAddress.district,
     shippingState: deliveryAddress.state,
@@ -72,8 +73,6 @@ exports.orderToCreated = async (customerId) => {
   await createOrder.update({
     razorpayOrderId: razorpayOrder.id,
   });
-
-  
 
   // group the product by vendor
   const vendorGrouped = cartInfo.reduce((acc, item) => {
@@ -119,7 +118,7 @@ exports.orderToCreated = async (customerId) => {
         customerId,
         vendorId,
         subOrderId: subOrder.subOrderId,
-        productId:item.product.productId,
+        productId: item.product.productId,
         productName: item.product.productName,
         quantity: item.product.quantity,
         productPrice,
@@ -154,11 +153,10 @@ exports.verify = async (req) => {
   const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
     req.body.paymentData;
 
-
   // if no data received
   if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
     return { success: false, message: "Invalid Payment Details Received." };
-  } 
+  }
 
   // generate signature to compare with razorpay signature
   const generatedSignature = crypto
@@ -167,140 +165,167 @@ exports.verify = async (req) => {
     .digest("hex");
 
   // if signature is mismatched
-  if (generatedSignature !== razorpay_signature) return { success: false, message: "Payment verification failed." };
+  if (generatedSignature !== razorpay_signature)
+    return { success: false, message: "Payment verification failed." };
 
-  // find the order with razorpayOrderId 
-  const order = await Orders.findOne({where:{razorpayOrderId:razorpay_order_id}});
+  // find the order with razorpayOrderId
+  const order = await Orders.findOne({
+    where: { razorpayOrderId: razorpay_order_id },
+  });
 
-  if (!order)  throw new Error("Order Not Found!!");
+  if (!order) throw new Error("Order Not Found!!");
 
-  if (order.status !== "PAID") {
+  if (order.status === 'PAID') {
+    return { success: true };
+  } else {
+    //update the status column 
     order.status = "PAYMENT_PROCESSING";
     await order.save();
-  };
 
-  // if all request handled successfully return success 
-   return {
-     success: true
-   };
- 
+    // find the each orderItem using orderId to mark payment is attempted
+    const allOrderItems = await OrderItems.findAll({
+      where: { orderId: order.orderId },
+    });
+
+    // loop over each orderItem 
+    for (const orderItem of allOrderItems) {
+      // update the status
+      orderItem.status = "PAYMENT_PROCESSING";
+      
+      await orderItem.save();
+    }
+  }
+
+  // if all request handled successfully return success
+  return {
+    success: true,
+  };
 };
 
-exports.paymentStatus = async (req)=>{
+exports.paymentStatus = async (req) => {
+  // get webhookSignature from request
+  const webhookSignature = req.get("X-Razorpay-Signature");
 
-  const webhookSignature = req.get('X-Razorpay-Signature');
-
-  // return a boolean value about webhook
-
+  // returns a boolean value about webhook
   const isWebhookValid = validateWebhookSignature(
     JSON.stringify(req.body),
     webhookSignature,
     process.env.razorPay_Webhook_Secret
   );
 
+  // if signature is not valid
   if (!isWebhookValid) throw new Error("Webhook not valid!!");
 
+  // extract the data from the req.body
+  const paymentData = req.body.payload.payment.entity;
 
-  if (req.body.event === 'payment.captured'){
+  const razorpayOrderId = paymentData.order_id;
+  const razorpayPaymentId = paymentData.id;
+  const amountPaid = paymentData.amount / 100;
+  const paymentMethod = paymentData.method;
+  const paymentStatus = paymentData.status;
 
-    const paymentData = req.body.payload.payment.entity;
+  // generate signature to add to payments table
+  const razorpaySignature = crypto
+    .createHmac("sha256", process.env.razorPay_secret_key)
+    .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+    .digest("hex");
 
-    const razorpayOrderId = paymentData.order_id;
-    const razorpayPaymentId = paymentData.id;
-    const amountPaid = paymentData.amount / 100;
-    const paymentMethod = paymentData.method;
-    const paymentStatus = paymentData.status;
+  const order = await Orders.findOne({
+    where: { razorpayOrderId },
+  });
 
-     const order = await Orders.findOne({
-       where: { razorpayOrderId},
-     });
+  // if didn't  found order details
+  if (!order) return { success: false, message: "Order not found." };
 
+  // extract the orderId from order details for further use cases
+  const orderId = order.orderId;
 
-     if (order.status === 'PAID') return {success:true,message:"Payment already processed"}
+  // return if order is already PAID
+  if (order.status === "PAID")
+    return { success: true, message: "Payment already processed" };
 
-     // didn't  found order details
-     if (!order) return { success: false, message: "Order not found." };
+  
+  // if payment captured successfully
+  if (req.body.event === "payment.captured") {
+    // change the status to PAID
+    order.status = "PAID";
 
-     // if find update the status column
-     order.status = "PAID";
+    // save the updated status
+    await order.save();
 
-     // save the update
-     await order.save();
+    // find all suborders linked to that order using orderId
+    const subOrders = await SubOrders.findAll({ where: { orderId } });
 
-     // extract the orderId from order details for further use cases
-     const orderId = order.orderId;
-     
-     // find all suborders linked to that order using orderId
-     const subOrders = await SubOrders.findAll({ where: { orderId } });
+    // loop over all suborders
+    for (const subOrder of subOrders) {
+      // update the status column
+      subOrder.status = "CONFIRMED";
 
-     // loop over all suborders
-     for (const subOrder of subOrders) {
-       // update the status column
-       subOrder.status = "CONFIRMED";
+      // save the updated value
+      await subOrder.save();
 
-       // save the updated value
-       await subOrder.save();
+      // find the all orderItems for that suborder/order using suborderId
+      const orderItems = await OrderItems.findAll({
+        where: { subOrderId: subOrder.subOrderId },
+      });
 
-       // find the all orderItems for that suborder/order using suborderId
-       const orderItems = await OrderItems.findAll({
-         where: { subOrderId: subOrder.subOrderId },
-       });
+      // loop over each orderItem
+      for (const orderItem of orderItems) {
+        // update the status column
+        orderItem.status = "CONFIRMED";
+        // save the update
+        await orderItem.save();
+      }
+    }
 
-       // loop over each orderItem
-       for (const orderItem of orderItems) {
-         // update the status column
-         orderItem.status = "CONFIRMED";
-         // save the update
-         await orderItem.save();
-       }
-     }
+    // make an entry in payment table
+    const payment = await Payments.create({
+      orderId,
+      customerId: order.customerId,
+      razorpayPaymentId,
+      razorpayOrderId,
+      razorpaySignature,
+      amountPaid: amountPaid,
+      status: paymentStatus,
+      method: paymentMethod,
+    });
 
-     // make an entry in payment table
-     const payment = await Payments.create({
-       orderId,
-       customerId: order.customerId,
-       razorpayPaymentId,
-       razorpayOrderId,
-       amountPaid: amountPaid,
-       status: paymentStatus,
-       method: paymentMethod,
-     });
-     
-
-    const {totalAmount,shippingName,shippingEmail,shippingPhone} = order;
-    const {method} = payment;
+    const { totalAmount, shippingName, shippingEmail, shippingPhone } = order;
+    const { method } = payment;
 
     await sendOrderConfirmationEmail({
-    to:shippingEmail,amount:totalAmount,method,fullName:shippingName,phoneNumber:shippingPhone,orderId
-    })
-     // if all transaction successful then remove the products from the cart using customerId
+      to: shippingEmail,
+      amount: totalAmount,
+      method,
+      fullName: shippingName,
+      phoneNumber: shippingPhone,
+      orderId,
+    });
+    // if all transaction successful then remove the products from the cart using customerId
     await Cart.destroy({ where: { customerId: order.customerId } });
-     
-
-
-     return {
-       orderId: order.orderId,
-       amount: order.totalAmount,
-       paymentId: payment.razorpayPaymentId,
-       customerName: order.shippingName,
-       customerPhone: order.shippingPhone,
-       customerEmail: order.shippingEmail,
-     };
-
-
-  }else if (req.body.event ==='payment.failed'){
+  
+    return {
+      orderId,
+      amountPaid,
+      paymentId: payment.razorpayPaymentId,
+      customerName: order.shippingName,
+      customerPhone: order.shippingPhone,
+      customerEmail: order.shippingEmail,
+    };
+  } else if (req.body.event === "payment.failed") {
     const paymentData = req.body.payload.payment.entity;
 
     const razorpayOrderId = paymentData.order_id;
 
+    // find the order details with razorpayorderId
     const order = await Orders.findOne({ where: { razorpayOrderId } });
 
+    // save the order with failed status
     if (order) {
       order.status = "FAILED";
       await order.save();
     }
-
-    const orderId = order.orderId;
 
     // find all suborders linked to that order using orderId
     const subOrders = await SubOrders.findAll({ where: { orderId } });
@@ -329,4 +354,4 @@ exports.paymentStatus = async (req)=>{
 
     return { message: "payment failed" };
   }
-}
+};

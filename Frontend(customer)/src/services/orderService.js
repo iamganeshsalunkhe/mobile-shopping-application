@@ -14,6 +14,6 @@ export async function getOrders(){
 
     } catch (error) {
         // if any error occurs
-        console.log(error);
+        console.error(error);
     }
 }

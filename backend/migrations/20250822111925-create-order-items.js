@@ -66,10 +66,8 @@ module.exports = {
         type: Sequelize.ENUM(
           "PENDING",
           "CONFIRMED",
-          "CANCELLED",
-          "RETURNED",
-          "SHIPPED",
-          "DELIVERED"
+          "FAILED",
+          "PAYMENT_PROCESSING"
         ),
       },
       createdAt: {

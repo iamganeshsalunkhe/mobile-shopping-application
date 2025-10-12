@@ -36,7 +36,7 @@ function App() {
           <Routes>
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/"element={<HomePage/>}/>
+            <Route path="/" element={<HomePage />} />
             <Route
               path="/account"
               element={
@@ -59,13 +59,13 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route 
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <OrdersPage/>
-              </ProtectedRoute>
-            }
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <OrdersPage />
+                </ProtectedRoute>
+              }
             />
             <Route
               path="/address"
@@ -75,19 +75,21 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/paymentsuccess"
-            element={
-              <ProtectedRoute>
-                <PaymentSuccessPage/>
-              </ProtectedRoute>
-            }
+            <Route
+              path="/paymentsuccess"
+              element={
+                <ProtectedRoute>
+                  <PaymentSuccessPage />
+                </ProtectedRoute>
+              }
             />
-            <Route path="/paymentfailed"
-            element={
-            <ProtectedRoute>
-              <PaymentFailedPage/>
-            </ProtectedRoute>
-            }
+            <Route
+              path="/paymentfailed"
+              element={
+                <ProtectedRoute>
+                  <PaymentFailedPage />
+                </ProtectedRoute>
+              }
             />
             <Route path="*" element={<PageNotFoundPage />} />
             <Route path="/about" element={<AboutPage />} />
@@ -103,6 +105,13 @@ function App() {
               },
             },
             error: {
+              style: {
+                fontFamily: "inherit",
+                fontWeight: "bold",
+                fontSize: "18px",
+              },
+            },
+            loading: {
               style: {
                 fontFamily: "inherit",
                 fontWeight: "bold",

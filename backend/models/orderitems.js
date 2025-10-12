@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       productName: DataTypes.STRING,
       productPrice: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
-      status: DataTypes.ENUM("PENDING", "CONFIRMED", "FAILED"),
+      status: DataTypes.ENUM("PENDING", "CONFIRMED", "FAILED","PAYMENT_PROCESSING"),
     },
     {
       sequelize,
