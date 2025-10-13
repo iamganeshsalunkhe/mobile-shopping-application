@@ -1,18 +1,19 @@
 // import required modules
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa6";
+import axiosInstance from "../utils/axios.js";
+
 
 
 // fetch the products from the database(self-listed)
 async function fetchProducts() {
   try {
-    const res = await axios.get("http://localhost:8000/api/vendor/product", {
+    const res = await axiosInstance.get("/product", {
       withCredentials: true,
     });
     return res.data;
@@ -94,8 +95,7 @@ function Products() {
   // to delete the product
   const deleteProduct = useMutation({
     mutationFn: async (product) => {
-      await axios.delete(
-        `http://localhost:8000/api/vendor/product/${product.productId}`,
+      await axiosInstance.delete(`/product/${product.productId}`,
         {
           withCredentials: true,
         }
@@ -136,8 +136,7 @@ function Products() {
 
       // if edit product is true (User want to update a product)
       if (isEditProduct) {
-        await axios.put(
-          `http://localhost:8000/api/vendor/product/${isEditProduct.productId}`,
+        await axiosInstance.put(`/product/${isEditProduct.productId}`,
           formData,
           { 
             headers:
@@ -150,8 +149,7 @@ function Products() {
         toast.success("Product Updated Successfully!");
       } else {
         // if edit product is false (User want to add a product)
-        await axios.post(
-          `http://localhost:8000/api/vendor/product`,
+        await axiosInstance.post(`/product`,
           formData,
           {
             withCredentials: true,

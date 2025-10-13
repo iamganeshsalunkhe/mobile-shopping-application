@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -8,6 +7,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useCartStore } from "../stores/cartStore";
 import { getCartInfo } from "../services/cartService";
 import { useQueryClient } from "@tanstack/react-query";
+import axiosInstance from "../utils/axios.js";
 
 function Login() {
   // get navigate for navigation
@@ -40,8 +40,7 @@ function Login() {
   async function onSubmit(data){
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/customer/login",
+      const res = await axiosInstance.post("/login",
         data,
         { withCredentials: true }
       );

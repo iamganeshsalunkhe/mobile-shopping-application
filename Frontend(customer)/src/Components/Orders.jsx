@@ -83,7 +83,7 @@ function Orders() {
                   rounded p-1 font-medium text-shadow-gray-600
                   `}
                   >
-                    {item.status ==='CONFIRMED'? "CONFIRMED" :'PENDING'}
+                    {item.status ==='CONFIRMED'? "CONFIRMED" :'PAYMENT_PROCESSING'}
                   </span>
                   <div className="p-10 border-b border-gray-200">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

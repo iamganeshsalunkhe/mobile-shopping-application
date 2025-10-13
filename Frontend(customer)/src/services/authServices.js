@@ -1,10 +1,8 @@
 // import required module
-import axios from 'axios';
-
-const API_BASE = `http://localhost:8000/api/customer`;
+import axiosInstance from "../utils/axios.js";
 
 export const getCurrentUser = async()=>{
-    const res = await axios.get(`${API_BASE}/me`,{
+    const res = await axiosInstance.get(`/me`,{
         withCredentials:true
     });
     return res.data;

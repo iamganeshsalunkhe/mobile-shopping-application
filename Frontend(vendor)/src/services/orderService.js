@@ -1,9 +1,10 @@
 // import required modules
-import axios from 'axios';
+import axiosInstance from "../utils/axios.js";
+
 
 export async function getVendorOrders(){
     try {
-        const {data} = await axios.get("http://localhost:8000/api/vendor/orders", {
+        const {data} = await axiosInstance.get("/orders", {
           withCredentials: true,
         });
 

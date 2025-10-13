@@ -1,14 +1,11 @@
 // import required modules
-
-import axios from "axios";
-
-const API_BASE = `http://localhost:8000/api/customer`;
+import axiosInstance from "../utils/axios.js";
 
 // function for get all addresses
 export async function getAddresses() {
   try {
     // fetch the all addresses from BE
-    const res = await axios.get(`${API_BASE}/address`, {
+    const res = await axiosInstance.get(`/address`, {
       withCredentials: true,
     });
     return res.data;
@@ -26,7 +23,7 @@ export async function getAddresses() {
 export async function addAnNewAddress(data) {
   try {
     // create a post request to BE
-    const res = await axios.post(`${API_BASE}/address`, data, {
+    const res = await axiosInstance.post(`/address`, data, {
       withCredentials: true,
     });
     // return the data
@@ -46,7 +43,7 @@ export async function addAnNewAddress(data) {
 export async function updateAnAddress({ addressId, data }) {
   try {
     // send request to BE with addressId
-    const res = await axios.put(`${API_BASE}/address/${addressId}`, data, {
+    const res = await axiosInstance.put(`/address/${addressId}`, data, {
       withCredentials: true,
     });
 
@@ -66,7 +63,7 @@ export async function updateAnAddress({ addressId, data }) {
 export async function deleteAnAddress(addressId) {
   try {
     // send request to BE with addressId
-    const res = await axios.delete(`${API_BASE}/address/${addressId}`, {
+    const res = await axiosInstance.delete(`/address/${addressId}`, {
       withCredentials: true,
     });
 
@@ -86,7 +83,7 @@ export async function deleteAnAddress(addressId) {
 export async function setDefaultAddress(addressId, data) {
   try {
     // send request to BE with addressId
-    const res = await axios.post(`${API_BASE}/address/${addressId}`, data, {
+    const res = await axiosInstance.post(`/address/${addressId}`, data, {
       withCredentials: true,
     });
 
@@ -106,7 +103,7 @@ export async function setDefaultAddress(addressId, data) {
 export async function getDefaultAddress() {
   try {
     // fetch the default address from BE
-    const res = await axios.get(`${API_BASE}/defaultAddress`, {
+    const res = await axiosInstance.get(`/defaultAddress`, {
       withCredentials: true,
     });
     return res.data;

@@ -1,17 +1,17 @@
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import axiosInstance from "../utils/axios.js";
 
 // function for fetching account details of loggedin user
 async function fetchVendorData() {
   try {
-    const res = await axios.get("http://localhost:8000/api/vendor/account", {
+    const res = await axiosInstance.get("/account", {
       withCredentials: true,
     });
     return res.data;
@@ -24,8 +24,7 @@ async function fetchVendorData() {
 // function for updating an account
 async function updateVendorData(formData) {
   try {
-    const res = await axios.put(
-      "http://localhost:8000/api/vendor/account",
+    const res = await axiosInstance.put("/account",
       formData,
       { withCredentials: true }
     );
@@ -38,7 +37,7 @@ async function updateVendorData(formData) {
 // function for deleting an account
 async function deleteVendorAccount(vendorId) {
   try {
-    const res = await axios.delete("http://localhost:8000/api/vendor/account", {
+    const res = await axiosInstance.delete("/account", {
       data: { vendorId },
       withCredentials: true,
     });
@@ -123,7 +122,7 @@ function Account() {
     formData.append("brandLogo", file);
 
     try {
-      await axios.post("http://localhost:8000/api/vendor/brandLogo", formData, {
+      await axiosInstance.post("/brandLogo", formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -139,7 +138,7 @@ function Account() {
   // function for deleting brandLogo
   async function handleDeleteLogo() {
     try {
-      await axios.delete("http://localhost:8000/api/vendor/brandLogo", {
+      await axiosInstance.delete("/brandLogo", {
         withCredentials: true,
       });
 

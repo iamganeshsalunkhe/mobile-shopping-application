@@ -1,13 +1,11 @@
 //  import required modules
-
-import axios from "axios";
-const API_BASE = `http://localhost:8000/api/customer`;
+import axiosInstance from '../utils/axios.js';
 
 // fetch customer Data
 export async function fetchCustomerData() {
   try {
     // get the data of the customer
-    const res = await axios.get(`${API_BASE}/account`, {
+    const res = await axiosInstance.get(`/account`, {
       withCredentials: true,
     });
     return res.data;
@@ -20,7 +18,7 @@ export async function fetchCustomerData() {
 //function for updating an account info
 export async function updateCustomerData(formData) {
   try {
-    const res = await axios.put(`${API_BASE}/account`, formData, {
+    const res = await axiosInstance.put(`/account`, formData, {
       withCredentials: true,
     });
     return res.data;
@@ -33,7 +31,7 @@ export async function updateCustomerData(formData) {
 // function for deleting the customer Account
 export async function deleteCustomerAccount() {
   try {
-    const res = await axios.delete(`${API_BASE}/account`, {
+    const res = await axiosInstance.delete(`/account`, {
       withCredentials: true,
     });
     return res.data;

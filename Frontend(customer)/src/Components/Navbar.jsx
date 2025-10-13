@@ -1,5 +1,4 @@
 // import required modules
-import axios from "axios";
 import { useState } from "react";
 import {
   FiSearch,
@@ -20,6 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/authStore";
 import toast from "react-hot-toast";
 import { useCartStore } from "../stores/cartStore";
+import axiosInstance from "../utils/axios.js";
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -36,8 +36,8 @@ function Navbar() {
 
     if (item.action) {
       try {
-        await axios.post(
-          "http://localhost:8000/api/customer/logout",
+        await axiosInstance.post(
+          "/logout",
           {},
           { withCredentials: true }
         );

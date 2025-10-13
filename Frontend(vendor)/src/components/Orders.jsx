@@ -1,12 +1,13 @@
 // import required modules
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import Loader from "./Loader";
 import Error from "./Error";
+import axiosInstance from "../utils/axios.js";
+
 
 async function fetchOrders() {
   try {
-    const res = await axios.get("http://localhost:8000/api/vendor/orders");
+    const res = await axiosInstance.get("/orders");
     return res.data;
   } catch (error) {
     console.error(error);

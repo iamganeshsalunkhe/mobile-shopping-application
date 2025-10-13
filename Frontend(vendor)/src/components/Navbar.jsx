@@ -1,46 +1,53 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems ,Transition} from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import toast from 'react-hot-toast'
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
-
+import axiosInstance from "../utils/axios.js";
 
 const navigation = [
-  { name: 'My Products', to: '/products', current: false },
-  { name: 'My Orders', to: '/orders', current: false },
-  { name: 'My Account', to: '/account', current: false },
-]
+  { name: "My Products", to: "/products", current: false },
+  { name: "My Orders", to: "/orders", current: false },
+  { name: "My Account", to: "/account", current: false },
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
-    const location = useLocation();
-    const navigate =  useNavigate();
-    const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-
-    async function handleLogout(){
-      try {
-          await axios.post('http://localhost:8000/api/vendor/logout',{},
-          {withCredentials:true}
-        )
-        // clear the cache of react-query
-        queryClient.clear();
-        toast.success("Logged Out Successfully!")
-        navigate('/login')
-        
-      } catch (error) {
-        console.log(error) 
-      }
+  async function handleLogout() {
+    try {
+      await axiosInstance.post("/logout", {}, { withCredentials: true });
+      // clear the cache of react-query
+      queryClient.clear();
+      toast.success("Logged Out Successfully!");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
     }
+  }
 
   return (
-    <Disclosure as="nav" className=" fixed top-0 left-0 w-full z-50 bg-emerald-800">
+    <Disclosure
+      as="nav"
+      className=" fixed top-0 left-0 w-full z-50 bg-emerald-800"
+    >
       <nav className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 select-none">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">

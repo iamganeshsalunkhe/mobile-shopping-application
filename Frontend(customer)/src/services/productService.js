@@ -1,13 +1,10 @@
 // import required modules
-
-import axios from "axios";
+import axiosInstance from "../utils/axios.js";
 
 export const fetchProducts = async () => {
     // fetch all the products
  try {
-     const { data } = await axios.get(
-       "http://localhost:8000/api/customer/product"
-     );
+     const { data } = await axiosInstance.get("/product");
      return data;
  } catch (error) {
     // if any error occurs

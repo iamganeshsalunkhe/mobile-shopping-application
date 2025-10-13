@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import axiosInstance from '../utils/axios.js';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -23,11 +23,9 @@ export default function SignUp() {
    async function onSubmit(data) {
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/customer/signup",
+      const res = await axiosInstance.post("/signup",
         data,
         {
-          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );

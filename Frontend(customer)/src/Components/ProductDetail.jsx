@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FiShoppingCart, FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { addToCart } from "../services/cartService";
@@ -8,6 +7,7 @@ import { useCartStore } from "../stores/cartStore";
 import Loader from "./Loader";
 import Error from "./Error";
 import { useEffect, useState } from "react";
+import axiosInstance from '../utils/axios.js';
 
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
@@ -16,8 +16,7 @@ import "react-medium-image-zoom/dist/styles.css";
 async function fetchProduct(productId) {
   // get productId from params
   try {
-    const { data } = await axios.get(
-      `http://localhost:8000/api/customer/product/${productId}`
+    const { data } = await axiosInstance.get(`/product/${productId}`
     );
     return data;
   } catch (error) {

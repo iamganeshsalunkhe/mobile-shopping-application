@@ -1,14 +1,11 @@
 // import required modules
-import axios from "axios";
-
-// declare as const as its won't change across requests
-const API_BASE = `http://localhost:8000/api/customer`;
+import axiosInstance from "../utils/axios.js";
 
 
 export async function getOrders(){
     // fetch order 
     try {
-        const {data} = await axios.get(`${API_BASE}/order`,{withCredentials:true});
+        const {data} = await axiosInstance.get(`/order`,{withCredentials:true});
 
         return data;
 
