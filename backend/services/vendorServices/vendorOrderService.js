@@ -13,7 +13,8 @@ exports.getVendorOrders = async (vendorId) => {
         
         
           }
-    ]
+    ],
+    order: [['updatedAt',"DESC"]]
   });
 
   return orders;
