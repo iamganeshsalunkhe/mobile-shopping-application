@@ -23,7 +23,7 @@ A full-stack microservices-based e-commerce platform that allows admins, vendors
 ### Backend
 
 * **Node.js + Express.js**
-* **Service Pattern**
+* **Service Pattern(MVCS)**
 * **RESTful APIs**
 * **Sequelize ORM** with MySQL
 * **Multer for file upload**
@@ -40,7 +40,7 @@ A full-stack microservices-based e-commerce platform that allows admins, vendors
 ###  Admin Panel
 
 * View all vendors and customers
-* Delete vendors/customers in case of policy violations
+* Delete/Remove vendors/customers in case of policy violations
 
 ###  Vendor Dashboard
 
@@ -137,7 +137,7 @@ npm run dev
 
 ##  Payments
 
-* Razorpay Checkout integration
+* Razorpay Checkout integration with Webhook implemented
 * Payments locked after checkout; no cancellation
 
 ---
