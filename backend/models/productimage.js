@@ -1,9 +1,7 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class ProductImage extends Model {
+  class ProductImages extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,25 +9,38 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ProductImage.belongsTo(models.Products,{
-        foreignKey:'productId',
-        onDelete:'CASCADE'
-      })
+      ProductImages.belongsTo(models.Products, {
+        foreignKey: "productId",
+        onDelete: "CASCADE",
+      });
     }
   }
-  ProductImage.init({
-    productImageId:
+  ProductImages.init(
     {
-      type:DataTypes.INTEGER,
-      primaryKey:true,
-      autoIncrement:true
+      productImageId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      productId:DataTypes.INTEGER,
+      imageUrl: DataTypes.STRING,
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
-    imageUrl: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'ProductImage',
-    tableName:'ProductImage',
-     timestamps:false
-  });
-  return ProductImage;
+    {
+      sequelize,
+      modelName: "ProductImages",
+      tableName: "ProductImages",
+      timestamps: true,
+    }
+  );
+  return ProductImages;
 };

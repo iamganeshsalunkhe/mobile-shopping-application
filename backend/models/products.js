@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Products extends Model {
     /**
@@ -11,18 +9,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Products.hasMany(models.Orders, {
-        foreignKey: "productId",
-        onDelete: "CASCADE",
-      });
       Products.belongsTo(models.Vendors, {
         foreignKey: "vendorId",
         onDelete: "CASCADE",
       });
-      Products.hasMany(models.ProductImage, {
+      Products.hasMany(models.ProductImages, {
         foreignKey: "productId",
         onDelete: "CASCADE",
       });
+      Products.hasMany(models.Cart, {
+        foreignKey: "productId",
+        onDelete: "CASCADE",
+        as: "cartEntries"
+      });
+      Products.hasMany(models.OrderItems,{
+        foreignKey:"productId"
+      })
     }
   }
   Products.init(
@@ -33,24 +35,33 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       vendorId: DataTypes.INTEGER,
+      brandName:DataTypes.STRING,
       productName: DataTypes.STRING,
-      price: DataTypes.INTEGER,
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
       specification: DataTypes.TEXT,
       soldOut: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
       createdAt: {
-          allowNull: false,
-          type: DataTypes.DATE,
-          defaultValue: DataTypes.NOW,
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {
       sequelize,
       modelName: "Products",
       tableName: "Products",
-      timestamps: false,
+      timestamps: true,
     }
   );
   return Products;

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -24,6 +24,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      email:{
+        type:Sequelize.STRING,
+      },
       contactNumber: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -32,7 +35,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      landMark: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       city: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      district: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -52,13 +63,22 @@ module.exports = {
         type: Sequelize.ENUM("Shipping", "Billing"),
         defaultValue: "Shipping",
       },
+      isDefault:{
+        type:Sequelize.BOOLEAN,
+        defaultValue:false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Addresses');
-  }
+    await queryInterface.dropTable("Addresses");
+  },
 };

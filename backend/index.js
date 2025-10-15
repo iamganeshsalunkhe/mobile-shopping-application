@@ -3,11 +3,24 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 // importing routes
-const vendorAuthRoutes = require('./routes/vendorRoutes/vendorAuth.routes');
-const vendorProductRoutes = require("./routes/vendorRoutes/vendorProduct.routes");
-const vendorProfileRoutes = require("./routes/vendorRoutes/vendorProfile.routes");
+// vendorsRoutes
+const vendorAuthRoutes = require('./routes/vendorRoutes/vendorAuthRoutes');
+const vendorProductRoutes = require("./routes/vendorRoutes/vendorProductRoutes");
+const vendorProfileRoutes = require("./routes/vendorRoutes/vendorProfileRoutes");
+const vendorBrandLogoRoutes = require('./routes/vendorRoutes/vendorBrandLogoRoutes');
+const vendorOrderRoutes = require('./routes/vendorRoutes/vendorOrderRoutes.js');
+
+// customerRoutes
+const customerAuthRoutes = require('./routes/customerRoutes/customerAuthRoutes.js');
+const customerProfileRoutes = require('./routes/customerRoutes/customerProfileRoutes.js');
+const customerAddressRoutes = require('./routes/customerRoutes/customerAddressRoutes.js');
+const customerProductRoutes = require('./routes/customerRoutes/customerProductRoutes.js');
+const customerCartRoutes = require('./routes/customerRoutes/customerCartRoute.js');
+const customerOrderRoutes = require('./routes/customerRoutes/customerOrderRoute');
+const customerPaymentRoutes = require("./routes/customerRoutes/customerPaymentRoute.js");
 
 // config the dotenv
 dotenv.config();
@@ -21,7 +34,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes]);
+const allowedOrigin =['http://localhost:5173','http://localhost:5174']
+
+app.use(cors({origin:allowedOrigin,credentials:true}));
+
+app.use('/api/vendor',[vendorAuthRoutes,vendorProductRoutes,vendorProfileRoutes,vendorBrandLogoRoutes,vendorOrderRoutes]);
+app.use('/api/customer',[customerAuthRoutes,customerProfileRoutes,customerAddressRoutes,customerProductRoutes,customerCartRoutes,customerOrderRoutes,customerPaymentRoutes]);
 
 // listening 
 app.listen(PORT,()=>{

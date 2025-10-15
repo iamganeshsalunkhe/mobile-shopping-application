@@ -5,7 +5,7 @@ const {Admins,Vendors,Customers} = require('../models');
 
 const authenticate = async(req,res,next)=>{
     // check if token is present in cookies
-    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+    const token = req.cookies?.token 
     
     // if not
     if (!token)return res.status(401).json({message:"Unauthorized!!"});
@@ -19,10 +19,12 @@ const authenticate = async(req,res,next)=>{
 
         if (decoded.role ==='vendor') user = await Vendors.findByPk(decoded.id);
 
-        if(!user) return res.status(401).json({message:"User not found"});
+        if (decoded.role ==='customer') user = await Customers.findByPk(decoded.id);
 
+        if(!user) return res.status(401).json({message:"User not found"});
+        
         req.user = {
-            id:user.vendorId,
+            id:decoded.id,
             role:decoded.role
         }
         next();

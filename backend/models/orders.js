@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Orders extends Model {
     /**
@@ -11,14 +9,24 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Orders.belongsTo(models.Products, {
-        foreignKey: "productId",
-        onDelete: "CASCADE",
-      });
       Orders.belongsTo(models.Customers, {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
+      Orders.hasMany(models.Payments,{
+        foreignKey:"orderId",
+        onDelete:"CASCADE"
+      });
+      Orders.hasMany(models.OrderItems, {
+        foreignKey: "orderId",
+        onDelete: "CASCADE",
+      });
+      
+      Orders.hasMany(models.SubOrders,{
+        foreignKey:"orderId",
+        onDelete:"CASCADE"
+      });
+
     }
   }
   Orders.init(
@@ -28,17 +36,39 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      productId: DataTypes.INTEGER,
       customerId: DataTypes.INTEGER,
-      amountPaid: DataTypes.STRING,
-      dateOfOrderPlaced: DataTypes.DATE,
-      transactionId: DataTypes.STRING,
+      status:{
+        type:DataTypes.ENUM("PENDING_PAYMENT","PAID","CANCELLED","SHIPPED","DELIVERED","PAYMENT_PROCESSING")
+      },
+      totalAmount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      shippingName:DataTypes.STRING,
+      shippingPhone:DataTypes.STRING,
+      shippingEmail:DataTypes.STRING,
+      shippingStreet:DataTypes.STRING,
+      shippingCity:DataTypes.STRING,
+      shippingDistrict:DataTypes.STRING,
+      shippingState:DataTypes.STRING,
+      shippingPincode:DataTypes.STRING,
+      razorpayOrderId:DataTypes.STRING,
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
       modelName: "Orders",
       tableName: "Orders",
-      timestamps: false,
+      timestamps: true,
     }
   );
   return Orders;

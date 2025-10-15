@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Customers extends Model {
     /**
@@ -19,6 +17,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId",
         onDelete: "CASCADE",
       });
+      Customers.hasMany(models.Payments,{
+        foreignKey:'customerId',
+        onDelete:"CASCADE"
+      });
+      Customers.hasMany(models.SubOrders,{
+        foreignKey:'customerId',
+        onDelete:"CASCADE"
+      });
+      Customers.hasMany(models.OrderItems,{
+        foreignKey:'customerId',
+        onDelete:'CASCADE'
+      });
     }
   }
   Customers.init(
@@ -28,16 +38,29 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      email: DataTypes.STRING,
+      email: {
+        type:DataTypes.STRING,
+        unique:true
+      },
       fullName: DataTypes.STRING,
       password: DataTypes.STRING,
       contactNumber: DataTypes.STRING,
+      createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
       modelName: "Customers",
       tableName: "Customers",
-      timestamps: false,
+      timestamps: true,
     }
   );
   return Customers;
