@@ -8,6 +8,7 @@ A full-stack microservices-based e-commerce platform that allows admins, vendors
 - [Basic Functionality](docs/BasicFunctionality/basicFunctionality%20.jpg)
 - [Use case diagram](docs/UseCaseDiagram/useCaseDiagram.png)
 - [Database Schema](docs/DatabaseSchema/)
+- [Payment Gateway](docs/PaymentGateway/PaymentGatewayArchitecture.jpeg)
 
 ---
 
@@ -15,8 +16,8 @@ A full-stack microservices-based e-commerce platform that allows admins, vendors
 
 ###  Frontend
 
-* **Customer**: React + TailwindCSS + Zustand + React Hook Form + React Query + Axios
-* **Vendor**: React + TailwindCSS + React Hook Form + React Query + Axios
+* **Customer**: React + TailwindCSS + Zustand + React Hook Form + React Query + Axios + RazorPay Payment Gateway + AWS S3
+* **Vendor**: React + TailwindCSS + React Hook Form + React Query + Axios + AWS S3
 * **Admin**: React (microfrontend architecture)
 * **Build Tool**: Vite
 
@@ -139,6 +140,9 @@ npm run dev
 
 * Razorpay Checkout integration with Webhook implemented
 * Payments locked after checkout; no cancellation
+
+### Payment Gateway Architecture Diagram
+![Payment Gateway Architecture](docs/PaymentGateway/PaymentGatewayArchitecture.jpeg)
 
 ---
 
