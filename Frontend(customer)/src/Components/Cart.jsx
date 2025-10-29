@@ -144,6 +144,11 @@ function Cart() {
         },
       };
 
+      if (!window.Razorpay) {
+        toast.error("There is error while opening payment gateway. Please refresh and try again!!");
+        return;
+      }
+
       const rzp = new window.Razorpay(options);
 
       rzp.on("payment.failed", (response) => {

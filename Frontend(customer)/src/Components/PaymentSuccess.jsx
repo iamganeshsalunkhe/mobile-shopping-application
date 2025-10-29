@@ -38,7 +38,7 @@ const PaymentSuccess = () => {
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Payment Confirmed!
+              Order Confirmed!
             </h1>
             <p className="text-xl text-green-100 font-medium max-w-2xl mx-auto">
               Thank you for your purchase. Your payment has been successfully
