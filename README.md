@@ -1,6 +1,6 @@
 ##  Mobile Shopping Application (MSA)📱
 
-A full-stack microservices-based e-commerce platform that allows admins, vendors, and customers to interact through dedicated frontend interfaces. It supports vendor listing, product listings, customer cart/order management, secure payments.
+A full-stack microservices-based e-commerce platform that allows vendors and customers to interact through dedicated frontend interfaces. It supports vendor listing, product listings, customer cart/order management, secure payments.
 
 ---
 ## Documentation
@@ -18,44 +18,43 @@ A full-stack microservices-based e-commerce platform that allows admins, vendors
 
 * **Customer**: React + TailwindCSS + Zustand + React Hook Form + React Query + Axios + RazorPay Payment Gateway + AWS S3
 * **Vendor**: React + TailwindCSS + React Hook Form + React Query + Axios + AWS S3
-* **Admin**: React (microfrontend architecture)
 * **Build Tool**: Vite
 
 ### Backend
 
 * **Node.js + Express.js**
-* **Service Pattern(MVCS)**
-* **RESTful APIs**
 * **Sequelize ORM** with MySQL
 * **Multer for file upload**
+* **RESTful APIs**
+* **Service Pattern(MVCS)**
 
 ### Third-Party Integrations
 
-* **Razorpay** – Payment gateway
 * **AWS S3** – Image upload & storage
+* **Razorpay** – Payment gateway
 
 ---
 
 ##  Features
 
-###  Admin Panel
-
-* View all vendors and customers
-* Delete/Remove vendors/customers in case of policy violations
 
 ###  Vendor Dashboard
 
 * CRUD for product listings
 * Manage orders
-* Update brand logo and profile
+* Update brand logo 
+* Manage profile
 
 ###  Customer Portal
 
+* Browse products without login
 * Product search and filtering
 * Add/remove items in the cart
+* CRUD operations on address
 * Place orders (no cancellations post-placement)
-* Make payments via Stripe
+* Make payments via Razorpay
 * Manage profile
+* Demo footer links
 
 ---
 
@@ -104,11 +103,6 @@ config/config.json
 npx sequelize db:migrate
 ```
 ### 5. Install frontend dependencies
-**For Admin**
-```sh
-cd Frontend(Admin)
-npm run dev
-```
 **For Vendor**
 ```sh
 cd Frontend(vendor)
@@ -122,24 +116,33 @@ npm run dev
 
 ---
 
+## Database Schema
+
+* Built clean and normalized, scalable database
+* Each data entry stored neatly considered all edge cases
+![Database Schema](docs/DatabaseSchema/MSADatabaseSchema.png)
+
+---
+
 ##  Authentication & Security
 
 * JWT-based auth stored in **HTTP-only cookies**
-* Role-based access controls: `admin`, `vendor`, `customer`
+* Role-based access controls: `vendor`, `customer`
 
 ---
 
 ##  Image Upload
 
-* Vendor logo and product images are uploaded via AWS S3
+* Vendor's brand logo and product images are uploaded via multer to AWS S3
 * Supports **single** image upload (brand-logo) and **multiple** image uploads (products)
 
 ---
 
 ##  Payments
 
-* Razorpay Checkout integration with Webhook implemented
+* Razorpay Checkout integration with Webhook implementation
 * Payments locked after checkout; no cancellation
+* An order gets confirmed only after the webhook reaches the backend
 
 ### Payment Gateway Architecture Diagram
 ![Payment Gateway Architecture](docs/PaymentGateway/PaymentGatewayArchitecture.jpeg)
